@@ -17,7 +17,7 @@ type Props = {
 const CourseTableActions = ({ course }: Props) => {
   const navigate = useNavigate();
   const { refetch } = useQuery(GetAllCoursesDocument, {
-    variables: { paginationInput: { limit: 10, page: 1 } },
+    variables: { courseFilters:{},paginationInput:{limit:10,page:1} },
   });
   const [togglePublish] = useMutation(TogglePublishStatusDocument, {
     onCompleted: async (data) => {

@@ -1,0 +1,3 @@
+mutation ReorderLessons($reorderLessonInput: ReorderLessonInput!) {
+  reorderLessons(reorderLessonInput: $reorderLessonInput)
+}

@@ -27,3 +27,12 @@ export class CreateLessonInput {
   @Field(() => Int)
   duration_minutes: number;
 }
+
+@InputType()
+export class ReorderLessonInput {
+  @Field(() => String)
+  moduleId: string;
+
+  @Field(() => [String])
+  lessonIds: string[];
+}

@@ -48,7 +48,7 @@ export class CourseService {
     if (thumbnail) {
       await validateFileUpload(
         thumbnail,
-        ['.jpeg', '.png', '.webp', '.jpg'],
+        ['image/jpeg', 'image/png', 'image/webp', 'image/jpg,'],
         10 * 1024 * 1024,
       );
       courseDetails.thumbnail_url = generateFileUrl(

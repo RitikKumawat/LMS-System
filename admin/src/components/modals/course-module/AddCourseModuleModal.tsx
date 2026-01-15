@@ -56,7 +56,7 @@ const AddCourseModuleModal = ({ courseModuleId,course_id }: Iprops) => {
         description: data.getCourseModuleById.description as string,
       });
     }
-  });
+  },[courseModuleId,data?.getCourseModuleById]);
   const handleSubmit = async (values: typeof form.values) => {
     await createCourseModule({
       variables: {

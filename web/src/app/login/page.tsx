@@ -27,7 +27,23 @@ export default function LoginPage() {
   const [step, setStep] = useState<"email" | "otp">("email");
   const [email, setEmail] = useState("");
   
-  const [sendOtp, { loading: sendOtpLoading }] = useMutation(SendOtpDocument);
+  const [sendOtp, { loading: sendOtpLoading }] = useMutation(SendOtpDocument,{
+    onCompleted:()=>{
+      setStep("otp");
+      notifications.show({
+        title: "OTP Sent",
+        message: "Please check your email for the OTP.",
+        color: "green",
+      });
+    },
+    onError:(error)=>{
+      notifications.show({
+        title: "Failed to send OTP",
+        message:  error.message,
+        color: "red",
+      });
+    }
+  });
   const [loginVerify, { loading: loginLoading }] = useMutation(LoginOtpVerifyDocument);
 
   const form = useForm({
@@ -44,7 +60,6 @@ export default function LoginPage() {
   });
 
   const handleSendOtp = async (values: typeof form.values) => {
-    try {
       await sendOtp({
         variables: {
           email: values.email,
@@ -52,19 +67,6 @@ export default function LoginPage() {
         },
       });
       setEmail(values.email);
-      setStep("otp");
-      notifications.show({
-        title: "OTP Sent",
-        message: "Please check your email for the OTP.",
-        color: "green",
-      });
-    } catch (error) {
-      notifications.show({
-        title: "Error",
-        message: error instanceof Error ? error.message : "Failed to send OTP",
-        color: "red",
-      });
-    }
   };
 
   const handleVerifyOtp = async (values: typeof form.values) => {

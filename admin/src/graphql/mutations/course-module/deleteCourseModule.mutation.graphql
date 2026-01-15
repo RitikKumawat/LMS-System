@@ -1,0 +1,3 @@
+mutation DeleteCourseModule($moduleId: String!) {
+  deleteCourseModule(moduleId: $moduleId)
+}

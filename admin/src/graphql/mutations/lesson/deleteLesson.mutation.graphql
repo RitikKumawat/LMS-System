@@ -1,0 +1,3 @@
+mutation DeleteLesson($lessonId: String!) {
+  deleteLesson(lessonId: $lessonId)
+}

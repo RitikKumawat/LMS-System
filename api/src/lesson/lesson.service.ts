@@ -7,6 +7,7 @@ import { Request } from 'express';
 import { FileUpload } from 'graphql-upload-ts';
 import { validateFileUpload } from 'src/utils/checkFileValidation';
 import { generateFileUrl } from 'src/utils/generateFileUrl.util';
+import { LessonResponse } from './entity/lesson.entity';
 
 @Injectable()
 export class LessonService {
@@ -36,11 +37,11 @@ export class LessonService {
       content: content,
       video_url: video_url,
       is_preview: is_preview,
-      module_id: module_id,
+      module_id: new Types.ObjectId(module_id),
       duration_minutes: duration_minutes,
     };
     if (document) {
-      await validateFileUpload(document, ['.pdf', '.docx'], 10 * 1024 * 1024);
+      await validateFileUpload(document, ['application/pdf'], 10 * 1024 * 1024);
       lessonData.pdf_url = generateFileUrl(req, document, 'lesson-document');
     } else if (document_url) {
       lessonData.pdf_url = document_url;
@@ -48,7 +49,10 @@ export class LessonService {
     try {
       if (lesson_id) {
         const lesson = await this.lessonModel.findOneAndUpdate(
-          { _id: lesson_id, module_id: module_id },
+          {
+            _id: new Types.ObjectId(lesson_id),
+            module_id: new Types.ObjectId(module_id),
+          },
           { $set: lessonData },
           { new: true, runValidators: true },
         );
@@ -68,7 +72,6 @@ export class LessonService {
         const lesson = await this.lessonModel.create({
           ...lessonData,
           order: nextOrder,
-          module_id: new Types.ObjectId(module_id),
         });
         return lesson;
       }
@@ -77,6 +80,55 @@ export class LessonService {
         `Failed to ${lesson_id ? 'update' : 'create'} lesson: ${error.message}`,
         500,
       );
+    }
+  }
+
+  async reorderLessons(moduleId: string, lessonIds: string[]) {
+    if (!moduleId || !lessonIds) {
+      throw new HttpException('Please provide all the fields', 400);
+    }
+    const bulkOps = lessonIds.map((lessonId, index) => ({
+      updateOne: {
+        filter: {
+          _id: lessonId,
+          module_id: new Types.ObjectId(moduleId),
+        },
+        update: {
+          $set: { order: index + 1 },
+        },
+      },
+    }));
+    try {
+      await this.lessonModel.bulkWrite(bulkOps);
+    } catch (error) {
+      console.log('error', error);
+      throw new HttpException('Something went wrong', 500);
+    }
+
+    return true;
+  }
+
+  async getLessonById(lessonId: string): Promise<LessonResponse> {
+    if (!lessonId) {
+      throw new HttpException('Please provide lesson id', 404);
+    }
+    const lesson = await this.lessonModel.findById(lessonId); //
+    if (!lesson) {
+      throw new HttpException('Lesson does not exists', 404);
+    }
+    return lesson;
+  }
+
+  async deleteLesson(lessonId: string) {
+    if (!lessonId) {
+      throw new HttpException('Please provide lesson id', 404);
+    }
+    try {
+      await this.lessonModel.findByIdAndDelete(lessonId);
+      return 'Lesson deleted successfully';
+    } catch (error) {
+      console.error('Error deleting the Lesson', error);
+      throw new HttpException('Something went wrong', 500);
     }
   }
 }

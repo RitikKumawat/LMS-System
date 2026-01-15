@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
-import { Model, Types } from 'mongoose';
+import { Connection, Model, Types } from 'mongoose';
 import { CourseModule } from 'src/schemas/course-module.schema';
 import { CreateCourseModuleInput } from './dto/course-module.dto';
 import { PaginationInput } from 'src/category/pagination.dto';
@@ -11,12 +11,19 @@ import {
 } from 'src/utils/paginate-aggregate';
 import { CourseModuleResponse } from './entity/course-module.entity';
 import { getAllCourseModulePipeline } from 'src/aggregation/getAllCourseModule.aggregation';
+import { Lesson } from 'src/schemas/lesson.schema';
 
 @Injectable()
 export class CourseModuleService {
   constructor(
     @InjectModel(CourseModule.name)
     private readonly courseModuleModel: Model<CourseModule>,
+
+    @InjectConnection()
+    private readonly connection: Connection,
+
+    @InjectModel(Lesson.name)
+    private readonly lessonModel: Model<Lesson>,
   ) {}
   async createCourseModule(
     req: Request,
@@ -26,7 +33,10 @@ export class CourseModuleService {
 
     if (id) {
       const updatedModule = await this.courseModuleModel.findOneAndUpdate(
-        { _id: id, course_id },
+        {
+          _id: new Types.ObjectId(id),
+          course_id: new Types.ObjectId(course_id),
+        },
         {
           $set: {
             title,
@@ -116,5 +126,36 @@ export class CourseModuleService {
     }
 
     return true;
+  }
+
+  async deleteCourseModule(moduleId: string) {
+    if (!moduleId) {
+      throw new HttpException('Please provide module id', 404);
+    }
+    const session = await this.connection.startSession();
+    session.startTransaction();
+    try {
+      // 1️⃣ Check module exists
+      const module = await this.courseModuleModel
+        .findById(moduleId)
+        .session(session);
+
+      if (!module) {
+        throw new HttpException('Module not found', 404);
+      }
+
+      await this.lessonModel.deleteMany({ module_id: module._id }, { session });
+
+      await this.courseModuleModel.deleteOne({ _id: module._id }, { session });
+
+      await session.commitTransaction();
+      session.endSession();
+
+      return 'Module and its lessons deleted successfully';
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      throw error;
+    }
   }
 }

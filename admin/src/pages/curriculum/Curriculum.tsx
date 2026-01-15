@@ -211,7 +211,7 @@ const Curriculum = () => {
                   <SortableModuleItem
                     key={module._id}
                     module={module}
-                    lessons={[]}
+                    lessons={module.lessons}
                   />
                 ))}
               </Accordion>

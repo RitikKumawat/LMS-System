@@ -58,4 +58,12 @@ export class CourseModuleResolver {
       input.moduleIds,
     );
   }
+  @Mutation(() => String)
+  @Roles(ADMIN_ROLES.INSTRUCTOR)
+  deleteCourseModule(
+    @Args('moduleId')
+    moduleId: string,
+  ) {
+    return this.courseModuleService.deleteCourseModule(moduleId);
+  }
 }

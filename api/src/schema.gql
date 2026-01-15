@@ -157,6 +157,7 @@ type Query {
   getCourseById(courseId: String!): Course!
   getAllCourseModules(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModule!
   getCourseModuleById(courseModuleId: String!): CourseModuleResponse!
+  getLessonById(lessonId: String!): LessonResponse!
 }
 
 input PaginationInput {
@@ -191,7 +192,10 @@ type Mutation {
   togglePublishStatus(courseId: String!): String!
   createCourseModule(createCourseModuleInput: CreateCourseModuleInput!): CourseModule!
   reorderCourseModules(reorderCourseModulesInput: ReorderCourseModulesInput!): Boolean!
+  deleteCourseModule(moduleId: String!): String!
   createLesson(createLessonInput: CreateLessonInput!, document: Upload): Lesson!
+  reorderLessons(reorderLessonInput: ReorderLessonInput!): Boolean!
+  deleteLesson(lessonId: String!): String!
 }
 
 input VerifyOtpInput {
@@ -263,4 +267,9 @@ input CreateLessonInput {
   lesson_id: ID
   is_preview: Boolean!
   duration_minutes: Int!
+}
+
+input ReorderLessonInput {
+  moduleId: String!
+  lessonIds: [String!]!
 }

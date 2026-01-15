@@ -20,6 +20,11 @@ import RichTextEditorComponent from "../../../ui/RichTextEditor/RichTextEditorCo
 import { scrollToFirstError } from "../../../utils/scrollToFirstError";
 import { useVideoUpload } from "../../../hooks/useUploadVideo";
 import { CheckCircle, Upload, XCircle } from "lucide-react";
+import {
+  CreateLessonDocument,
+  GetAllCourseModulesDocument,
+  GetLessonByIdDocument,
+} from "../../../generated/graphql";
 
 interface Iprops {
   module_id: string;
@@ -27,75 +32,53 @@ interface Iprops {
 }
 
 const AddLessonModal = ({ lesson_id, module_id }: Iprops) => {
-  // const { data } = useQuery(GetLessonByIdDocument, {
-  //   skip: !lesson_id,
-  //   variables: {
-  //     lessonId: lesson_id as string,
-  //   },
-  // });
+  const { data } = useQuery(GetLessonByIdDocument, {
+    skip: !lesson_id,
+    variables: {
+      lessonId: lesson_id as string,
+    },
+  });
 
-  // const [createLesson, { loading: createLoading }] = useMutation(
-  //   CreateLessonDocument,
-  //   {
-  //     onCompleted() {
-  //       notifications.show({
-  //         message: "Lesson Added Successfully",
-  //         color: "green",
-  //       });
-  //       modals.closeAll();
-  //     },
-  //     onError(error) {
-  //       notifications.show({
-  //         message: error.message,
-  //         color: "red",
-  //       });
-  //     },
-  //     refetchQueries: [GetAllCourseModulesDocument],
-  //   }
-  // );
-
-  // const [updateLesson, { loading: updateLoading }] = useMutation(
-  //   UpdateLessonDocument,
-  //   {
-  //     onCompleted() {
-  //       notifications.show({
-  //         message: "Lesson Updated Successfully",
-  //         color: "green",
-  //       });
-  //       modals.closeAll();
-  //     },
-  //     onError(error) {
-  //       notifications.show({
-  //         message: error.message,
-  //         color: "red",
-  //       });
-  //     },
-  //     refetchQueries: [GetAllCourseModulesDocument],
-  //   }
-  // );
+  const [createLesson, { loading: createLoading }] = useMutation(
+    CreateLessonDocument,
+    {
+      onCompleted() {
+        notifications.show({
+          message: "Lesson Added Successfully",
+          color: "green",
+        });
+        modals.closeAll();
+      },
+      onError(error) {
+        notifications.show({
+          message: error.message,
+          color: "red",
+        });
+      },
+      refetchQueries: [GetAllCourseModulesDocument],
+    }
+  );
 
   const form = useForm({
     initialValues: INITIAL_VALUES.addLesson,
     validate: yupResolver(VALIDATIONS.addLesson),
   });
 
-  // useEffect(() => {
-  //   if (lesson_id && data?.getLessonById) {
-  //     const lesson = data.getLessonById;
-  //     form.setValues({
-  //       title: lesson.title,
-  //       content: lesson.content || "",
-  //       duration_minutes: lesson.duration_minutes,
-  //       order: lesson.order,
-  //       is_preview: lesson.is_preview,
-  //       video_url: lesson.video_url || "",
-  //       pdf_url: lesson.pdf_url || "",
-  //       // Pre-fill file uploaders if URLs exist (display only, optional logic depending on component)
-  //       video: lesson.video_url ? [lesson.video_url] : [],
-  //       pdf: lesson.pdf_url ? [lesson.pdf_url] : [],
-  //     });
-  //   }
-  // }, [lesson_id, data]);
+  useEffect(() => {
+    if (lesson_id && data?.getLessonById) {
+      const lesson = data.getLessonById;
+      form.setValues({
+        title: lesson.title,
+        content: lesson.content || "",
+        duration_minutes: lesson.duration_minutes,
+        is_preview: lesson.is_preview,
+        video: lesson.video_url ? lesson.video_url : "",
+        video_url: lesson.video_url || "",
+        pdf: lesson.pdf_url ? [lesson.pdf_url] : [],
+        pdf_url: lesson.pdf_url || "",
+      });
+    }
+  }, [lesson_id, data]);
 
   const handleSubmit = async () => {
     const validation = form.validate();
@@ -104,38 +87,23 @@ const AddLessonModal = ({ lesson_id, module_id }: Iprops) => {
       scrollToFirstError(validation.errors);
       return;
     }
+    const values = form.values;
     console.log("VALUES", form.values);
-    // if (lesson_id) {
-    //     await updateLesson({
-    //         variables: {
-    //             updateLessonInput: {
-    //                 id: lesson_id,
-    //                 title: values.title,
-    //                 content: values.content,
-    //                 duration_minutes: values.duration_minutes,
-    //                 order: values.order,
-    //                 is_preview: values.is_preview,
-    //             },
-    //             video: values.video instanceof File ? values.video : undefined,
-    //             pdf: values.pdf instanceof File ? values.pdf : undefined,
-    //         },
-    //     });
-    // } else {
-    //     await createLesson({
-    //         variables: {
-    //             createLessonInput: {
-    //                 module_id: module_id,
-    //                 title: values.title,
-    //                 content: values.content,
-    //                 duration_minutes: values.duration_minutes,
-    //                 order: values.order,
-    //                 is_preview: values.is_preview,
-    //             },
-    //             video: values.video instanceof File ? values.video : undefined,
-    //             pdf: values.pdf instanceof File ? values.pdf : undefined,
-    //         },
-    //     });
-    // }
+    await createLesson({
+      variables: {
+        createLessonInput: {
+          module_id: module_id,
+          title: values.title,
+          content: values.content,
+          duration_minutes: values.duration_minutes,
+          is_preview: values.is_preview,
+          video_url: values.video_url,
+          lesson_id: lesson_id
+        },
+        document:
+          values?.pdf?.[0] instanceof File ? values?.pdf?.[0] : undefined,
+      },
+    });
   };
   const { uploadVideo, uploading, progress, videoUrl, error, reset } =
     useVideoUpload();
@@ -145,7 +113,6 @@ const AddLessonModal = ({ lesson_id, module_id }: Iprops) => {
       form.setFieldValue("video_url", videoUrl);
     }
   }, [videoUrl]);
-
   return (
     <form
       onSubmit={(e) => {
@@ -187,7 +154,7 @@ const AddLessonModal = ({ lesson_id, module_id }: Iprops) => {
           label="Lesson Video"
           accept="video/*"
           maxSize={100 * 1024 * 1024}
-          value={[]}
+          value={form.values.video? [form.values.video as File] :[]}
           onChange={(files) => {
             const file = files[0];
             if (!file) return;
@@ -318,6 +285,7 @@ const AddLessonModal = ({ lesson_id, module_id }: Iprops) => {
           title={lesson_id ? "Update Lesson" : "Add Lesson"}
           variant="dark"
           type="submit"
+          loading={createLoading}
           disabled={
             uploading || (!!form.values.video && !form.values.video_url)
           }

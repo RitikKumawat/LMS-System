@@ -36,7 +36,7 @@ export class CategoryService {
     if (image) {
       await validateFileUpload(
         image,
-        ['.jpeg', '.png', '.webp', '.jpg'],
+        ['image/jpeg', 'image/png', 'image/webp', 'image/jpg,'],
         10 * 1024 * 1024,
       );
       categoryDetails.imageUrl = generateFileUrl(req, image, 'category-logo');

@@ -2,7 +2,7 @@
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "../../app/globals.css";
-import { memo, ReactNode } from "react";
+import {ReactNode } from "react";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ApolloProvider } from "@apollo/client/react";
@@ -33,4 +33,4 @@ const DefaultLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default memo(DefaultLayout);
+export default DefaultLayout;
