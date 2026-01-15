@@ -1,0 +1,3 @@
+mutation TogglePublishStatus($courseId: String!) {
+  togglePublishStatus(courseId: $courseId)
+}

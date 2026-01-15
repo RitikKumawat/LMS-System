@@ -1,0 +1,18 @@
+query GetAllCategories($paginationInput: PaginationInput!) {
+  getAllCategories(paginationInput: $paginationInput) {
+    docs {
+      _id
+      name
+      slug
+      imageUrl
+      updatedAt
+      createdAt
+    }
+    totalDocs
+    limit
+    totalPages
+    page
+    hasNextPage
+    hasPrevPage
+  }
+}

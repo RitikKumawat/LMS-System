@@ -1,0 +1,266 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  _id: ID!
+  name: String!
+  email: String!
+  emailVerified: Boolean!
+}
+
+type Category {
+  _id: ID!
+  name: String!
+  slug: String!
+  imageUrl: String!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type CourseModule {
+  _id: ID!
+  course_id: ID!
+  title: String!
+  description: String
+  order: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Course {
+  _id: ID!
+  title: String!
+  slug: String!
+  description: String
+  thumbnail_url: String!
+  category_id: ID!
+  level: String!
+  language: String!
+  price: Float!
+  is_published: Boolean!
+  created_by: ID!
+  published_at: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Lesson {
+  _id: ID!
+  module_id: ID!
+  title: String!
+  video_url: String
+  pdf_url: String
+  content: String
+  order: Int!
+  duration_minutes: Int!
+  is_preview: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type AdminResponse {
+  _id: String!
+  name: String!
+  email: String!
+  role: ADMIN_ROLES!
+}
+
+enum ADMIN_ROLES {
+  ADMIN
+  INSTRUCTOR
+}
+
+type InstructorResponse {
+  _id: String!
+  name: String!
+  email: String!
+  role: ADMIN_ROLES!
+}
+
+type PaginatedCategory {
+  docs: [Category!]!
+  totalDocs: Int!
+  limit: Int!
+  totalPages: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
+type CourseResponse {
+  _id: ID!
+  title: String!
+  slug: String!
+  description: String
+  thumbnail_url: String
+  category_name: String
+  level: String!
+  language: String!
+  price: Float!
+  is_published: Boolean!
+  createdAt: DateTime!
+}
+
+type PaginatedCourse {
+  docs: [CourseResponse!]!
+  totalDocs: Int!
+  limit: Int!
+  totalPages: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
+type LessonResponse {
+  _id: ID!
+  title: String!
+  order: Int!
+  video_url: String
+  pdf_url: String
+  content: String
+  duration_minutes: Int!
+  is_preview: Boolean!
+}
+
+type CourseModuleResponse {
+  _id: ID!
+  title: String!
+  description: String
+  course_id: String!
+  order: Int!
+  createdAt: DateTime!
+  lessons: [LessonResponse!]!
+}
+
+type PaginatedCourseModule {
+  docs: [CourseModuleResponse!]!
+  totalDocs: Int!
+  limit: Int!
+  totalPages: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
+type Query {
+  getProfileData: User!
+  getAdminData: AdminResponse!
+  category(id: String!): Category!
+  getAllCategories(paginationInput: PaginationInput!): PaginatedCategory!
+  getAllCourses(paginationInput: PaginationInput!, courseFilters: CourseFilters!): PaginatedCourse!
+  getCourseById(courseId: String!): Course!
+  getAllCourseModules(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModule!
+  getCourseModuleById(courseModuleId: String!): CourseModuleResponse!
+}
+
+input PaginationInput {
+  page: Int = 1
+  limit: Int = 10
+}
+
+input CourseFilters {
+  search: String
+  level: COURSE_LEVEL
+  categoryId: String
+  isPublished: Boolean
+}
+
+enum COURSE_LEVEL {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+type Mutation {
+  signUpOtpVerify(data: VerifyOtpInput!): User!
+  loginOtpVerify(data: VerifyLoginOtpInput!): User!
+  sendOtp(email: String!, type: String!): String!
+  userLogout: String!
+  createInstructor(input: CreateInstructorDto!): AdminResponse!
+  adminLogin(input: AdminLoginDto!): AdminResponse!
+  adminLogout: String!
+  instructorSignUp(input: InstructorSignUpDto!): InstructorResponse!
+  createCategory(input: CreateCategoryInput!, image: Upload): Category!
+  createCourse(createCourseInput: CreateCourseInput!, thumbnail: Upload): Course!
+  togglePublishStatus(courseId: String!): String!
+  createCourseModule(createCourseModuleInput: CreateCourseModuleInput!): CourseModule!
+  reorderCourseModules(reorderCourseModulesInput: ReorderCourseModulesInput!): Boolean!
+  createLesson(createLessonInput: CreateLessonInput!, document: Upload): Lesson!
+}
+
+input VerifyOtpInput {
+  email: String!
+  name: String!
+  otp: String!
+}
+
+input VerifyLoginOtpInput {
+  email: String!
+  otp: String!
+}
+
+input CreateInstructorDto {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input AdminLoginDto {
+  email: String!
+  password: String!
+}
+
+input InstructorSignUpDto {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input CreateCategoryInput {
+  categoryId: String
+  name: String!
+  imageUrl: String
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input CreateCourseInput {
+  price: Int!
+  courseId: String
+  title: String!
+  thumbnail_url: String
+  description: String!
+  level: COURSE_LEVEL!
+  language: String!
+  category_id: String!
+}
+
+input CreateCourseModuleInput {
+  id: ID
+  course_id: ID!
+  title: String!
+  description: String!
+}
+
+input ReorderCourseModulesInput {
+  courseId: String!
+  moduleIds: [String!]!
+}
+
+input CreateLessonInput {
+  module_id: ID!
+  title: String!
+  document_url: String
+  content: String!
+  video_url: String
+  lesson_id: ID
+  is_preview: Boolean!
+  duration_minutes: Int!
+}

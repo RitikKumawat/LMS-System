@@ -1,0 +1,446 @@
+/* eslint-disable */
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+export type Maybe<T> = T | null;
+export type InputMaybe<T> = T | null | undefined;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: { input: unknown; output: unknown; }
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: { input: unknown; output: unknown; }
+};
+
+export enum Admin_Roles {
+  Admin = 'ADMIN',
+  Instructor = 'INSTRUCTOR'
+}
+
+export type AdminLoginDto = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type AdminResponse = {
+  __typename: 'AdminResponse';
+  _id: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  role: Admin_Roles;
+};
+
+export enum Course_Level {
+  Advanced = 'ADVANCED',
+  Beginner = 'BEGINNER',
+  Intermediate = 'INTERMEDIATE'
+}
+
+export type Category = {
+  __typename: 'Category';
+  _id: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  imageUrl: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  slug: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type Course = {
+  __typename: 'Course';
+  _id: Scalars['ID']['output'];
+  category_id: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  created_by: Scalars['ID']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  is_published: Scalars['Boolean']['output'];
+  language: Scalars['String']['output'];
+  level: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
+  published_at: Maybe<Scalars['DateTime']['output']>;
+  slug: Scalars['String']['output'];
+  thumbnail_url: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type CourseFilters = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  level?: InputMaybe<Course_Level>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CourseModule = {
+  __typename: 'CourseModule';
+  _id: Scalars['ID']['output'];
+  course_id: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  order: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type CourseModuleResponse = {
+  __typename: 'CourseModuleResponse';
+  _id: Scalars['ID']['output'];
+  course_id: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  order: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type CourseResponse = {
+  __typename: 'CourseResponse';
+  _id: Scalars['ID']['output'];
+  category_name: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  is_published: Scalars['Boolean']['output'];
+  language: Scalars['String']['output'];
+  level: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
+  slug: Scalars['String']['output'];
+  thumbnail_url: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type CreateCategoryInput = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+};
+
+export type CreateCourseInput = {
+  category_id: Scalars['String']['input'];
+  courseId?: InputMaybe<Scalars['String']['input']>;
+  description: Scalars['String']['input'];
+  language: Scalars['String']['input'];
+  level: Course_Level;
+  price: Scalars['Int']['input'];
+  thumbnail_url?: InputMaybe<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type CreateCourseModuleInput = {
+  course_id: Scalars['ID']['input'];
+  description: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['ID']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type CreateInstructorDto = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type InstructorResponse = {
+  __typename: 'InstructorResponse';
+  _id: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  role: Admin_Roles;
+};
+
+export type InstructorSignUpDto = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type Mutation = {
+  __typename: 'Mutation';
+  adminLogin: AdminResponse;
+  adminLogout: Scalars['String']['output'];
+  createCategory: Category;
+  createCourse: Course;
+  createCourseModule: CourseModule;
+  createInstructor: AdminResponse;
+  instructorSignUp: InstructorResponse;
+  loginOtpVerify: User;
+  reorderCourseModules: Scalars['Boolean']['output'];
+  sendOtp: Scalars['String']['output'];
+  signUpOtpVerify: User;
+  togglePublishStatus: Scalars['String']['output'];
+  userLogout: Scalars['String']['output'];
+};
+
+
+export type MutationAdminLoginArgs = {
+  input: AdminLoginDto;
+};
+
+
+export type MutationCreateCategoryArgs = {
+  image?: InputMaybe<Scalars['Upload']['input']>;
+  input: CreateCategoryInput;
+};
+
+
+export type MutationCreateCourseArgs = {
+  createCourseInput: CreateCourseInput;
+  thumbnail?: InputMaybe<Scalars['Upload']['input']>;
+};
+
+
+export type MutationCreateCourseModuleArgs = {
+  createCourseModuleInput: CreateCourseModuleInput;
+};
+
+
+export type MutationCreateInstructorArgs = {
+  input: CreateInstructorDto;
+};
+
+
+export type MutationInstructorSignUpArgs = {
+  input: InstructorSignUpDto;
+};
+
+
+export type MutationLoginOtpVerifyArgs = {
+  data: VerifyLoginOtpInput;
+};
+
+
+export type MutationReorderCourseModulesArgs = {
+  reorderCourseModulesInput: ReorderCourseModulesInput;
+};
+
+
+export type MutationSendOtpArgs = {
+  email: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+};
+
+
+export type MutationSignUpOtpVerifyArgs = {
+  data: VerifyOtpInput;
+};
+
+
+export type MutationTogglePublishStatusArgs = {
+  courseId: Scalars['String']['input'];
+};
+
+export type PaginatedCategory = {
+  __typename: 'PaginatedCategory';
+  docs: Array<Category>;
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPrevPage: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  totalDocs: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type PaginatedCourse = {
+  __typename: 'PaginatedCourse';
+  docs: Array<CourseResponse>;
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPrevPage: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  totalDocs: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type PaginatedCourseModule = {
+  __typename: 'PaginatedCourseModule';
+  docs: Array<CourseModuleResponse>;
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPrevPage: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  totalDocs: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type PaginationInput = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type Query = {
+  __typename: 'Query';
+  category: Category;
+  getAdminData: AdminResponse;
+  getAllCategories: PaginatedCategory;
+  getAllCourseModules: PaginatedCourseModule;
+  getAllCourses: PaginatedCourse;
+  getCourseById: Course;
+  getCourseModuleById: CourseModuleResponse;
+  getProfileData: User;
+};
+
+
+export type QueryCategoryArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryGetAllCategoriesArgs = {
+  paginationInput: PaginationInput;
+};
+
+
+export type QueryGetAllCourseModulesArgs = {
+  courseId: Scalars['String']['input'];
+  paginationInput: PaginationInput;
+};
+
+
+export type QueryGetAllCoursesArgs = {
+  courseFilters: CourseFilters;
+  paginationInput: PaginationInput;
+};
+
+
+export type QueryGetCourseByIdArgs = {
+  courseId: Scalars['String']['input'];
+};
+
+
+export type QueryGetCourseModuleByIdArgs = {
+  courseModuleId: Scalars['String']['input'];
+};
+
+export type ReorderCourseModulesInput = {
+  courseId: Scalars['String']['input'];
+  moduleIds: Array<Scalars['String']['input']>;
+};
+
+export type User = {
+  __typename: 'User';
+  _id: Scalars['ID']['output'];
+  email: Scalars['String']['output'];
+  emailVerified: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type VerifyLoginOtpInput = {
+  email: Scalars['String']['input'];
+  otp: Scalars['String']['input'];
+};
+
+export type VerifyOtpInput = {
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  otp: Scalars['String']['input'];
+};
+
+export type AdminLogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AdminLogoutMutation = { adminLogout: string };
+
+export type AdminLoginMutationVariables = Exact<{
+  input: AdminLoginDto;
+}>;
+
+
+export type AdminLoginMutation = { adminLogin: { __typename: 'AdminResponse', _id: string, name: string, email: string, role: Admin_Roles } };
+
+export type InstructorSignUpMutationVariables = Exact<{
+  input: InstructorSignUpDto;
+}>;
+
+
+export type InstructorSignUpMutation = { instructorSignUp: { __typename: 'InstructorResponse', _id: string, name: string, email: string, role: Admin_Roles } };
+
+export type CreateCourseModuleMutationVariables = Exact<{
+  createCourseModuleInput: CreateCourseModuleInput;
+}>;
+
+
+export type CreateCourseModuleMutation = { createCourseModule: { __typename: 'CourseModule', _id: string, course_id: string, title: string, description: string | null, order: number, createdAt: unknown, updatedAt: unknown } };
+
+export type ReorderCourseModulesMutationVariables = Exact<{
+  reorderCourseModulesInput: ReorderCourseModulesInput;
+}>;
+
+
+export type ReorderCourseModulesMutation = { reorderCourseModules: boolean };
+
+export type CreateCourseMutationVariables = Exact<{
+  createCourseInput: CreateCourseInput;
+  thumbnail?: InputMaybe<Scalars['Upload']['input']>;
+}>;
+
+
+export type CreateCourseMutation = { createCourse: { __typename: 'Course', _id: string, title: string, slug: string, description: string | null, thumbnail_url: string, category_id: string, level: string, language: string, price: number, is_published: boolean, created_by: string, createdAt: unknown, updatedAt: unknown } };
+
+export type TogglePublishStatusMutationVariables = Exact<{
+  courseId: Scalars['String']['input'];
+}>;
+
+
+export type TogglePublishStatusMutation = { togglePublishStatus: string };
+
+export type GetAllCategoriesQueryVariables = Exact<{
+  paginationInput: PaginationInput;
+}>;
+
+
+export type GetAllCategoriesQuery = { getAllCategories: { __typename: 'PaginatedCategory', totalDocs: number, limit: number, totalPages: number, page: number, hasNextPage: boolean, hasPrevPage: boolean, docs: Array<{ __typename: 'Category', _id: string, name: string, slug: string, imageUrl: string, updatedAt: unknown, createdAt: unknown }> } };
+
+export type GetAllCourseModulesQueryVariables = Exact<{
+  courseId: Scalars['String']['input'];
+  paginationInput: PaginationInput;
+}>;
+
+
+export type GetAllCourseModulesQuery = { getAllCourseModules: { __typename: 'PaginatedCourseModule', totalDocs: number, limit: number, totalPages: number, page: number, hasNextPage: boolean, hasPrevPage: boolean, docs: Array<{ __typename: 'CourseModuleResponse', _id: string, title: string, description: string | null, course_id: string, order: number, createdAt: unknown }> } };
+
+export type GetCourseModuleByIdQueryVariables = Exact<{
+  courseModuleId: Scalars['String']['input'];
+}>;
+
+
+export type GetCourseModuleByIdQuery = { getCourseModuleById: { __typename: 'CourseModuleResponse', _id: string, title: string, description: string | null, course_id: string, order: number, createdAt: unknown } };
+
+export type GetAllCoursesQueryVariables = Exact<{
+  paginationInput: PaginationInput;
+  courseFilters: CourseFilters;
+}>;
+
+
+export type GetAllCoursesQuery = { getAllCourses: { __typename: 'PaginatedCourse', totalDocs: number, limit: number, totalPages: number, page: number, hasNextPage: boolean, hasPrevPage: boolean, docs: Array<{ __typename: 'CourseResponse', _id: string, title: string, slug: string, description: string | null, thumbnail_url: string | null, category_name: string | null, level: string, language: string, price: number, is_published: boolean, createdAt: unknown }> } };
+
+export type GetCourseByIdQueryVariables = Exact<{
+  courseId: Scalars['String']['input'];
+}>;
+
+
+export type GetCourseByIdQuery = { getCourseById: { __typename: 'Course', _id: string, title: string, slug: string, description: string | null, thumbnail_url: string, category_id: string, level: string, language: string, price: number, is_published: boolean, created_by: string, createdAt: unknown, updatedAt: unknown } };
+
+export type GetAdminDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAdminDataQuery = { getAdminData: { __typename: 'AdminResponse', _id: string, name: string, email: string, role: Admin_Roles } };
+
+
+export const AdminLogoutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AdminLogout"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminLogout"}}]}}]} as unknown as DocumentNode<AdminLogoutMutation, AdminLogoutMutationVariables>;
+export const AdminLoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AdminLogin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AdminLoginDto"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminLogin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}}]}}]} as unknown as DocumentNode<AdminLoginMutation, AdminLoginMutationVariables>;
+export const InstructorSignUpDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InstructorSignUp"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InstructorSignUpDto"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"instructorSignUp"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}}]}}]} as unknown as DocumentNode<InstructorSignUpMutation, InstructorSignUpMutationVariables>;
+export const CreateCourseModuleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateCourseModule"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createCourseModuleInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateCourseModuleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createCourseModule"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"createCourseModuleInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createCourseModuleInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"course_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateCourseModuleMutation, CreateCourseModuleMutationVariables>;
+export const ReorderCourseModulesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ReorderCourseModules"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"reorderCourseModulesInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ReorderCourseModulesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reorderCourseModules"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"reorderCourseModulesInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"reorderCourseModulesInput"}}}]}]}}]} as unknown as DocumentNode<ReorderCourseModulesMutation, ReorderCourseModulesMutationVariables>;
+export const CreateCourseDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateCourse"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createCourseInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateCourseInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"thumbnail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createCourse"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"createCourseInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createCourseInput"}}},{"kind":"Argument","name":{"kind":"Name","value":"thumbnail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"thumbnail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"category_id"}},{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_by"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateCourseMutation, CreateCourseMutationVariables>;
+export const TogglePublishStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TogglePublishStatus"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"togglePublishStatus"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}}}]}]}}]} as unknown as DocumentNode<TogglePublishStatusMutation, TogglePublishStatusMutationVariables>;
+export const GetAllCategoriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllCategories"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllCategories"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paginationInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"docs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalDocs"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPrevPage"}}]}}]}}]} as unknown as DocumentNode<GetAllCategoriesQuery, GetAllCategoriesQueryVariables>;
+export const GetAllCourseModulesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllCourseModules"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllCourseModules"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"docs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"course_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalDocs"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPrevPage"}}]}}]}}]} as unknown as DocumentNode<GetAllCourseModulesQuery, GetAllCourseModulesQueryVariables>;
+export const GetCourseModuleByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCourseModuleById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseModuleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCourseModuleById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseModuleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseModuleId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"course_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetCourseModuleByIdQuery, GetCourseModuleByIdQueryVariables>;
+export const GetAllCoursesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllCourses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseFilters"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CourseFilters"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllCourses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paginationInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}}},{"kind":"Argument","name":{"kind":"Name","value":"courseFilters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseFilters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"docs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"category_name"}},{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalDocs"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPrevPage"}}]}}]}}]} as unknown as DocumentNode<GetAllCoursesQuery, GetAllCoursesQueryVariables>;
+export const GetCourseByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCourseById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCourseById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"category_id"}},{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_by"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetCourseByIdQuery, GetCourseByIdQueryVariables>;
+export const GetAdminDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAdminData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAdminData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}}]}}]} as unknown as DocumentNode<GetAdminDataQuery, GetAdminDataQueryVariables>;

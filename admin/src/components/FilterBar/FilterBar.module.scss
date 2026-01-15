@@ -1,0 +1,23 @@
+.filterWrapper {
+  background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.searchInput {
+  width: 50% !important;
+}
+
+.divider {
+  height: 28px;
+  border-color: #e5e7eb;
+}
+
+/* Make select inputs compact */
+:global(.mantine-Select-input),
+:global(.mantine-Input-input) {
+  height: 38px;
+  font-size: 14px;
+}

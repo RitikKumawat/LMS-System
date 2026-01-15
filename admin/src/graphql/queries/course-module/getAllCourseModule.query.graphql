@@ -1,0 +1,28 @@
+query GetAllCourseModules($courseId: String!, $paginationInput: PaginationInput!) {
+  getAllCourseModules(courseId: $courseId, paginationInput: $paginationInput) {
+    docs {
+      _id
+      title
+      description
+      course_id
+      order
+      createdAt
+      lessons {
+        _id
+        title
+        order
+        video_url
+        pdf_url
+        content
+        duration_minutes
+        is_preview
+      }
+    }
+    totalDocs
+    limit
+    totalPages
+    page
+    hasNextPage
+    hasPrevPage
+  }
+}

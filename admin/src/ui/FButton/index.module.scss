@@ -1,0 +1,4 @@
+@use "../../assets/colors/colors.scss" as *;
+.btn:hover{
+    background-color: $blueHover !important;
+}

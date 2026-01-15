@@ -1,0 +1,3 @@
+mutation ReorderCourseModules($reorderCourseModulesInput: ReorderCourseModulesInput!) {
+  reorderCourseModules(reorderCourseModulesInput: $reorderCourseModulesInput)
+}

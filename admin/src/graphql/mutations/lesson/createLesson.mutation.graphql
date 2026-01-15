@@ -1,0 +1,15 @@
+mutation CreateLesson($createLessonInput: CreateLessonInput!, $document: Upload) {
+  createLesson(createLessonInput: $createLessonInput, document: $document) {
+    _id
+    module_id
+    title
+    video_url
+    pdf_url
+    content
+    order
+    duration_minutes
+    is_preview
+    createdAt
+    updatedAt
+  }
+}

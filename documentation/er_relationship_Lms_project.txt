@@ -1,0 +1,146 @@
+erDiagram
+
+    USERS {
+        uuid id PK
+        string name
+        string email
+        string password
+        string role
+        timestamp created_at
+    }
+
+    CATEGORIES {
+        uuid id PK
+        string name
+        string slug
+    }
+
+    COURSES {
+        uuid id PK
+        string title
+        string slug
+        text description
+        string thumbnail_url
+        uuid category_id FK
+        string level
+        string language
+        decimal price
+        boolean is_published
+        uuid created_by FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    COURSE_MODULES {
+        uuid id PK
+        uuid course_id FK
+        string title
+        text description
+        int order
+        timestamp created_at
+    }
+
+    LESSONS {
+        uuid id PK
+        uuid module_id FK
+        string title
+        string video_url
+        string pdf_url
+        text content
+        int order
+        int duration_minutes
+        boolean is_preview
+        timestamp created_at
+    }
+
+    QUIZZES {
+        uuid id PK
+        uuid module_id FK
+        string title
+        int passing_score
+        timestamp created_at
+    }
+
+    QUIZ_QUESTIONS {
+        uuid id PK
+        uuid quiz_id FK
+        text question_text
+        string type
+        timestamp created_at
+    }
+
+    QUIZ_OPTIONS {
+        uuid id PK
+        uuid question_id FK
+        string option_text
+        boolean is_correct
+    }
+
+    ENROLLMENTS {
+        uuid id PK
+        uuid user_id FK
+        uuid course_id FK
+        string status
+        timestamp enrolled_at
+    }
+
+    LESSON_PROGRESS {
+        uuid id PK
+        uuid lesson_id FK
+        uuid user_id FK
+        boolean is_completed
+        timestamp completed_at
+    }
+
+    QUIZ_ATTEMPTS {
+        uuid id PK
+        uuid quiz_id FK
+        uuid user_id FK
+        int score
+        int attempt_number
+        timestamp started_at
+        timestamp completed_at
+    }
+
+    CERTIFICATES {
+        uuid id PK
+        uuid user_id FK
+        uuid course_id FK
+        string certificate_url
+        timestamp issued_at
+    }
+
+    COURSE_REVIEWS {
+        uuid id PK
+        uuid user_id FK
+        uuid course_id FK
+        int rating
+        text comment
+        timestamp created_at
+    }
+
+    %% RELATIONSHIPS
+
+    USERS ||--o{ COURSES : "creates"
+    USERS ||--o{ ENROLLMENTS : "enrolls"
+    USERS ||--o{ LESSON_PROGRESS : "tracks"
+    USERS ||--o{ QUIZ_ATTEMPTS : "attempts"
+    USERS ||--o{ COURSE_REVIEWS : "reviews"
+    USERS ||--o{ CERTIFICATES : "receives"
+
+    CATEGORIES ||--o{ COURSES : "categorizes"
+
+    COURSES ||--o{ COURSE_MODULES : "has"
+    COURSES ||--o{ ENROLLMENTS : "enrolled by"
+    COURSES ||--o{ CERTIFICATES : "certified on"
+    COURSES ||--o{ COURSE_REVIEWS : "reviewed"
+
+    COURSE_MODULES ||--o{ LESSONS : "contains"
+    COURSE_MODULES ||--o{ QUIZZES : "has quiz"
+
+    QUIZZES ||--o{ QUIZ_QUESTIONS : "has"
+    QUIZ_QUESTIONS ||--o{ QUIZ_OPTIONS : "has options"
+
+    LESSONS ||--o{ LESSON_PROGRESS : "completed by"
+
+    QUIZZES ||--o{ QUIZ_ATTEMPTS : "attempted by"

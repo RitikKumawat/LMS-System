@@ -1,0 +1,10 @@
+query GetCourseModuleById($courseModuleId: String!) {
+  getCourseModuleById(courseModuleId: $courseModuleId) {
+    _id
+    title
+    description
+    course_id
+    order
+    createdAt
+  }
+}

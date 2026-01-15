@@ -1,0 +1,21 @@
+mutation SendOtp($email: String!, $type: String!) {
+  sendOtp(email: $email, type: $type)
+}
+
+mutation LoginOtpVerify($data: VerifyLoginOtpInput!) {
+  loginOtpVerify(data: $data) {
+    _id
+    name
+    email
+    emailVerified
+  }
+}
+
+mutation SignUpOtpVerify($data: VerifyOtpInput!) {
+  signUpOtpVerify(data: $data) {
+    _id
+    name
+    email
+    emailVerified
+  }
+}

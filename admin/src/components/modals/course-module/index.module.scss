@@ -1,0 +1,99 @@
+.container {
+  padding: 0px 30px 30px 30px;
+  border-radius: 10px;
+  border: 1px solid #dedede;
+  box-shadow: 0px 4px 8px 1px #0000001a;
+  background-color: white;
+
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #a0a0a0;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  @media (max-width: 450px) {
+    padding: 0px 8px 8px 8px;
+  }
+}
+.formSection {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  gap: 20px;
+}
+.headerModal {
+  padding-top: 30px !important;
+}
+.inputLabel {
+  & > label {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 22.5px;
+    letter-spacing: 0px;
+    font-family: "Roboto", sans-serif;
+  }
+}
+.responsiveFlex {
+  display: flex;
+  justify-content: space-between;
+  gap: 22px;
+
+  @media (max-width: 740px) {
+    flex-direction: column;
+  }
+}
+.responsiveDiv2 {
+  display: flex;
+  justify-content: space-between;
+  gap: 22px;
+  align-items: flex-end;
+  width: 100%;
+
+  @media (max-width: 450px) {
+    flex-direction: column;
+  }
+}
+
+.textareaLabel {
+  margin-bottom: 10px;
+  font-weight: 500 !important;
+  font-size: 15px !important;
+}
+
+.textareaInput {
+  height: 110px;
+  border: 1px solid #bdbdbd;
+  border-radius: 8px;
+  transition: none !important;
+  padding: 15px !important;
+  font-size: clamp(13px, 1.5vw, 15px) !important;
+
+  &::placeholder {
+    font-weight: 500 !important;
+    color: #adb5bd;
+    font-size: clamp(13px, 1.5vw, 15px) !important;
+  }
+
+  &:hover {
+    border: 1px solid #bdbdbd;
+  }
+
+  &:focus {
+    border: 1px solid #bdbdbd;
+    box-shadow: none;
+  }
+}

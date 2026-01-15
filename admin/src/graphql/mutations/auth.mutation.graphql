@@ -1,0 +1,21 @@
+mutation AdminLogout {
+  adminLogout
+}
+
+mutation AdminLogin($input: AdminLoginDto!) {
+  adminLogin(input: $input) {
+    _id
+    name
+    email
+    role
+  }
+}
+
+mutation InstructorSignUp($input: InstructorSignUpDto!) {
+  instructorSignUp(input: $input) {
+    _id
+    name
+    email
+    role
+  }
+}

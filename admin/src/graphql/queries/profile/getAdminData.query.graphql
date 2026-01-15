@@ -1,0 +1,8 @@
+query GetAdminData {
+  getAdminData {
+    _id
+    name
+    email
+    role
+  }
+}

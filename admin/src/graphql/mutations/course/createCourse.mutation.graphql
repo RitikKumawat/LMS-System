@@ -1,0 +1,17 @@
+mutation CreateCourse($createCourseInput: CreateCourseInput!, $thumbnail: Upload) {
+  createCourse(createCourseInput: $createCourseInput, thumbnail: $thumbnail) {
+    _id
+    title
+    slug
+    description
+    thumbnail_url
+    category_id
+    level
+    language
+    price
+    is_published
+    created_by
+    createdAt
+    updatedAt
+  }
+}
