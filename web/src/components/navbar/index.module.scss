@@ -1,0 +1,126 @@
+@use '../../assets/colors/colors.scss' as *;
+/* ========================================================================== */
+/*                                Navbar                                      */
+/* ========================================================================== */
+
+.navbar {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 1200px;
+  z-index: 100;
+  
+}
+
+.navContent {
+  background: rgba(10, 15, 31, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid $glass-border;
+  border-radius: 20px;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: $shadow-sm;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+
+  span {
+    color: white;
+  }
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, $accent-blue, $accent-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+.navLinks {
+  display: flex;
+  gap: 2.5rem;
+
+  a {
+    font-size: 0.9375rem;
+    color: $text-secondary;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: white;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+  }
+}
+
+.navActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  text-decoration: none;
+  justify-content: center;
+}
+
+.btnPrimary {
+  @extend .btn;
+  background: linear-gradient(135deg, $accent-blue 0%, $accent-cyan 100%);
+  color: white;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+  }
+}
+
+.btnSecondary {
+  @extend .btn;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.btnGhost {
+  @extend .btn;
+  background: transparent;
+  color: $text-secondary;
+
+  &:hover {
+    color: white;
+  }
+}

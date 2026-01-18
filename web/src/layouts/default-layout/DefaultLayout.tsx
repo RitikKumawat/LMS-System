@@ -1,13 +1,13 @@
 "use client";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
-import "../../app/globals.css";
-import {ReactNode } from "react";
+import { ReactNode } from "react";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ApolloProvider } from "@apollo/client/react";
 import { Roboto } from "next/font/google";
 import { apolloClient } from "@/client/apolloClient";
+import Navbar from "@/components/navbar/Navbar";
 
 const roboto = Roboto({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -20,16 +20,13 @@ const theme = {
 };
 const DefaultLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <html lang="en">
-      <body>
-        <ApolloProvider client={apolloClient}>
-          <MantineProvider theme={theme} defaultColorScheme="light">
-            <Notifications position="top-center" />
-            {children}
-          </MantineProvider>
-        </ApolloProvider>
-      </body>
-    </html>
+    <ApolloProvider client={apolloClient}>
+      <MantineProvider theme={theme} defaultColorScheme="light">
+        <Notifications  position="top-center"/>
+        <Navbar/>
+        {children}
+      </MantineProvider>
+    </ApolloProvider>
   );
 };
 

@@ -3,32 +3,31 @@
 import React, { useState } from "react";
 import {
   TextInput,
-  Button,
-  Paper,
-  Title,
-  Text,
+  LoadingOverlay,
   Group,
   PinInput,
-  LoadingOverlay,
-} from "@mantine/core";
+  Text,
+} from "@mantine/core"; // Keep Mantine inputs for functionality
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
-import styles from "./login.module.scss";
-// import { useMutation } from "@apollo/client/react/hooks";
-import {
-  SendOtpDocument,
-  LoginOtpVerifyDocument,
-} from "@/generated/graphql";
+import styles from "../auth.module.scss"; // Styles for inputs/layout
+import { yupResolver } from "mantine-form-yup-resolver";
+import { SendOtpDocument, LoginOtpVerifyDocument } from "@/generated/graphql";
 import { useMutation } from "@apollo/client/react";
+import FCard from "@/components/ui/FCard";
+import FButton from "@/components/ui/FButton";
+import FTypography from "@/components/ui/FTypography";
+import { INITIAL_VALUES } from "@/form/initial-values";
+import { VALIDATIONS } from "@/form/validations";
 
 export default function LoginPage() {
   const router = useRouter();
   const [step, setStep] = useState<"email" | "otp">("email");
   const [email, setEmail] = useState("");
-  
-  const [sendOtp, { loading: sendOtpLoading }] = useMutation(SendOtpDocument,{
-    onCompleted:()=>{
+
+  const [sendOtp, { loading: sendOtpLoading }] = useMutation(SendOtpDocument, {
+    onCompleted: () => {
       setStep("otp");
       notifications.show({
         title: "OTP Sent",
@@ -36,51 +35,18 @@ export default function LoginPage() {
         color: "green",
       });
     },
-    onError:(error)=>{
+    onError: (error) => {
       notifications.show({
         title: "Failed to send OTP",
-        message:  error.message,
+        message: error.message,
         color: "red",
       });
-    }
-  });
-  const [loginVerify, { loading: loginLoading }] = useMutation(LoginOtpVerifyDocument);
-
-  const form = useForm({
-    initialValues: {
-      email: "",
-      otp: "",
-    },
-
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      otp: (value) =>
-        step === "otp" && value.length < 4 ? "OTP must be 4 digits" : null,
     },
   });
-
-  const handleSendOtp = async (values: typeof form.values) => {
-      await sendOtp({
-        variables: {
-          email: values.email,
-          type: "LOGIN",
-        },
-      });
-      setEmail(values.email);
-  };
-
-  const handleVerifyOtp = async (values: typeof form.values) => {
-    try {
-      const { data } = await loginVerify({
-        variables: {
-          data: {
-            email: email,
-            otp: values.otp,
-          },
-        },
-      });
-
-      if (data?.loginOtpVerify) {
+  const [loginVerify, { loading: loginLoading }] = useMutation(
+    LoginOtpVerifyDocument,
+    {
+      onCompleted: () => {
         notifications.show({
           title: "Success",
           message: "Logged in successfully!",
@@ -88,7 +54,43 @@ export default function LoginPage() {
         });
         // Redirect to home or dashboard
         router.push("/");
-      }
+    },
+    onError:(error)=>{
+      notifications.show({
+        title: "Error",
+        message:  error.message,
+        color: "red",
+      });
+    }
+  }
+  );
+
+  const form = useForm({
+    initialValues: INITIAL_VALUES.login,
+    validate: yupResolver(VALIDATIONS.login(step)),
+  });
+
+  const handleSendOtp = async (values: typeof form.values) => {
+    console.log("FORM ERRRORS",form.errors)
+    await sendOtp({
+      variables: {
+        email: values.email,
+        type: "LOGIN",
+      },
+    });
+    setEmail(values.email);
+  };
+
+  const handleVerifyOtp = async (values: typeof form.values) => {
+    try {
+      await loginVerify({
+        variables: {
+          data: {
+            email: email,
+            otp: values.otp,
+          },
+        },
+      });
     } catch (error) {
       notifications.show({
         title: "Error",
@@ -100,58 +102,71 @@ export default function LoginPage() {
 
   return (
     <div className={styles.container}>
-      <Paper className={styles.card} withBorder>
-        <LoadingOverlay
-          visible={sendOtpLoading || loginLoading}
-          zIndex={1000}
-          overlayProps={{ radius: "sm", blur: 2 }}
-        />
-        <Title order={2} className={styles.title}>
-          {step === "email" ? "Welcome Back" : "Enter OTP"}
-        </Title>
+      <div className={`${styles.blob} ${styles.blob1}`} />
+      <div className={`${styles.blob} ${styles.blob2}`} />
+      <div className={styles.gridOverlay} />
 
-        <form
-          className={styles.form}
-          onSubmit={form.onSubmit(step === "email" ? handleSendOtp : handleVerifyOtp)}
-        >
-          {step === "email" ? (
-            <TextInput
-              label="Email"
-              placeholder="your@email.com"
-              required
-              {...form.getInputProps("email")}
-            />
-          ) : (
-            <>
-              <Text size="sm" ta="center" mb="xs">
-                Enter the OTP sent to {email}
-              </Text>
-              <Group justify="center">
-                <PinInput
-                  length={4}
-                  type="number"
-                  {...form.getInputProps("otp")}
-                />
-              </Group>
-            </>
-          )}
+      <div className={styles.cardWrapper}>
+        <FCard glass={true} className={styles.authCard}>
+          <LoadingOverlay
+            visible={sendOtpLoading || loginLoading}
+            zIndex={1000}
+            overlayProps={{ radius: "sm", blur: 2 }}
+            styles={{ overlay: { backgroundColor: "#2d303cb0" } }}
+          />
+          <FTypography variant="h2" align="center" className={styles.title}>
+            {step === "email" ? "Welcome Back" : "Enter OTP"}
+          </FTypography>
 
-          <Button type="submit" fullWidth className={styles.button}>
-            {step === "email" ? "Send OTP" : "Verify & Login"}
-          </Button>
-          
-          {step === "otp" && (
-             <Button 
-                variant="subtle" 
-                fullWidth 
+          <form
+            className={styles.form}
+            onSubmit={form.onSubmit(
+              step === "email" ? handleSendOtp : handleVerifyOtp,
+            )}
+          >
+            {step === "email" ? (
+              <TextInput
+                label="Email"
+                placeholder="your@email.com"
+                classNames={{ input: styles.input, label: styles.input }}
+                {...form.getInputProps("email")}
+                error={form.errors.email}
+                className={styles.input}
+              />
+            ) : (
+              <>
+                <Text size="sm" ta="center" mb="xs" c="dimmed">
+                  Enter the OTP sent to {email}
+                </Text>
+                <Group justify="center">
+                  <PinInput
+                    length={6}
+                    type="number"
+                    classNames={{ input: styles.pinInput }}
+                    {...form.getInputProps("otp")}
+                    
+                  />
+                </Group>
+              </>
+            )}
+
+            <FButton type="submit" fullWidth style={{ marginTop: "1rem" }}>
+              {step === "email" ? "Send OTP" : "Verify & Login"}
+            </FButton>
+
+            {step === "otp" && (
+              <FButton
+                variant="ghost"
+                fullWidth
                 onClick={() => setStep("email")}
-                size="xs"
-             >
+                style={{ marginTop: "0.5rem", fontSize: "0.875rem" }}
+              >
                 Back to Email
-             </Button>
-          )}
-        </form>
-      </Paper>
+              </FButton>
+            )}
+          </form>
+        </FCard>
+      </div>
     </div>
   );
 }

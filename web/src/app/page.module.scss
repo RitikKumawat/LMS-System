@@ -1,0 +1,289 @@
+@use "../assets/colors/colors.scss" as *;
+.page {
+  background: $bg-primary;
+  color: $text-primary;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  line-height: 1.6;
+}
+
+.main {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8rem;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.scrollReveal {
+  perspective: 1000px;
+}
+
+.blob1 {
+  top: -10%;
+  left: 20%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, $accent-blue 0%, transparent 60%);
+  opacity: 0.3;
+}
+
+.blob2 {
+  top: 40%;
+  right: -10%;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, $accent-violet 0%, transparent 60%);
+  opacity: 0.25;
+}
+
+.blob3 {
+  bottom: 0%;
+  left: 0%;
+  width: 900px;
+  height: 900px;
+  background: radial-gradient(circle, $accent-blue 0%, transparent 60%);
+  opacity: 0.2;
+}
+
+.gridOverlay {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 180px 2rem 80px;
+  position: relative;
+}
+
+.heroContent {
+  max-width: 900px;
+  z-index: 2;
+}
+
+.hero h1 {
+  font-size: clamp(3.5rem, 8vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 2rem;
+  line-height: 1.1;
+  text-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.subtitle {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  color: $text-secondary;
+  line-height: 1.6;
+  max-width: 650px;
+  margin: 20px auto !important;
+}
+
+.heroActions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.roleSection {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.roleGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+.cardIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent-blue;
+  transition: all 0.3s ease;
+}
+
+.cardList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: $text-secondary;
+    font-size: 1rem;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.features {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.featureTile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+
+  .iconWrapper {
+    color: $text-secondary;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+
+    svg {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  &:hover .iconWrapper {
+    color: white;
+    text-shadow: 0 0 10px $accent-blue;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+    color: $text-secondary;
+  }
+}
+
+.ctaSection {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.ctaWrapper {
+  perspective: 1000px;
+}
+
+.ctaCard {
+  padding: 5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaContent {
+  position: relative;
+  z-index: 2;
+
+  h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 2.5rem;
+  }
+}
+
+.ctaActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.footer {
+  margin-top: 4rem;
+  border-top: 1px solid $glass-border;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.footerContent {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  text-align: center;
+
+  p {
+    color: $text-muted;
+  }
+}
+
+.footerLinks {
+  display: flex;
+  gap: 2rem;
+
+  a {
+    color: $text-secondary;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: white;
+    }
+  }
+}

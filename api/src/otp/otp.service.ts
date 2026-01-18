@@ -154,10 +154,13 @@ export class OtpService {
     const existingUser = await this.UserModel.exists({
       email: email.toLowerCase().trim(),
     }).exec();
-    if (existingUser && type === AUTH_TYPE.SIGNUP) {
+    console.log('Existing user', existingUser);
+    console.log('TYPE', type);
+    if (existingUser && AUTH_TYPE[type] === AUTH_TYPE.SIGNUP) {
       throw new HttpException('This email is already registered', 400);
     }
-    if (!existingUser && type === AUTH_TYPE.LOGIN) {
+
+    if (!existingUser && AUTH_TYPE[type] === AUTH_TYPE.LOGIN) {
       throw new HttpException('This email is not registered', 400);
     }
 

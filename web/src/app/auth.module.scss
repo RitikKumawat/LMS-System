@@ -1,0 +1,152 @@
+@use "../assets/colors/colors.scss" as *;
+.container {
+  background: $bg-primary;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.blob1 {
+  top: -20%;
+  left: -10%;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, $accent-blue 0%, transparent 60%);
+  opacity: 0.3;
+}
+
+.blob2 {
+  bottom: -20%;
+  right: -10%;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, $accent-violet 0%, transparent 60%);
+  opacity: 0.25;
+}
+
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cardWrapper {
+  perspective: 1000px;
+  width: 100%;
+  max-width: 440px;
+  z-index: 10;
+}
+
+.authCard {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid $glass-border !important;
+  border-radius: 24px !important;
+  padding: 2.5rem !important;
+  box-shadow: $shadow-lg !important;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: radial-gradient(
+      circle at top right,
+      rgba(59, 130, 246, 0.1),
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+}
+
+.title {
+  color: $text-primary !important;
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  text-align: center;
+  margin-bottom: 2rem !important;
+  letter-spacing: -0.02em;
+}
+
+.input {
+  input {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-radius: 12px !important;
+    height: 48px !important;
+    padding-left: 1rem !important;
+    transition: all 0.3s ease;
+
+    &:focus {
+      border-color: $accent-blue !important;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+      background: rgba(0, 0, 0, 0.2) !important;
+    }
+
+    &::placeholder {
+      color: $text-muted !important;
+    }
+  }
+
+  label {
+    color: $text-secondary !important;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.pinInput{
+  background: $glass-bg;
+  color: $text-primary;
+}
+.button {
+  background: linear-gradient(
+    135deg,
+    $accent-blue 0%,
+    $accent-cyan 100%
+  ) !important;
+  border: none !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  margin-top: 1rem;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  }
+}
+
+.textLink {
+  color: $text-secondary !important;
+  margin-top: 1.5rem !important;
+
+  &:hover {
+    color: white !important;
+    background: transparent !important;
+  }
+}

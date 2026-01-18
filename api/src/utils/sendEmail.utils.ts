@@ -5,32 +5,22 @@ interface ISendEmail {
   subject: string;
   html: string;
   attachments?: any;
-  fromName?: string;
 }
 
-const sendMail = async ({
-  html,
-  subject,
-  to,
-  attachments,
-  fromName,
-}: ISendEmail) => {
+const sendMail = async ({ html, subject, to, attachments }: ISendEmail) => {
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: 465,
-    secure: true,
+    host: process.env.MAIL_HOST, // MUST be smtp.gmail.com
+    port: Number(process.env.MAIL_PORT) || 587,
+    secure: false, // ✅ IMPORTANT
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-    tls: {
-      rejectUnauthorized: false,
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
     },
   });
 
   try {
     await transporter.sendMail({
-      from: `"${fromName || process.env.EMAIL_USER_NAME}" <${process.env.EMAIL_USER}>`,
+      from: process.env.MAIL_FROM,
       to,
       subject,
       html,
@@ -38,7 +28,7 @@ const sendMail = async ({
     });
     return true;
   } catch (error) {
-    console.log('Email Send Error :', error);
+    console.error('Email Send Error:', error);
     return false;
   }
 };
