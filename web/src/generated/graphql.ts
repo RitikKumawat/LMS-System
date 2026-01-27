@@ -14,6 +14,10 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: { input: unknown; output: unknown; }
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: { input: unknown; output: unknown; }
 };
 
 export enum Admin_Roles {
@@ -34,15 +38,123 @@ export type AdminResponse = {
   role: Admin_Roles;
 };
 
+export enum Course_Level {
+  Advanced = 'ADVANCED',
+  Beginner = 'BEGINNER',
+  Intermediate = 'INTERMEDIATE'
+}
+
+export type Category = {
+  __typename: 'Category';
+  _id: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  imageUrl: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  slug: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type Course = {
+  __typename: 'Course';
+  _id: Scalars['ID']['output'];
+  category_id: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  created_by: Scalars['ID']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  is_published: Scalars['Boolean']['output'];
+  language: Scalars['String']['output'];
+  level: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
+  published_at: Maybe<Scalars['DateTime']['output']>;
+  slug: Scalars['String']['output'];
+  thumbnail_url: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type CourseFilters = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  level?: InputMaybe<Course_Level>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CourseModule = {
+  __typename: 'CourseModule';
+  _id: Scalars['ID']['output'];
+  course_id: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  order: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type CourseModuleResponse = {
+  __typename: 'CourseModuleResponse';
+  _id: Scalars['ID']['output'];
+  course_id: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  lessons: Array<LessonResponse>;
+  order: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type CourseResponse = {
+  __typename: 'CourseResponse';
+  _id: Scalars['ID']['output'];
+  category_name: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  is_published: Scalars['Boolean']['output'];
+  language: Scalars['String']['output'];
+  level: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
+  slug: Scalars['String']['output'];
+  thumbnail_url: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+};
+
+export type CreateCategoryInput = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+};
+
+export type CreateCourseInput = {
+  category_id: Scalars['String']['input'];
+  courseId?: InputMaybe<Scalars['String']['input']>;
+  description: Scalars['String']['input'];
+  language: Scalars['String']['input'];
+  level: Course_Level;
+  price: Scalars['Int']['input'];
+  thumbnail_url?: InputMaybe<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type CreateCourseModuleInput = {
+  course_id: Scalars['ID']['input'];
+  description: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['ID']['input']>;
+  title: Scalars['String']['input'];
+};
+
 export type CreateInstructorDto = {
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
 };
 
-export type InstructorLoginDto = {
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+export type CreateLessonInput = {
+  content: Scalars['String']['input'];
+  document_url?: InputMaybe<Scalars['String']['input']>;
+  duration_minutes: Scalars['Int']['input'];
+  is_preview: Scalars['Boolean']['input'];
+  lesson_id?: InputMaybe<Scalars['ID']['input']>;
+  module_id: Scalars['ID']['input'];
+  title: Scalars['String']['input'];
+  video_url?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InstructorResponse = {
@@ -59,17 +171,51 @@ export type InstructorSignUpDto = {
   password: Scalars['String']['input'];
 };
 
+export type Lesson = {
+  __typename: 'Lesson';
+  _id: Scalars['ID']['output'];
+  content: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  duration_minutes: Scalars['Int']['output'];
+  is_preview: Scalars['Boolean']['output'];
+  module_id: Scalars['ID']['output'];
+  order: Scalars['Int']['output'];
+  pdf_url: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  video_url: Maybe<Scalars['String']['output']>;
+};
+
+export type LessonResponse = {
+  __typename: 'LessonResponse';
+  _id: Scalars['ID']['output'];
+  content: Maybe<Scalars['String']['output']>;
+  duration_minutes: Scalars['Int']['output'];
+  is_preview: Scalars['Boolean']['output'];
+  order: Scalars['Int']['output'];
+  pdf_url: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  video_url: Maybe<Scalars['String']['output']>;
+};
+
 export type Mutation = {
   __typename: 'Mutation';
   adminLogin: AdminResponse;
   adminLogout: Scalars['String']['output'];
+  createCategory: Category;
+  createCourse: Course;
+  createCourseModule: CourseModule;
   createInstructor: AdminResponse;
-  instructorLogin: InstructorResponse;
-  instructorLogout: Scalars['String']['output'];
+  createLesson: Lesson;
+  deleteCourseModule: Scalars['String']['output'];
+  deleteLesson: Scalars['String']['output'];
   instructorSignUp: InstructorResponse;
   loginOtpVerify: User;
+  reorderCourseModules: Scalars['Boolean']['output'];
+  reorderLessons: Scalars['Boolean']['output'];
   sendOtp: Scalars['String']['output'];
   signUpOtpVerify: User;
+  togglePublishStatus: Scalars['String']['output'];
   userLogout: Scalars['String']['output'];
 };
 
@@ -79,13 +225,41 @@ export type MutationAdminLoginArgs = {
 };
 
 
+export type MutationCreateCategoryArgs = {
+  image?: InputMaybe<Scalars['Upload']['input']>;
+  input: CreateCategoryInput;
+};
+
+
+export type MutationCreateCourseArgs = {
+  createCourseInput: CreateCourseInput;
+  thumbnail?: InputMaybe<Scalars['Upload']['input']>;
+};
+
+
+export type MutationCreateCourseModuleArgs = {
+  createCourseModuleInput: CreateCourseModuleInput;
+};
+
+
 export type MutationCreateInstructorArgs = {
   input: CreateInstructorDto;
 };
 
 
-export type MutationInstructorLoginArgs = {
-  input: InstructorLoginDto;
+export type MutationCreateLessonArgs = {
+  createLessonInput: CreateLessonInput;
+  document?: InputMaybe<Scalars['Upload']['input']>;
+};
+
+
+export type MutationDeleteCourseModuleArgs = {
+  moduleId: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteLessonArgs = {
+  lessonId: Scalars['String']['input'];
 };
 
 
@@ -99,6 +273,16 @@ export type MutationLoginOtpVerifyArgs = {
 };
 
 
+export type MutationReorderCourseModulesArgs = {
+  reorderCourseModulesInput: ReorderCourseModulesInput;
+};
+
+
+export type MutationReorderLessonsArgs = {
+  reorderLessonInput: ReorderLessonInput;
+};
+
+
 export type MutationSendOtpArgs = {
   email: Scalars['String']['input'];
   type: Scalars['String']['input'];
@@ -109,11 +293,107 @@ export type MutationSignUpOtpVerifyArgs = {
   data: VerifyOtpInput;
 };
 
+
+export type MutationTogglePublishStatusArgs = {
+  courseId: Scalars['String']['input'];
+};
+
+export type PaginatedCategory = {
+  __typename: 'PaginatedCategory';
+  docs: Array<Category>;
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPrevPage: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  totalDocs: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type PaginatedCourse = {
+  __typename: 'PaginatedCourse';
+  docs: Array<CourseResponse>;
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPrevPage: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  totalDocs: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type PaginatedCourseModule = {
+  __typename: 'PaginatedCourseModule';
+  docs: Array<CourseModuleResponse>;
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPrevPage: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  totalDocs: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
+export type PaginationInput = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type Query = {
   __typename: 'Query';
+  category: Category;
   getAdminData: AdminResponse;
-  getInstructorData: InstructorResponse;
+  getAllCategories: PaginatedCategory;
+  getAllCourseModules: PaginatedCourseModule;
+  getAllCourses: PaginatedCourse;
+  getCourseById: Course;
+  getCourseModuleById: CourseModuleResponse;
+  getLessonById: LessonResponse;
   getProfileData: User;
+};
+
+
+export type QueryCategoryArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryGetAllCategoriesArgs = {
+  paginationInput: PaginationInput;
+};
+
+
+export type QueryGetAllCourseModulesArgs = {
+  courseId: Scalars['String']['input'];
+  paginationInput: PaginationInput;
+};
+
+
+export type QueryGetAllCoursesArgs = {
+  courseFilters: CourseFilters;
+  paginationInput: PaginationInput;
+};
+
+
+export type QueryGetCourseByIdArgs = {
+  courseId: Scalars['String']['input'];
+};
+
+
+export type QueryGetCourseModuleByIdArgs = {
+  courseModuleId: Scalars['String']['input'];
+};
+
+
+export type QueryGetLessonByIdArgs = {
+  lessonId: Scalars['String']['input'];
+};
+
+export type ReorderCourseModulesInput = {
+  courseId: Scalars['String']['input'];
+  moduleIds: Array<Scalars['String']['input']>;
+};
+
+export type ReorderLessonInput = {
+  lessonIds: Array<Scalars['String']['input']>;
+  moduleId: Scalars['String']['input'];
 };
 
 export type User = {
@@ -157,7 +437,13 @@ export type SignUpOtpVerifyMutationVariables = Exact<{
 
 export type SignUpOtpVerifyMutation = { signUpOtpVerify: { __typename: 'User', _id: string, name: string, email: string, emailVerified: boolean } };
 
+export type GetProfileDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetProfileDataQuery = { getProfileData: { __typename: 'User', _id: string, name: string, email: string, emailVerified: boolean } };
+
 
 export const SendOtpDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendOtp"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendOtp"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}}]}]}}]} as unknown as DocumentNode<SendOtpMutation, SendOtpMutationVariables>;
 export const LoginOtpVerifyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LoginOtpVerify"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VerifyLoginOtpInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loginOtpVerify"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}}]}}]}}]} as unknown as DocumentNode<LoginOtpVerifyMutation, LoginOtpVerifyMutationVariables>;
 export const SignUpOtpVerifyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SignUpOtpVerify"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"VerifyOtpInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signUpOtpVerify"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}}]}}]}}]} as unknown as DocumentNode<SignUpOtpVerifyMutation, SignUpOtpVerifyMutationVariables>;
+export const GetProfileDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProfileData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getProfileData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}}]}}]}}]} as unknown as DocumentNode<GetProfileDataQuery, GetProfileDataQueryVariables>;

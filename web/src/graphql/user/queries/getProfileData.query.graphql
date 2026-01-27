@@ -1,0 +1,8 @@
+query GetProfileData {
+  getProfileData {
+    _id
+    name
+    email
+    emailVerified
+  }
+}

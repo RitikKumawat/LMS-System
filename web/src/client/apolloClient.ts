@@ -9,10 +9,12 @@ import createUploadLink from "apollo-upload-client/UploadHttpLink.mjs";
 
 const url = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:4000";
 
-export const errorLink = new ErrorLink(({ error }) => {
+export const errorLink = new ErrorLink(({ error,operation }) => {
   if (typeof window === "undefined") {
     return;
   }
+  const isPublic = operation.getContext().public === true;
+  if (isPublic) return; 
 
   const isOnLoginPage = window.location.pathname === "/login";
 
@@ -50,12 +52,26 @@ export const errorLink = new ErrorLink(({ error }) => {
   }
 });
 
-const authLink = new SetContextLink((prevContext) => ({
-  headers: {
-    ...prevContext.headers,
-    "x-panel-role": btoa("admin"),
-  },
-}));
+const authLink = new SetContextLink((prevContext) => {
+  const isPublic = prevContext.public === true;
+
+  if (isPublic) {
+    return {
+      headers: prevContext.headers,
+    };
+  }
+
+  return {
+    headers: {
+      ...prevContext.headers,
+      "x-panel-role": btoa("user"),
+    },
+  };
+});
+
+
+
+
 
 const uploadLink = new createUploadLink({
   uri: `${url}/graphql`,

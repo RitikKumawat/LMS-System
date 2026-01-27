@@ -19,54 +19,108 @@ import {
   Award,
 } from "lucide-react";
 import Link from "next/link";
-import { useRef } from "react";
-// import Hero3D from "@/components/home-page/Hero3D"; 
+import { useEffect, useRef } from "react";
+// import Hero3D from "@/components/home-page/Hero3D";
 import FCard from "@/components/ui/FCard";
 import FButton from "@/components/ui/FButton";
 import FTypography from "@/components/ui/FTypography";
 import styles from "./page.module.scss";
+import { useQuery } from "@apollo/client/react";
+import { GetProfileDataDocument } from "@/generated/graphql";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/enum/routes.enum";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
-
+  const { data, loading } = useQuery(GetProfileDataDocument, {
+    context: { public: true },
+  });
+  const router = useRouter();
+  useEffect(() => {
+    if (data?.getProfileData && !loading) {
+      router.push(ROUTES.DASHBOARD);
+    }
+  }, [data, loading]);
   useGSAP(
     () => {
       const tl = gsap.timeline();
 
-      tl.from(`.${styles.navbar}`, { y: -100, opacity: 0, duration: 1.2, ease: "power4.out" });
+      tl.from(`.${styles.navbar}`, {
+        y: -100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power4.out",
+      });
 
       tl.from(
-        [`.${styles.hero} h1`, `.${styles.hero} .${styles.subtitle}`, `.${styles.heroActions}`],
+        [
+          `.${styles.hero} h1`,
+          `.${styles.hero} .${styles.subtitle}`,
+          `.${styles.heroActions}`,
+        ],
         { y: 60, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out" },
-        "-=0.6"
+        "-=0.6",
       );
 
-      gsap.to(`.${styles.blob1}`, { x: 80, y: 100, scale: 1.1, duration: 15, repeat: -1, yoyo: true, ease: "sine.inOut" });
-      gsap.to(`.${styles.blob2}`, { x: -60, y: 80, scale: 0.9, duration: 18, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 2 });
-      gsap.to(`.${styles.blob3}`, { x: 40, y: -60, scale: 1.05, duration: 20, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 4 });
+      gsap.to(`.${styles.blob1}`, {
+        x: 80,
+        y: 100,
+        scale: 1.1,
+        duration: 15,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+      gsap.to(`.${styles.blob2}`, {
+        x: -60,
+        y: 80,
+        scale: 0.9,
+        duration: 18,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: 2,
+      });
+      gsap.to(`.${styles.blob3}`, {
+        x: 40,
+        y: -60,
+        scale: 1.05,
+        duration: 20,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: 4,
+      });
 
       // Target .scrollReveal class for scroll animations
       const cards = gsap.utils.toArray(`.${styles.scrollReveal}`);
       cards.forEach((card) => {
         gsap.from(card as gsap.TweenTarget, {
-          scrollTrigger: { trigger: card as gsap.DOMTarget, start: "top 85%", toggleActions: "play none none reverse" },
+          scrollTrigger: {
+            trigger: card as gsap.DOMTarget,
+            start: "top 85%",
+            toggleActions: "play none none reverse",
+          },
           y: 50,
           rotateX: -15,
           opacity: 0,
           duration: 1,
           ease: "power3.out",
-          transformOrigin: "top center"
+          transformOrigin: "top center",
         });
       });
 
       gsap.from(`.${styles.ctaWrapper}`, {
         scrollTrigger: { trigger: `.${styles.ctaWrapper}`, start: "top 80%" },
-        scale: 0.95, opacity: 0, duration: 1, ease: "power3.out"
+        scale: 0.95,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
       });
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   return (
@@ -86,15 +140,23 @@ export default function Home() {
               <br />
               <FTypography gradient>Beautifully Organized.</FTypography>
             </FTypography>
-            <FTypography variant="body" className={styles.subtitle} align="center">
-              A premium LMS for teachers and students to create, manage, and experience modern education.
+            <FTypography
+              variant="body"
+              className={styles.subtitle}
+              align="center"
+            >
+              A premium LMS for teachers and students to create, manage, and
+              experience modern education.
             </FTypography>
             <div className={styles.heroActions}>
-              <FButton onClick={() => window.location.href = '/signup'}>
+              <FButton onClick={() => (window.location.href = "/signup")}>
                 Start Learning
                 <ArrowRight size={20} />
               </FButton>
-              <FButton variant="secondary" onClick={() => window.location.href = '/teachers'}>
+              <FButton
+                variant="secondary"
+                onClick={() => (window.location.href = "/teachers")}
+              >
                 For Teachers
               </FButton>
             </div>
@@ -107,7 +169,9 @@ export default function Home() {
             <div className={styles.scrollReveal}>
               <FCard animate3d={true}>
                 <div className={styles.cardHeader}>
-                  <div className={styles.cardIcon}><GraduationCap size={28} /></div>
+                  <div className={styles.cardIcon}>
+                    <GraduationCap size={28} />
+                  </div>
                   <h3>For Students</h3>
                 </div>
                 <ul className={styles.cardList}>
@@ -123,7 +187,9 @@ export default function Home() {
             <div className={styles.scrollReveal}>
               <FCard animate3d={true}>
                 <div className={styles.cardHeader}>
-                  <div className={styles.cardIcon}><Users size={28} /></div>
+                  <div className={styles.cardIcon}>
+                    <Users size={28} />
+                  </div>
                   <h3>For Teachers</h3>
                 </div>
                 <ul className={styles.cardList}>
@@ -139,7 +205,9 @@ export default function Home() {
             <div className={styles.scrollReveal}>
               <FCard animate3d={true}>
                 <div className={styles.cardHeader}>
-                  <div className={styles.cardIcon}><Building size={28} /></div>
+                  <div className={styles.cardIcon}>
+                    <Building size={28} />
+                  </div>
                   <h3>For Institutions</h3>
                 </div>
                 <ul className={styles.cardList}>
@@ -173,10 +241,16 @@ export default function Home() {
           <div className={styles.ctaWrapper}>
             <FCard animate3d={true} glass={true} className={styles.ctaCard}>
               <div className={styles.ctaContent}>
-                <FTypography variant="h2" align="center">Start your learning journey today</FTypography>
+                <FTypography variant="h2" align="center">
+                  Start your learning journey today
+                </FTypography>
                 <div className={styles.ctaActions}>
-                  <FButton onClick={() => window.location.href = '/login'}>Login</FButton>
-                  <FButton onClick={() => window.location.href = '/signup'}>Sign Up</FButton>
+                  <FButton onClick={() => (window.location.href = "/login")}>
+                    Login
+                  </FButton>
+                  <FButton onClick={() => (window.location.href = "/signup")}>
+                    Sign Up
+                  </FButton>
                 </div>
               </div>
             </FCard>
@@ -187,7 +261,9 @@ export default function Home() {
         <footer className={styles.footer}>
           <div className={styles.footerContent}>
             <div className={styles.logo}>
-              <div className={styles.logoIcon}><Sparkles size={20} /></div>
+              <div className={styles.logoIcon}>
+                <Sparkles size={20} />
+              </div>
               <span>Nexus</span>
             </div>
             <div className={styles.footerLinks}>
@@ -203,7 +279,13 @@ export default function Home() {
   );
 }
 
-function FeatureTile({ icon, title }: { icon: React.ReactNode; title: string }) {
+function FeatureTile({
+  icon,
+  title,
+}: {
+  icon: React.ReactNode;
+  title: string;
+}) {
   return (
     <div className={styles.scrollReveal}>
       <FCard animate3d={true} className={styles.featureTile}>

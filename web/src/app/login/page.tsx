@@ -20,6 +20,7 @@ import FButton from "@/components/ui/FButton";
 import FTypography from "@/components/ui/FTypography";
 import { INITIAL_VALUES } from "@/form/initial-values";
 import { VALIDATIONS } from "@/form/validations";
+import { ROUTES } from "@/enum/routes.enum";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -46,23 +47,25 @@ export default function LoginPage() {
   const [loginVerify, { loading: loginLoading }] = useMutation(
     LoginOtpVerifyDocument,
     {
-      onCompleted: () => {
+      onCompleted: (data) => {
+        if (data.loginOtpVerify) {
+          notifications.show({
+            title: "Success",
+            message: "Logged in successfully!",
+            color: "green",
+          });
+          // Redirect to home or dashboard
+          router.push(ROUTES.DASHBOARD);
+        }
+      },
+      onError: (error) => {
         notifications.show({
-          title: "Success",
-          message: "Logged in successfully!",
-          color: "green",
+          title: "Error",
+          message: error.message,
+          color: "red",
         });
-        // Redirect to home or dashboard
-        router.push("/");
+      },
     },
-    onError:(error)=>{
-      notifications.show({
-        title: "Error",
-        message:  error.message,
-        color: "red",
-      });
-    }
-  }
   );
 
   const form = useForm({
@@ -71,7 +74,7 @@ export default function LoginPage() {
   });
 
   const handleSendOtp = async (values: typeof form.values) => {
-    console.log("FORM ERRRORS",form.errors)
+    console.log("FORM ERRRORS", form.errors);
     await sendOtp({
       variables: {
         email: values.email,
@@ -144,7 +147,6 @@ export default function LoginPage() {
                     type="number"
                     classNames={{ input: styles.pinInput }}
                     {...form.getInputProps("otp")}
-                    
                   />
                 </Group>
               </>

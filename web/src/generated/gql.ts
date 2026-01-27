@@ -15,9 +15,11 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "mutation SendOtp($email: String!, $type: String!) {\n  sendOtp(email: $email, type: $type)\n}\n\nmutation LoginOtpVerify($data: VerifyLoginOtpInput!) {\n  loginOtpVerify(data: $data) {\n    _id\n    name\n    email\n    emailVerified\n  }\n}\n\nmutation SignUpOtpVerify($data: VerifyOtpInput!) {\n  signUpOtpVerify(data: $data) {\n    _id\n    name\n    email\n    emailVerified\n  }\n}": typeof types.SendOtpDocument,
+    "query GetProfileData {\n  getProfileData {\n    _id\n    name\n    email\n    emailVerified\n  }\n}": typeof types.GetProfileDataDocument,
 };
 const documents: Documents = {
     "mutation SendOtp($email: String!, $type: String!) {\n  sendOtp(email: $email, type: $type)\n}\n\nmutation LoginOtpVerify($data: VerifyLoginOtpInput!) {\n  loginOtpVerify(data: $data) {\n    _id\n    name\n    email\n    emailVerified\n  }\n}\n\nmutation SignUpOtpVerify($data: VerifyOtpInput!) {\n  signUpOtpVerify(data: $data) {\n    _id\n    name\n    email\n    emailVerified\n  }\n}": types.SendOtpDocument,
+    "query GetProfileData {\n  getProfileData {\n    _id\n    name\n    email\n    emailVerified\n  }\n}": types.GetProfileDataDocument,
 };
 
 /**
@@ -38,6 +40,10 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation SendOtp($email: String!, $type: String!) {\n  sendOtp(email: $email, type: $type)\n}\n\nmutation LoginOtpVerify($data: VerifyLoginOtpInput!) {\n  loginOtpVerify(data: $data) {\n    _id\n    name\n    email\n    emailVerified\n  }\n}\n\nmutation SignUpOtpVerify($data: VerifyOtpInput!) {\n  signUpOtpVerify(data: $data) {\n    _id\n    name\n    email\n    emailVerified\n  }\n}"): (typeof documents)["mutation SendOtp($email: String!, $type: String!) {\n  sendOtp(email: $email, type: $type)\n}\n\nmutation LoginOtpVerify($data: VerifyLoginOtpInput!) {\n  loginOtpVerify(data: $data) {\n    _id\n    name\n    email\n    emailVerified\n  }\n}\n\nmutation SignUpOtpVerify($data: VerifyOtpInput!) {\n  signUpOtpVerify(data: $data) {\n    _id\n    name\n    email\n    emailVerified\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query GetProfileData {\n  getProfileData {\n    _id\n    name\n    email\n    emailVerified\n  }\n}"): (typeof documents)["query GetProfileData {\n  getProfileData {\n    _id\n    name\n    email\n    emailVerified\n  }\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

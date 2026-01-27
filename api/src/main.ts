@@ -62,6 +62,18 @@ async function bootstrap() {
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
   app.useGlobalPipes(new ValidationPipe());
   // app.use(morgan('combined'));
+  app.getHttpAdapter().get('/health', (_req, res) => {
+    try {
+      res.status(200).json({
+        status: 'ok',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+      });
+    } catch {
+      res.status(500).json({ status: 'error' });
+    }
+  });
+
   await app.listen(config.get('app.port') ?? 4000);
 }
 bootstrap();
