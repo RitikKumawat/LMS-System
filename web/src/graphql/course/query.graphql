@@ -1,0 +1,40 @@
+query FindAllCourses($paginationInput: PaginationInput!, $courseFilters: CourseFilters!) {
+  getPublishedCourses(paginationInput: $paginationInput, courseFilters: $courseFilters) {
+    docs {
+      _id
+      title
+      description
+      price
+      thumbnail_url
+      category_name
+      level
+      language
+      is_published
+      createdAt
+    }
+    totalDocs
+    limit
+    totalPages
+    page
+    hasNextPage
+    hasPrevPage
+  }
+}
+
+query FindOneCourse($courseId: String!) {
+  getCourseById(courseId: $courseId) {
+    _id
+    title
+    description
+    price
+    thumbnail_url
+    category_id
+    level
+    language
+    is_published
+    created_by
+    published_at
+    createdAt
+    updatedAt
+  }
+}

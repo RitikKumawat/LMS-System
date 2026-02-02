@@ -6,6 +6,17 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
   },
+  images: {
+    domains: ["localhost"],
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "4000",
+      },
+    ],
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;

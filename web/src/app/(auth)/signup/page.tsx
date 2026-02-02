@@ -11,7 +11,7 @@ import {
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
-import styles from "../auth.module.scss";
+import styles from "../../auth.module.scss";
 import { SendOtpDocument, SignUpOtpVerifyDocument } from "@/generated/graphql";
 import { useMutation } from "@apollo/client/react";
 import FCard from "@/components/ui/FCard";
@@ -57,12 +57,12 @@ export default function SignupPage() {
         router.push("/");
       },
       onError: (error) => {
-      notifications.show({
-        title: "Error",
-        message: error.message,
-        color: "red",
-      });
-    }
+        notifications.show({
+          title: "Error",
+          message: error.message,
+          color: "red",
+        });
+      }
     },
   );
 

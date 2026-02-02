@@ -16,12 +16,15 @@ async function bootstrap() {
   app.use(
     helmet({
       crossOriginEmbedderPolicy: false,
+      crossOriginResourcePolicy: false,
       contentSecurityPolicy: {
         directives: {
           imgSrc: [
             `'self'`,
             'data:',
             'apollo-server-landing-page.cdn.apollographql.com',
+            'blob:',
+            'http://localhost:4000',
           ],
           scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
           manifestSrc: [

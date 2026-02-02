@@ -14,17 +14,20 @@ export interface PaginatedResult<T> {
 export async function paginateAggregate<T>(
   model: Model<any>,
   basePipeline: PipelineStage[], // aggregation without pagination
-  page = 1,
-  limit = 10,
+  page: number = 1,
+  limit: number = 10,
 ): Promise<PaginatedResult<T>> {
-  const skip = (page - 1) * limit;
+  const validPage = Number(page) > 0 ? Number(page) : 1;
+  const validLimit = Number(limit) > 0 ? Number(limit) : 10;
+
+  const skip = (validPage - 1) * validLimit;
 
   const pipeline = [
     ...basePipeline,
 
     {
       $facet: {
-        docs: [{ $skip: skip }, { $limit: limit }],
+        docs: [{ $skip: skip }, { $limit: validLimit }],
         totalDocs: [{ $count: 'count' }],
       },
     },
@@ -38,10 +41,10 @@ export async function paginateAggregate<T>(
   return {
     docs,
     totalDocs,
-    limit,
-    page,
-    totalPages: Math.ceil(totalDocs / limit),
-    hasNextPage: page * limit < totalDocs,
-    hasPrevPage: page > 1,
+    limit: validLimit,
+    page: validPage,
+    totalPages: Math.ceil(totalDocs / validLimit),
+    hasNextPage: validPage * validLimit < totalDocs,
+    hasPrevPage: validPage > 1,
   };
 }

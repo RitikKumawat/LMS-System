@@ -10,10 +10,11 @@ import { ADMIN_ROLES } from 'src/enum/roles';
 import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
 import { Course } from 'src/schemas/course.schema';
 import { PaginationInput } from 'src/category/pagination.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @Resolver(() => Course)
 export class CourseResolver {
-  constructor(private readonly courseService: CourseService) {}
+  constructor(private readonly courseService: CourseService) { }
 
   @Mutation(() => Course)
   @Roles(ADMIN_ROLES.INSTRUCTOR)
@@ -26,6 +27,7 @@ export class CourseResolver {
     return this.courseService.create(ctx.req, createCourseInput, thumbnail);
   }
 
+  @Roles(ADMIN_ROLES.INSTRUCTOR, ADMIN_ROLES.ADMIN)
   @Query(() => PaginatedCourse)
   getAllCourses(
     @Args('paginationInput') paginationInput: PaginationInput,
@@ -34,6 +36,7 @@ export class CourseResolver {
     return this.courseService.getAll(paginationInput, courseFilters);
   }
 
+  @Public()
   @Query(() => Course)
   getCourseById(@Args('courseId') courseId: string) {
     return this.courseService.getById(courseId);
@@ -43,5 +46,15 @@ export class CourseResolver {
   @Roles(ADMIN_ROLES.INSTRUCTOR, ADMIN_ROLES.ADMIN)
   togglePublishStatus(@Args('courseId') courseId: string) {
     return this.courseService.togglePublishStatus(courseId);
+  }
+
+  @Public()
+  @Query(() => PaginatedCourse)
+  getPublishedCourses(
+    @Args('paginationInput') paginationInput: PaginationInput,
+    @Args('courseFilters') courseFilters: CourseFilters,
+  ) {
+    courseFilters.isPublished = true;
+    return this.courseService.getAll(paginationInput, courseFilters);
   }
 }

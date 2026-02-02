@@ -11,7 +11,7 @@ import {
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
-import styles from "../auth.module.scss"; // Styles for inputs/layout
+import styles from "../../auth.module.scss"; // Styles for inputs/layout
 import { yupResolver } from "mantine-form-yup-resolver";
 import { SendOtpDocument, LoginOtpVerifyDocument } from "@/generated/graphql";
 import { useMutation } from "@apollo/client/react";

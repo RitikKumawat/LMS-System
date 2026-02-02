@@ -6,15 +6,22 @@ import {
   CombinedProtocolErrors,
 } from "@apollo/client/errors";
 import createUploadLink from "apollo-upload-client/UploadHttpLink.mjs";
+import { isPublicRoute } from "@/utils/isPublicRoute";
 
 const url = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:4000";
 
-export const errorLink = new ErrorLink(({ error,operation }) => {
+export const errorLink = new ErrorLink(({ error, operation }) => {
   if (typeof window === "undefined") {
     return;
   }
+  const isPublicPage = isPublicRoute(window.location.pathname);
   const isPublic = operation.getContext().public === true;
-  if (isPublic) return; 
+  if (isPublic) return;
+
+  if (isPublicPage) {
+    console.log("PUBLIC PAGE____");
+    return;
+  }
 
   const isOnLoginPage = window.location.pathname === "/login";
 
@@ -26,7 +33,7 @@ export const errorLink = new ErrorLink(({ error,operation }) => {
         graphQLError.message?.toLowerCase().includes("unauthorized")
     );
 
-    if (unauthorized && !isOnLoginPage) {
+    if (unauthorized && !isPublicPage) {
       localStorage.clear();
       window.location.href = "/login";
       return;
@@ -53,13 +60,6 @@ export const errorLink = new ErrorLink(({ error,operation }) => {
 });
 
 const authLink = new SetContextLink((prevContext) => {
-  const isPublic = prevContext.public === true;
-
-  if (isPublic) {
-    return {
-      headers: prevContext.headers,
-    };
-  }
 
   return {
     headers: {

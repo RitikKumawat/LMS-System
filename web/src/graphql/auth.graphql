@@ -19,3 +19,7 @@ mutation SignUpOtpVerify($data: VerifyOtpInput!) {
     emailVerified
   }
 }
+
+mutation UserLogout {
+  userLogout
+}

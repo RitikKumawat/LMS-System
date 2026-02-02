@@ -29,6 +29,7 @@ import { useQuery } from "@apollo/client/react";
 import { GetProfileDataDocument } from "@/generated/graphql";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/enum/routes.enum";
+import Navbar from "@/components/navbar/Navbar";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,6 +37,7 @@ export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { data, loading } = useQuery(GetProfileDataDocument, {
     context: { public: true },
+    fetchPolicy: "network-only",
   });
   const router = useRouter();
   useEffect(() => {
@@ -124,158 +126,161 @@ export default function Home() {
   );
 
   return (
-    <div className={styles.page} ref={containerRef}>
-      <div className={`${styles.blob} ${styles.blob1}`} />
-      <div className={`${styles.blob} ${styles.blob2}`} />
-      <div className={`${styles.blob} ${styles.blob3}`} />
-      <div className={styles.gridOverlay} />
+    <>
+      <Navbar />
+      <div className={styles.page} ref={containerRef}>
+        <div className={`${styles.blob} ${styles.blob1}`} />
+        <div className={`${styles.blob} ${styles.blob2}`} />
+        <div className={`${styles.blob} ${styles.blob3}`} />
+        <div className={styles.gridOverlay} />
 
-      <main className={styles.main}>
-        {/* 2️⃣ Hero Section */}
-        <section className={styles.hero}>
-          {/* <Hero3D /> */}
-          <div className={styles.heroContent}>
-            <FTypography variant="h1" align="center">
-              Smart Learning.
-              <br />
-              <FTypography gradient>Beautifully Organized.</FTypography>
-            </FTypography>
-            <FTypography
-              variant="body"
-              className={styles.subtitle}
-              align="center"
-            >
-              A premium LMS for teachers and students to create, manage, and
-              experience modern education.
-            </FTypography>
-            <div className={styles.heroActions}>
-              <FButton onClick={() => (window.location.href = "/signup")}>
-                Start Learning
-                <ArrowRight size={20} />
-              </FButton>
-              <FButton
-                variant="secondary"
-                onClick={() => (window.location.href = "/teachers")}
+        <main className={styles.main}>
+          {/* 2️⃣ Hero Section */}
+          <section className={styles.hero}>
+            {/* <Hero3D /> */}
+            <div className={styles.heroContent}>
+              <FTypography variant="h1" align="center">
+                Smart Learning.
+                <br />
+                <FTypography gradient>Beautifully Organized.</FTypography>
+              </FTypography>
+              <FTypography
+                variant="body"
+                className={styles.subtitle}
+                align="center"
               >
-                For Teachers
-              </FButton>
-            </div>
-          </div>
-        </section>
-
-        {/* 3️⃣ User Role Cards */}
-        <section id="roles" className={styles.roleSection}>
-          <div className={styles.roleGrid}>
-            <div className={styles.scrollReveal}>
-              <FCard animate3d={true}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.cardIcon}>
-                    <GraduationCap size={28} />
-                  </div>
-                  <h3>For Students</h3>
-                </div>
-                <ul className={styles.cardList}>
-                  <li>Courses</li>
-                  <li>Lessons</li>
-                  <li>Tests</li>
-                  <li>Progress</li>
-                  <li>Certificates</li>
-                </ul>
-              </FCard>
-            </div>
-
-            <div className={styles.scrollReveal}>
-              <FCard animate3d={true}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.cardIcon}>
-                    <Users size={28} />
-                  </div>
-                  <h3>For Teachers</h3>
-                </div>
-                <ul className={styles.cardList}>
-                  <li>Create courses</li>
-                  <li>Upload lessons</li>
-                  <li>Assign work</li>
-                  <li>Track students</li>
-                  <li>Analytics</li>
-                </ul>
-              </FCard>
-            </div>
-
-            <div className={styles.scrollReveal}>
-              <FCard animate3d={true}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.cardIcon}>
-                    <Building size={28} />
-                  </div>
-                  <h3>For Institutions</h3>
-                </div>
-                <ul className={styles.cardList}>
-                  <li>Admin Dashboard</li>
-                  <li>User Management</li>
-                  <li>Global Analytics</li>
-                  <li>Custom Branding</li>
-                  <li>Scalable Infra</li>
-                </ul>
-              </FCard>
-            </div>
-          </div>
-        </section>
-
-        {/* 4️⃣ Feature Grid */}
-        <section id="features" className={styles.features}>
-          <div className={styles.featureGrid}>
-            <FeatureTile icon={<Layout />} title="Course Management" />
-            <FeatureTile icon={<PlayCircle />} title="Video Lessons" />
-            <FeatureTile icon={<BookOpen />} title="Assignments" />
-            <FeatureTile icon={<CheckCircle2 />} title="Quizzes" />
-            <FeatureTile icon={<BarChart3 />} title="Analytics" />
-            <FeatureTile icon={<Lock />} title="Secure Login" />
-            <FeatureTile icon={<Award />} title="Certificates" />
-            <FeatureTile icon={<Smartphone />} title="Mobile Friendly" />
-          </div>
-        </section>
-
-        {/* 5️⃣ CTA Section */}
-        <section className={styles.ctaSection}>
-          <div className={styles.ctaWrapper}>
-            <FCard animate3d={true} glass={true} className={styles.ctaCard}>
-              <div className={styles.ctaContent}>
-                <FTypography variant="h2" align="center">
-                  Start your learning journey today
-                </FTypography>
-                <div className={styles.ctaActions}>
-                  <FButton onClick={() => (window.location.href = "/login")}>
-                    Login
-                  </FButton>
-                  <FButton onClick={() => (window.location.href = "/signup")}>
-                    Sign Up
-                  </FButton>
-                </div>
+                A premium LMS for teachers and students to create, manage, and
+                experience modern education.
+              </FTypography>
+              <div className={styles.heroActions}>
+                <FButton onClick={() => (window.location.href = "/signup")}>
+                  Start Learning
+                  <ArrowRight size={20} />
+                </FButton>
+                <FButton
+                  variant="secondary"
+                  onClick={() => (window.location.href = "/teachers")}
+                >
+                  For Teachers
+                </FButton>
               </div>
-            </FCard>
-          </div>
-        </section>
+            </div>
+          </section>
 
-        {/* 6️⃣ Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerContent}>
-            <div className={styles.logo}>
-              <div className={styles.logoIcon}>
-                <Sparkles size={20} />
+          {/* 3️⃣ User Role Cards */}
+          <section id="roles" className={styles.roleSection}>
+            <div className={styles.roleGrid}>
+              <div className={styles.scrollReveal}>
+                <FCard animate3d={true}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.cardIcon}>
+                      <GraduationCap size={28} />
+                    </div>
+                    <h3>For Students</h3>
+                  </div>
+                  <ul className={styles.cardList}>
+                    <li>Courses</li>
+                    <li>Lessons</li>
+                    <li>Tests</li>
+                    <li>Progress</li>
+                    <li>Certificates</li>
+                  </ul>
+                </FCard>
               </div>
-              <span>Nexus</span>
+
+              <div className={styles.scrollReveal}>
+                <FCard animate3d={true}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.cardIcon}>
+                      <Users size={28} />
+                    </div>
+                    <h3>For Teachers</h3>
+                  </div>
+                  <ul className={styles.cardList}>
+                    <li>Create courses</li>
+                    <li>Upload lessons</li>
+                    <li>Assign work</li>
+                    <li>Track students</li>
+                    <li>Analytics</li>
+                  </ul>
+                </FCard>
+              </div>
+
+              <div className={styles.scrollReveal}>
+                <FCard animate3d={true}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.cardIcon}>
+                      <Building size={28} />
+                    </div>
+                    <h3>For Institutions</h3>
+                  </div>
+                  <ul className={styles.cardList}>
+                    <li>Admin Dashboard</li>
+                    <li>User Management</li>
+                    <li>Global Analytics</li>
+                    <li>Custom Branding</li>
+                    <li>Scalable Infra</li>
+                  </ul>
+                </FCard>
+              </div>
             </div>
-            <div className={styles.footerLinks}>
-              <Link href="/features">Features</Link>
-              <Link href="/students">For Students</Link>
-              <Link href="/teachers">For Teachers</Link>
+          </section>
+
+          {/* 4️⃣ Feature Grid */}
+          <section id="features" className={styles.features}>
+            <div className={styles.featureGrid}>
+              <FeatureTile icon={<Layout />} title="Course Management" />
+              <FeatureTile icon={<PlayCircle />} title="Video Lessons" />
+              <FeatureTile icon={<BookOpen />} title="Assignments" />
+              <FeatureTile icon={<CheckCircle2 />} title="Quizzes" />
+              <FeatureTile icon={<BarChart3 />} title="Analytics" />
+              <FeatureTile icon={<Lock />} title="Secure Login" />
+              <FeatureTile icon={<Award />} title="Certificates" />
+              <FeatureTile icon={<Smartphone />} title="Mobile Friendly" />
             </div>
-            <p>© 2026 Nexus LMS</p>
-          </div>
-        </footer>
-      </main>
-    </div>
+          </section>
+
+          {/* 5️⃣ CTA Section */}
+          <section className={styles.ctaSection}>
+            <div className={styles.ctaWrapper}>
+              <FCard animate3d={true} glass={true} className={styles.ctaCard}>
+                <div className={styles.ctaContent}>
+                  <FTypography variant="h2" align="center">
+                    Start your learning journey today
+                  </FTypography>
+                  <div className={styles.ctaActions}>
+                    <FButton onClick={() => (window.location.href = "/login")}>
+                      Login
+                    </FButton>
+                    <FButton onClick={() => (window.location.href = "/signup")}>
+                      Sign Up
+                    </FButton>
+                  </div>
+                </div>
+              </FCard>
+            </div>
+          </section>
+
+          {/* 6️⃣ Footer */}
+          <footer className={styles.footer}>
+            <div className={styles.footerContent}>
+              <div className={styles.logo}>
+                <div className={styles.logoIcon}>
+                  <Sparkles size={20} />
+                </div>
+                <span>Nexus</span>
+              </div>
+              <div className={styles.footerLinks}>
+                <Link href="/features">Features</Link>
+                <Link href="/students">For Students</Link>
+                <Link href="/teachers">For Teachers</Link>
+              </div>
+              <p>© 2026 Nexus LMS</p>
+            </div>
+          </footer>
+        </main>
+      </div>
+    </>
   );
 }
 

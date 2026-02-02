@@ -155,6 +155,7 @@ type Query {
   getAllCategories(paginationInput: PaginationInput!): PaginatedCategory!
   getAllCourses(paginationInput: PaginationInput!, courseFilters: CourseFilters!): PaginatedCourse!
   getCourseById(courseId: String!): Course!
+  getPublishedCourses(paginationInput: PaginationInput!, courseFilters: CourseFilters!): PaginatedCourse!
   getAllCourseModules(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModule!
   getCourseModuleById(courseModuleId: String!): CourseModuleResponse!
   getLessonById(lessonId: String!): LessonResponse!
