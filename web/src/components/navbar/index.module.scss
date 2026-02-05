@@ -16,8 +16,7 @@
 
 .navContent {
   background: rgba(10, 15, 31, 0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(9px);
   border: 1px solid $glass-border;
   border-radius: 20px;
   padding: 1rem 2rem;

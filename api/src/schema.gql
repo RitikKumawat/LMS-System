@@ -128,6 +128,13 @@ type LessonResponse {
   is_preview: Boolean!
 }
 
+type LessonForStudentResponse {
+  _id: ID!
+  title: String!
+  order: Int!
+  lesson_type: String
+}
+
 type CourseModuleResponse {
   _id: ID!
   title: String!
@@ -148,6 +155,26 @@ type PaginatedCourseModule {
   hasPrevPage: Boolean!
 }
 
+type CourseModuleForStudentResponse {
+  _id: ID!
+  title: String!
+  description: String
+  course_id: String!
+  order: Int!
+  createdAt: DateTime!
+  lessons: [LessonForStudentResponse!]!
+}
+
+type PaginatedCourseModuleForStudent {
+  docs: [CourseModuleForStudentResponse!]!
+  totalDocs: Int!
+  limit: Int!
+  totalPages: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
 type Query {
   getProfileData: User!
   getAdminData: AdminResponse!
@@ -158,6 +185,7 @@ type Query {
   getPublishedCourses(paginationInput: PaginationInput!, courseFilters: CourseFilters!): PaginatedCourse!
   getAllCourseModules(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModule!
   getCourseModuleById(courseModuleId: String!): CourseModuleResponse!
+  getCourseModuleByCourseId(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModuleForStudent!
   getLessonById(lessonId: String!): LessonResponse!
 }
 

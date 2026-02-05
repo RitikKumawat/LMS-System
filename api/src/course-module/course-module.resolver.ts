@@ -10,12 +10,14 @@ import {
 import {
   CourseModuleResponse,
   PaginatedCourseModule,
+  PaginatedCourseModuleForStudent,
 } from './entity/course-module.entity';
 import { PaginationInput } from 'src/category/pagination.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @Resolver()
 export class CourseModuleResolver {
-  constructor(private readonly courseModuleService: CourseModuleService) {}
+  constructor(private readonly courseModuleService: CourseModuleService) { }
 
   @Mutation(() => CourseModule)
   @Roles(ADMIN_ROLES.INSTRUCTOR)
@@ -65,5 +67,12 @@ export class CourseModuleResolver {
     moduleId: string,
   ) {
     return this.courseModuleService.deleteCourseModule(moduleId);
+  }
+
+  @Public()
+  @Query(() => PaginatedCourseModuleForStudent)
+  getCourseModuleByCourseId(@Args('courseId') courseId: string,
+    @Args('paginationInput') paginationInput: PaginationInput,) {
+    return this.courseModuleService.getCourseModuleByCourseId(courseId, paginationInput);
   }
 }

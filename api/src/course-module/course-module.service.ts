@@ -9,9 +9,10 @@ import {
   paginateAggregate,
   PaginatedResult,
 } from 'src/utils/paginate-aggregate';
-import { CourseModuleResponse } from './entity/course-module.entity';
+import { CourseModuleForStudentResponse, CourseModuleResponse } from './entity/course-module.entity';
 import { getAllCourseModulePipeline } from 'src/aggregation/getAllCourseModule.aggregation';
 import { Lesson } from 'src/schemas/lesson.schema';
+import { getAllCourseModuleForStudentPipeline } from 'src/aggregation/getAllCourseModuleForStudent.aggregation';
 
 @Injectable()
 export class CourseModuleService {
@@ -24,7 +25,7 @@ export class CourseModuleService {
 
     @InjectModel(Lesson.name)
     private readonly lessonModel: Model<Lesson>,
-  ) {}
+  ) { }
   async createCourseModule(
     req: Request,
     createCourseModuleInput: CreateCourseModuleInput,
@@ -157,5 +158,18 @@ export class CourseModuleService {
       session.endSession();
       throw error;
     }
+  }
+
+  async getCourseModuleByCourseId(courseId: string,
+    paginationInput: PaginationInput,
+  ): Promise<PaginatedResult<CourseModuleForStudentResponse>> {
+    const pipeline = getAllCourseModuleForStudentPipeline(courseId);
+    const result = await paginateAggregate<CourseModuleForStudentResponse>(
+      this.courseModuleModel,
+      pipeline,
+      paginationInput.page,
+      paginationInput.limit,
+    );
+    return result;
   }
 }

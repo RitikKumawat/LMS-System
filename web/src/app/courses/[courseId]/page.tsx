@@ -9,6 +9,7 @@ import { Clock, BarChart, Users, Star, ArrowLeft } from "lucide-react";
 import FButton from "@/components/ui/FButton";
 import Navbar from "@/components/navbar/Navbar";
 import FContainer from "@/ui/FContainer/FContainer";
+import CourseModulesAccordion from "@/components/course/CourseModulesAccordion";
 
 export default function CourseDetailPage() {
     const { courseId } = useParams();
@@ -52,7 +53,8 @@ export default function CourseDetailPage() {
                                         <Text>Multi-level</Text>
                                     </Group>
                                 </Group>
-
+                                <Divider label="Course Content" labelPosition="left" />
+                                <CourseModulesAccordion courseId={courseId as string} />
                                 {/* Removed What you will learn and Requirements as they are not in the schema */}
                             </Stack>
                         </Grid.Col>

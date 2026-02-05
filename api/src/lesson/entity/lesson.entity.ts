@@ -26,3 +26,19 @@ export class LessonResponse {
   @Field()
   is_preview: boolean;
 }
+
+
+@ObjectType()
+export class LessonForStudentResponse {
+  @Field(() => ID)
+  _id: string;
+
+  @Field(() => String)
+  title: string;
+
+  @Field(() => Int)
+  order: number;
+
+  @Field(() => String, { nullable: true })
+  lesson_type?: string;
+}

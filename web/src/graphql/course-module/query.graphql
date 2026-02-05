@@ -1,0 +1,24 @@
+query GetCourseModuleByCourseId($courseId: String!, $paginationInput: PaginationInput!) {
+  getCourseModuleByCourseId(courseId: $courseId, paginationInput: $paginationInput) {
+    docs {
+      _id
+      title
+      description
+      course_id
+      order
+      createdAt
+      lessons {
+        _id
+        title
+        order
+        lesson_type
+      }
+    }
+    totalDocs
+    limit
+    totalPages
+    page
+    hasNextPage
+    hasPrevPage
+  }
+}

@@ -2,11 +2,12 @@
 
 import { useQuery } from "@apollo/client/react";
 import { FindOneCourseDocument } from "@/generated/graphql";
-import { Container, Title, Text, Button, Image, Group, Stack, Badge, Loader, Center, Grid, Paper, Divider, Avatar } from "@mantine/core";
+import { Container, Title, Text, Button, Image, Group, Stack, Badge, Loader, Center, Grid, Paper, Divider, Avatar, Box } from "@mantine/core";
 import { useParams, useRouter } from "next/navigation";
 import { COLORS } from "@/assets/colors/colors";
 import { Clock, BarChart, Users, Star, ArrowLeft } from "lucide-react";
 import FButton from "@/components/ui/FButton";
+import CourseModulesAccordion from "@/components/course/CourseModulesAccordion";
 
 export default function CourseDetailPage() {
     const { courseId } = useParams();
@@ -43,9 +44,10 @@ export default function CourseDetailPage() {
                 Back to Explore
             </Button>
 
-            <Grid gutter="xl">
+            <Grid gutter="xl" styles={{ inner: { minHeight: "100vh" } }}>
                 <Grid.Col span={{ base: 12, md: 8 }}>
                     <Stack gap="lg">
+
                         <Title style={{ color: COLORS.text.primary }}>{course.title}</Title>
                         <Text size="lg" style={{ color: COLORS.text.secondary }} dangerouslySetInnerHTML={{ __html: course.description as string }} />
 
@@ -58,47 +60,50 @@ export default function CourseDetailPage() {
                             </Group>
                         </Group>
 
-
+                        <Divider label="Course Content" labelPosition="left" />
+                        <CourseModulesAccordion courseId={courseId as string} />
 
                         {/* Removed What you will learn and Requirements as they are not in the schema */}
                     </Stack>
                 </Grid.Col>
 
                 <Grid.Col span={{ base: 12, md: 4 }}>
-                    <Stack gap="md">
-                        <Paper shadow="sm" p="xl" radius="md" style={{ backgroundColor: COLORS.background.secondary, border: `1px solid ${COLORS.border.glass}` }}>
-                            <Stack gap="md">
-                                <Image
-                                    src={course.thumbnail_url ? `${course.thumbnail_url}` : "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"}
-                                    radius="md"
-                                    alt={course.title}
-                                />
-                                <Group justify="space-between" align="center">
-                                    <Text size="3xl" fw={700} style={{ color: COLORS.text.primary }}>₹{course.price}</Text>
-                                </Group>
-                                <FButton variant="primary" >Enroll Now</FButton>
-                                <Text size="xs" ta="center" c="dimmed">30-day money-back guarantee</Text>
-
-                                <Divider label="Course Features" labelPosition="center" />
-
-                                <Stack gap="xs">
-                                    <Group>
-                                        <BarChart size={18} />
-                                        <Text>{course.level || "All Levels"}</Text>
+                    <Box pos="sticky" top={100} style={{ height: "83vh", top: "60px" }}>
+                        <Stack gap="md">
+                            <Paper shadow="sm" p="xl" radius="md" style={{ backgroundColor: COLORS.background.secondary, border: `1px solid ${COLORS.border.glass}` }}>
+                                <Stack gap="md">
+                                    <Image
+                                        src={course.thumbnail_url ? `${course.thumbnail_url}` : "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"}
+                                        radius="md"
+                                        alt={course.title}
+                                    />
+                                    <Group justify="space-between" align="center">
+                                        <Text size="3xl" fw={700} style={{ color: COLORS.text.primary }}>₹{course.price}</Text>
                                     </Group>
-                                    <Group>
-                                        <Text size="sm" c="dimmed">Language: {course.language}</Text>
-                                    </Group>
+                                    <FButton variant="primary" >Enroll Now</FButton>
+                                    <Text size="xs" ta="center" c="dimmed">30-day money-back guarantee</Text>
+
+                                    <Divider label="Course Features" labelPosition="center" />
+
+                                    <Stack gap="xs">
+                                        <Group>
+                                            <BarChart size={18} />
+                                            <Text>{course.level || "All Levels"}</Text>
+                                        </Group>
+                                        <Group>
+                                            <Text size="sm" c="dimmed">Language: {course.language}</Text>
+                                        </Group>
+                                    </Stack>
                                 </Stack>
-                            </Stack>
-                        </Paper>
+                            </Paper>
 
-                        <Paper shadow="sm" p="lg" radius="md" style={{ backgroundColor: COLORS.background.secondary, border: `1px solid ${COLORS.border.glass}` }}>
-                            <Title order={4} mb="md" style={{ color: COLORS.text.primary }}>Instructor</Title>
-                            {/* Instructor details are not directly available in the Course object, only ID */}
-                            <Text fw={500} style={{ color: COLORS.text.primary }}>Instructor ID: {course.created_by}</Text>
-                        </Paper>
-                    </Stack>
+                            <Paper shadow="sm" p="lg" radius="md" style={{ backgroundColor: COLORS.background.secondary, border: `1px solid ${COLORS.border.glass}` }}>
+                                <Title order={4} mb="md" style={{ color: COLORS.text.primary }}>Instructor</Title>
+                                {/* Instructor details are not directly available in the Course object, only ID */}
+                                <Text fw={500} style={{ color: COLORS.text.primary }}>Instructor ID: {course.created_by}</Text>
+                            </Paper>
+                        </Stack>
+                    </Box>
                 </Grid.Col>
             </Grid>
         </Container>
