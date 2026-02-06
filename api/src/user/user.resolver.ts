@@ -7,12 +7,11 @@ import { Request, Response } from 'express';
 
 @Resolver()
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Query(() => User)
   @Roles(USER_ROLES.USER)
   async getProfileData(@Context() context: { req: Request }) {
-    console.log('CONTEXT', context.req.user);
     return this.userService.getProfileData(context.req.user.id);
   }
   @Mutation(() => String)

@@ -7,10 +7,11 @@ import { JwtHelper } from 'src/helper/jwtHelper';
 import { UserModule } from 'src/user/user.module';
 import { AdminModule } from 'src/admin/admin.module';
 import { InstructorModule } from 'src/instructor/instructor.module';
+import { OptionalAuthGuard } from './optionalAuth.guard';
 
 @Module({
   imports: [UserModule, AdminModule, InstructorModule],
-  providers: [AuthResolver, AuthService, AuthGuard, JwtHelper],
-  exports: [JwtHelper, AuthGuard],
+  providers: [AuthResolver, AuthService, AuthGuard, JwtHelper, OptionalAuthGuard],
+  exports: [JwtHelper, AuthGuard, OptionalAuthGuard],
 })
-export class AuthModule {}
+export class AuthModule { }

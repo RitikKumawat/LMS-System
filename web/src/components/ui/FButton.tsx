@@ -1,12 +1,13 @@
-"use client";
-
 import React from "react";
+import { Button, ButtonProps } from "@mantine/core";
 import styles from "./ui.module.scss";
 
-interface FButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: "primary" | "secondary" | "ghost";
-    fullWidth?: boolean;
-}
+type NativeButtonProps = React.ComponentPropsWithoutRef<"button">;
+
+type FButtonProps = ButtonProps &
+    NativeButtonProps & {
+        variant?: "primary" | "secondary" | "ghost";
+    };
 
 export default function FButton({
     children,
@@ -26,12 +27,12 @@ export default function FButton({
     const widthStyle = fullWidth ? { width: "100%", display: "flex" } : {};
 
     return (
-        <button
+        <Button
             className={`${styles.btn} ${variantClass} ${className}`}
             style={{ ...widthStyle, ...style }}
             {...props}
         >
             {children}
-        </button>
+        </Button>
     );
 }

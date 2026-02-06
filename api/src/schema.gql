@@ -107,6 +107,24 @@ type CourseResponse {
   createdAt: DateTime!
 }
 
+type CourseWithEnrollment {
+  _id: ID!
+  title: String!
+  slug: String!
+  description: String
+  thumbnail_url: String!
+  category_id: ID!
+  level: String!
+  language: String!
+  price: Float!
+  is_published: Boolean!
+  created_by: ID!
+  published_at: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  is_enrolled: Boolean!
+}
+
 type PaginatedCourse {
   docs: [CourseResponse!]!
   totalDocs: Int!
@@ -175,18 +193,27 @@ type PaginatedCourseModuleForStudent {
   hasPrevPage: Boolean!
 }
 
+type CourseOrderResponse {
+  order_id: ID!
+  amount: Float!
+  currency: String!
+  razorpay_order_id: String!
+  status: String!
+}
+
 type Query {
   getProfileData: User!
   getAdminData: AdminResponse!
   category(id: String!): Category!
   getAllCategories(paginationInput: PaginationInput!): PaginatedCategory!
   getAllCourses(paginationInput: PaginationInput!, courseFilters: CourseFilters!): PaginatedCourse!
-  getCourseById(courseId: String!): Course!
+  getCourseById(courseId: String!): CourseWithEnrollment!
   getPublishedCourses(paginationInput: PaginationInput!, courseFilters: CourseFilters!): PaginatedCourse!
   getAllCourseModules(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModule!
   getCourseModuleById(courseModuleId: String!): CourseModuleResponse!
   getCourseModuleByCourseId(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModuleForStudent!
   getLessonById(lessonId: String!): LessonResponse!
+  getOrder(id: String!): CourseOrderResponse!
 }
 
 input PaginationInput {
@@ -225,6 +252,7 @@ type Mutation {
   createLesson(createLessonInput: CreateLessonInput!, document: Upload): Lesson!
   reorderLessons(reorderLessonInput: ReorderLessonInput!): Boolean!
   deleteLesson(lessonId: String!): String!
+  createCourseOrder(course_id: String!): CourseOrderResponse!
 }
 
 input VerifyOtpInput {

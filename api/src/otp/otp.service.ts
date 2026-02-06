@@ -21,7 +21,7 @@ export class OtpService {
     private readonly UserModel: Model<UserDocument>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   async signupVerify(data: VerifyOtpInput, res: Response) {
     const existingUser = await this.UserModel.exists({
@@ -154,8 +154,6 @@ export class OtpService {
     const existingUser = await this.UserModel.exists({
       email: email.toLowerCase().trim(),
     }).exec();
-    console.log('Existing user', existingUser);
-    console.log('TYPE', type);
     if (existingUser && AUTH_TYPE[type] === AUTH_TYPE.SIGNUP) {
       throw new HttpException('This email is already registered', 400);
     }

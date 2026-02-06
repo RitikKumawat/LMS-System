@@ -1,0 +1,9 @@
+mutation CreateCourseOrder($course_id: String!) {
+  createCourseOrder(course_id: $course_id) {
+    order_id
+    amount
+    currency
+    razorpay_order_id
+    status
+  }
+}

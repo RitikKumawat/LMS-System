@@ -25,16 +25,18 @@ query FindOneCourse($courseId: String!) {
   getCourseById(courseId: $courseId) {
     _id
     title
+    slug
     description
-    price
     thumbnail_url
     category_id
     level
     language
+    price
     is_published
     created_by
     published_at
     createdAt
     updatedAt
+    is_enrolled
   }
 }

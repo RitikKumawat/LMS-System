@@ -19,7 +19,6 @@ const theme = {
   fontFamily: `${roboto.style.fontFamily}, sans-serif`,
 };
 const DefaultLayout = ({ children }: { children: ReactNode }) => {
-  console.log("DEFAULT LAYOUT RENDER.....");
   return (
     <ApolloProvider client={apolloClient}>
       <MantineProvider theme={theme} defaultColorScheme="light">

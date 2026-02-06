@@ -90,6 +90,17 @@ export type CourseModule = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type CourseModuleForStudentResponse = {
+  __typename: 'CourseModuleForStudentResponse';
+  _id: Scalars['ID']['output'];
+  course_id: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  lessons: Array<LessonForStudentResponse>;
+  order: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+};
+
 export type CourseModuleResponse = {
   __typename: 'CourseModuleResponse';
   _id: Scalars['ID']['output'];
@@ -99,6 +110,15 @@ export type CourseModuleResponse = {
   lessons: Array<LessonResponse>;
   order: Scalars['Int']['output'];
   title: Scalars['String']['output'];
+};
+
+export type CourseOrderResponse = {
+  __typename: 'CourseOrderResponse';
+  amount: Scalars['Float']['output'];
+  currency: Scalars['String']['output'];
+  order_id: Scalars['ID']['output'];
+  razorpay_order_id: Scalars['String']['output'];
+  status: Scalars['String']['output'];
 };
 
 export type CourseResponse = {
@@ -114,6 +134,25 @@ export type CourseResponse = {
   slug: Scalars['String']['output'];
   thumbnail_url: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
+};
+
+export type CourseWithEnrollment = {
+  __typename: 'CourseWithEnrollment';
+  _id: Scalars['ID']['output'];
+  category_id: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  created_by: Scalars['ID']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  is_enrolled: Scalars['Boolean']['output'];
+  is_published: Scalars['Boolean']['output'];
+  language: Scalars['String']['output'];
+  level: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
+  published_at: Maybe<Scalars['DateTime']['output']>;
+  slug: Scalars['String']['output'];
+  thumbnail_url: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type CreateCategoryInput = {
@@ -186,6 +225,14 @@ export type Lesson = {
   video_url: Maybe<Scalars['String']['output']>;
 };
 
+export type LessonForStudentResponse = {
+  __typename: 'LessonForStudentResponse';
+  _id: Scalars['ID']['output'];
+  lesson_type: Maybe<Scalars['String']['output']>;
+  order: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+};
+
 export type LessonResponse = {
   __typename: 'LessonResponse';
   _id: Scalars['ID']['output'];
@@ -205,6 +252,7 @@ export type Mutation = {
   createCategory: Category;
   createCourse: Course;
   createCourseModule: CourseModule;
+  createCourseOrder: CourseOrderResponse;
   createInstructor: AdminResponse;
   createLesson: Lesson;
   deleteCourseModule: Scalars['String']['output'];
@@ -239,6 +287,11 @@ export type MutationCreateCourseArgs = {
 
 export type MutationCreateCourseModuleArgs = {
   createCourseModuleInput: CreateCourseModuleInput;
+};
+
+
+export type MutationCreateCourseOrderArgs = {
+  course_id: Scalars['String']['input'];
 };
 
 
@@ -331,6 +384,17 @@ export type PaginatedCourseModule = {
   totalPages: Scalars['Int']['output'];
 };
 
+export type PaginatedCourseModuleForStudent = {
+  __typename: 'PaginatedCourseModuleForStudent';
+  docs: Array<CourseModuleForStudentResponse>;
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPrevPage: Scalars['Boolean']['output'];
+  limit: Scalars['Int']['output'];
+  page: Scalars['Int']['output'];
+  totalDocs: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
 export type PaginationInput = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
@@ -343,10 +407,13 @@ export type Query = {
   getAllCategories: PaginatedCategory;
   getAllCourseModules: PaginatedCourseModule;
   getAllCourses: PaginatedCourse;
-  getCourseById: Course;
+  getCourseById: CourseWithEnrollment;
+  getCourseModuleByCourseId: PaginatedCourseModuleForStudent;
   getCourseModuleById: CourseModuleResponse;
   getLessonById: LessonResponse;
+  getOrder: CourseOrderResponse;
   getProfileData: User;
+  getPublishedCourses: PaginatedCourse;
 };
 
 
@@ -377,6 +444,12 @@ export type QueryGetCourseByIdArgs = {
 };
 
 
+export type QueryGetCourseModuleByCourseIdArgs = {
+  courseId: Scalars['String']['input'];
+  paginationInput: PaginationInput;
+};
+
+
 export type QueryGetCourseModuleByIdArgs = {
   courseModuleId: Scalars['String']['input'];
 };
@@ -384,6 +457,17 @@ export type QueryGetCourseModuleByIdArgs = {
 
 export type QueryGetLessonByIdArgs = {
   lessonId: Scalars['String']['input'];
+};
+
+
+export type QueryGetOrderArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryGetPublishedCoursesArgs = {
+  courseFilters: CourseFilters;
+  paginationInput: PaginationInput;
 };
 
 export type ReorderCourseModulesInput = {
@@ -527,7 +611,7 @@ export type GetCourseByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetCourseByIdQuery = { getCourseById: { __typename: 'Course', _id: string, title: string, slug: string, description: string | null, thumbnail_url: string, category_id: string, level: string, language: string, price: number, is_published: boolean, created_by: string, createdAt: unknown, updatedAt: unknown } };
+export type GetCourseByIdQuery = { getCourseById: { __typename: 'CourseWithEnrollment', _id: string, title: string, slug: string, description: string | null, thumbnail_url: string, category_id: string, level: string, language: string, price: number, is_published: boolean, created_by: string, published_at: unknown | null, createdAt: unknown, updatedAt: unknown, is_enrolled: boolean } };
 
 export type GetLessonByIdQueryVariables = Exact<{
   lessonId: Scalars['String']['input'];
@@ -557,6 +641,6 @@ export const GetAllCategoriesDocument = {"kind":"Document","definitions":[{"kind
 export const GetAllCourseModulesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllCourseModules"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllCourseModules"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"docs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"course_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"lessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"video_url"}},{"kind":"Field","name":{"kind":"Name","value":"pdf_url"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"duration_minutes"}},{"kind":"Field","name":{"kind":"Name","value":"is_preview"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalDocs"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPrevPage"}}]}}]}}]} as unknown as DocumentNode<GetAllCourseModulesQuery, GetAllCourseModulesQueryVariables>;
 export const GetCourseModuleByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCourseModuleById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseModuleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCourseModuleById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseModuleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseModuleId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"course_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetCourseModuleByIdQuery, GetCourseModuleByIdQueryVariables>;
 export const GetAllCoursesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAllCourses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseFilters"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CourseFilters"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAllCourses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paginationInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}}},{"kind":"Argument","name":{"kind":"Name","value":"courseFilters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseFilters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"docs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"category_name"}},{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalDocs"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPrevPage"}}]}}]}}]} as unknown as DocumentNode<GetAllCoursesQuery, GetAllCoursesQueryVariables>;
-export const GetCourseByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCourseById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCourseById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"category_id"}},{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_by"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetCourseByIdQuery, GetCourseByIdQueryVariables>;
+export const GetCourseByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCourseById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCourseById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"category_id"}},{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_by"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"is_enrolled"}}]}}]}}]} as unknown as DocumentNode<GetCourseByIdQuery, GetCourseByIdQueryVariables>;
 export const GetLessonByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetLessonById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lessonId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getLessonById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lessonId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lessonId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"video_url"}},{"kind":"Field","name":{"kind":"Name","value":"pdf_url"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"duration_minutes"}},{"kind":"Field","name":{"kind":"Name","value":"is_preview"}}]}}]}}]} as unknown as DocumentNode<GetLessonByIdQuery, GetLessonByIdQueryVariables>;
 export const GetAdminDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAdminData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAdminData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}}]}}]} as unknown as DocumentNode<GetAdminDataQuery, GetAdminDataQueryVariables>;

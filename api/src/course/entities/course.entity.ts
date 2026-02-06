@@ -1,5 +1,6 @@
 import { ObjectType, Field, ID, Float } from '@nestjs/graphql';
 import { COURSE_LEVEL } from 'src/enum/courseLevel';
+import { Course } from 'src/schemas/course.schema';
 
 @ObjectType()
 export class CourseResponse {
@@ -35,4 +36,11 @@ export class CourseResponse {
 
   @Field(() => Date)
   createdAt: Date;
+}
+
+
+@ObjectType()
+export class CourseWithEnrollment extends Course {
+  @Field(() => Boolean)
+  is_enrolled: boolean;
 }

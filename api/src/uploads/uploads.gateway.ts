@@ -14,8 +14,7 @@ import { Server, Socket } from 'socket.io';
   },
 })
 export class UploadsGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+  implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
@@ -29,7 +28,6 @@ export class UploadsGateway
         return;
       }
 
-      console.log('Client connected:', client.id);
     } catch {
       client.disconnect();
     }
@@ -45,7 +43,6 @@ export class UploadsGateway
 
   @SubscribeMessage('join-upload')
   handleJoin(client: Socket, uploadId: string) {
-    console.log('Upload socket joined:', uploadId);
     this.clients.set(uploadId, client.id);
   }
 

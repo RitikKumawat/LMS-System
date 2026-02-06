@@ -13,9 +13,8 @@ import { COLORS } from "@/assets/colors/colors";
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const [opened, { toggle }] = useDisclosure();
-  const { data, loading, error } = useQuery(GetProfileDataDocument);
+  const { data, loading, error } = useQuery(GetProfileDataDocument, { fetchPolicy: "network-only" });
   const router = useRouter();
-  console.log("DASHBOARD LAYOUT RENDER.....");
   useEffect(() => {
     if (error) {
       router.push(ROUTES.LOGIN);

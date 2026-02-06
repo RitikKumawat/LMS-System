@@ -112,6 +112,15 @@ export type CourseModuleResponse = {
   title: Scalars['String']['output'];
 };
 
+export type CourseOrderResponse = {
+  __typename: 'CourseOrderResponse';
+  amount: Scalars['Float']['output'];
+  currency: Scalars['String']['output'];
+  order_id: Scalars['ID']['output'];
+  razorpay_order_id: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+};
+
 export type CourseResponse = {
   __typename: 'CourseResponse';
   _id: Scalars['ID']['output'];
@@ -125,6 +134,25 @@ export type CourseResponse = {
   slug: Scalars['String']['output'];
   thumbnail_url: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
+};
+
+export type CourseWithEnrollment = {
+  __typename: 'CourseWithEnrollment';
+  _id: Scalars['ID']['output'];
+  category_id: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  created_by: Scalars['ID']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  is_enrolled: Scalars['Boolean']['output'];
+  is_published: Scalars['Boolean']['output'];
+  language: Scalars['String']['output'];
+  level: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
+  published_at: Maybe<Scalars['DateTime']['output']>;
+  slug: Scalars['String']['output'];
+  thumbnail_url: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type CreateCategoryInput = {
@@ -224,6 +252,7 @@ export type Mutation = {
   createCategory: Category;
   createCourse: Course;
   createCourseModule: CourseModule;
+  createCourseOrder: CourseOrderResponse;
   createInstructor: AdminResponse;
   createLesson: Lesson;
   deleteCourseModule: Scalars['String']['output'];
@@ -258,6 +287,11 @@ export type MutationCreateCourseArgs = {
 
 export type MutationCreateCourseModuleArgs = {
   createCourseModuleInput: CreateCourseModuleInput;
+};
+
+
+export type MutationCreateCourseOrderArgs = {
+  course_id: Scalars['String']['input'];
 };
 
 
@@ -373,10 +407,11 @@ export type Query = {
   getAllCategories: PaginatedCategory;
   getAllCourseModules: PaginatedCourseModule;
   getAllCourses: PaginatedCourse;
-  getCourseById: Course;
+  getCourseById: CourseWithEnrollment;
   getCourseModuleByCourseId: PaginatedCourseModuleForStudent;
   getCourseModuleById: CourseModuleResponse;
   getLessonById: LessonResponse;
+  getOrder: CourseOrderResponse;
   getProfileData: User;
   getPublishedCourses: PaginatedCourse;
 };
@@ -422,6 +457,11 @@ export type QueryGetCourseModuleByIdArgs = {
 
 export type QueryGetLessonByIdArgs = {
   lessonId: Scalars['String']['input'];
+};
+
+
+export type QueryGetOrderArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -507,7 +547,21 @@ export type FindOneCourseQueryVariables = Exact<{
 }>;
 
 
-export type FindOneCourseQuery = { getCourseById: { __typename: 'Course', _id: string, title: string, description: string | null, price: number, thumbnail_url: string, category_id: string, level: string, language: string, is_published: boolean, created_by: string, published_at: unknown | null, createdAt: unknown, updatedAt: unknown } };
+export type FindOneCourseQuery = { getCourseById: { __typename: 'CourseWithEnrollment', _id: string, title: string, slug: string, description: string | null, thumbnail_url: string, category_id: string, level: string, language: string, price: number, is_published: boolean, created_by: string, published_at: unknown | null, createdAt: unknown, updatedAt: unknown, is_enrolled: boolean } };
+
+export type CreateCourseOrderMutationVariables = Exact<{
+  course_id: Scalars['String']['input'];
+}>;
+
+
+export type CreateCourseOrderMutation = { createCourseOrder: { __typename: 'CourseOrderResponse', order_id: string, amount: number, currency: string, razorpay_order_id: string, status: string } };
+
+export type GetOrderQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetOrderQuery = { getOrder: { __typename: 'CourseOrderResponse', order_id: string, amount: number, currency: string, razorpay_order_id: string, status: string } };
 
 export type GetProfileDataQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -521,5 +575,7 @@ export const SignUpOtpVerifyDocument = {"kind":"Document","definitions":[{"kind"
 export const UserLogoutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UserLogout"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userLogout"}}]}}]} as unknown as DocumentNode<UserLogoutMutation, UserLogoutMutationVariables>;
 export const GetCourseModuleByCourseIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCourseModuleByCourseId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCourseModuleByCourseId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}}},{"kind":"Argument","name":{"kind":"Name","value":"paginationInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"docs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"course_id"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"lessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"order"}},{"kind":"Field","name":{"kind":"Name","value":"lesson_type"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalDocs"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPrevPage"}}]}}]}}]} as unknown as DocumentNode<GetCourseModuleByCourseIdQuery, GetCourseModuleByCourseIdQueryVariables>;
 export const FindAllCoursesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindAllCourses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PaginationInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseFilters"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CourseFilters"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getPublishedCourses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"paginationInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"paginationInput"}}},{"kind":"Argument","name":{"kind":"Name","value":"courseFilters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseFilters"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"docs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"category_name"}},{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalDocs"}},{"kind":"Field","name":{"kind":"Name","value":"limit"}},{"kind":"Field","name":{"kind":"Name","value":"totalPages"}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPrevPage"}}]}}]}}]} as unknown as DocumentNode<FindAllCoursesQuery, FindAllCoursesQueryVariables>;
-export const FindOneCourseDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindOneCourse"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCourseById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"category_id"}},{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_by"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<FindOneCourseQuery, FindOneCourseQueryVariables>;
+export const FindOneCourseDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindOneCourse"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCourseById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"courseId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"courseId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"thumbnail_url"}},{"kind":"Field","name":{"kind":"Name","value":"category_id"}},{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"language"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"is_published"}},{"kind":"Field","name":{"kind":"Name","value":"created_by"}},{"kind":"Field","name":{"kind":"Name","value":"published_at"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"is_enrolled"}}]}}]}}]} as unknown as DocumentNode<FindOneCourseQuery, FindOneCourseQueryVariables>;
+export const CreateCourseOrderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateCourseOrder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"course_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createCourseOrder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"course_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"course_id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"order_id"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"razorpay_order_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<CreateCourseOrderMutation, CreateCourseOrderMutationVariables>;
+export const GetOrderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getOrder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"order_id"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"razorpay_order_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetOrderQuery, GetOrderQueryVariables>;
 export const GetProfileDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetProfileData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getProfileData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerified"}}]}}]}}]} as unknown as DocumentNode<GetProfileDataQuery, GetProfileDataQueryVariables>;

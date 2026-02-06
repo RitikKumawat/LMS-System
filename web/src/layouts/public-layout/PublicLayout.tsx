@@ -9,8 +9,9 @@ import { useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
 
 const PublicLayout = ({ children }: { children: ReactNode }) => {
-    console.log("PUBLIC LAYOUT RENDER.....");
-    const { data, loading, error } = useQuery(GetProfileDataDocument);
+    const { data, loading, error } = useQuery(GetProfileDataDocument, {
+        fetchPolicy: "network-only"
+    });
     const router = useRouter();
 
     useEffect(() => {

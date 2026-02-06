@@ -11,6 +11,9 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
 import { Course } from 'src/schemas/course.schema';
 import { PaginationInput } from 'src/category/pagination.dto';
 import { Public } from 'src/decorators/public.decorator';
+import { CourseWithEnrollment } from './entities/course.entity';
+import { UseGuards } from '@nestjs/common';
+import { OptionalAuthGuard } from 'src/auth/optionalAuth.guard';
 
 @Resolver(() => Course)
 export class CourseResolver {
@@ -36,10 +39,11 @@ export class CourseResolver {
     return this.courseService.getAll(paginationInput, courseFilters);
   }
 
-  @Public()
-  @Query(() => Course)
-  getCourseById(@Args('courseId') courseId: string) {
-    return this.courseService.getById(courseId);
+  @UseGuards(OptionalAuthGuard)
+  @Query(() => CourseWithEnrollment)
+  getCourseById(@Args('courseId') courseId: string,
+    @Context() ctx,) {
+    return this.courseService.getById(courseId, ctx.req);
   }
 
   @Mutation(() => String)

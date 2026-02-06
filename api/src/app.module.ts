@@ -25,6 +25,9 @@ import { CourseModuleModule } from './course-module/course-module.module';
 import { LessonModule } from './lesson/lesson.module';
 import { UploadsGateway } from './uploads/uploads.gateway';
 import { UploadsModule } from './uploads/uploads.module';
+import { OrdersModule } from './orders/orders.module';
+import { EnrollmentModule } from './enrollment/enrollment.module';
+import { PaymentModule } from './payment/payment.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -57,6 +60,9 @@ import { UploadsModule } from './uploads/uploads.module';
     CourseModuleModule,
     LessonModule,
     UploadsModule,
+    OrdersModule,
+    EnrollmentModule,
+    PaymentModule,
     // CommonModule,
   ],
   controllers: [AppController],

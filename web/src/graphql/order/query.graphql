@@ -1,0 +1,9 @@
+query GetOrder($id: String!) {
+  getOrder(id: $id) {
+    order_id
+    amount
+    currency
+    razorpay_order_id
+    status
+  }
+}

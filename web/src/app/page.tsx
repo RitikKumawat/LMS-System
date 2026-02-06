@@ -153,13 +153,13 @@ export default function Home() {
                 experience modern education.
               </FTypography>
               <div className={styles.heroActions}>
-                <FButton onClick={() => (window.location.href = "/signup")}>
+                <FButton onClick={() => router.push(ROUTES.SIGNUP)}>
                   Start Learning
                   <ArrowRight size={20} />
                 </FButton>
                 <FButton
                   variant="secondary"
-                  onClick={() => (window.location.href = "/teachers")}
+                  onClick={() => router.push(ROUTES.LOGIN)}
                 >
                   For Teachers
                 </FButton>
@@ -279,7 +279,7 @@ export default function Home() {
             </div>
           </footer>
         </main>
-      </div>
+      </div >
     </>
   );
 }

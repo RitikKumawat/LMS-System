@@ -15,14 +15,19 @@ import {
   PaginatedResult,
 } from 'src/utils/paginate-aggregate';
 import { getAllCoursePipeline } from 'src/aggregation/getAllCourse.aggregation';
-import { CourseResponse } from './entities/course.entity';
+import { CourseResponse, CourseWithEnrollment } from './entities/course.entity';
+import { USER_ROLES } from 'src/enum/roles';
+import { Enrollment } from 'src/schemas/enrollment.schema';
+import { ENROLLMENT_STATUS } from 'src/enum/enrollmentStatus';
 
 @Injectable()
 export class CourseService {
   constructor(
     @InjectModel(Course.name)
     private readonly courseModel: Model<Course>,
-  ) {}
+    @InjectModel(Enrollment.name)
+    private readonly enrollmentModel: Model<Enrollment>,
+  ) { }
   async create(
     req: Request,
     createCourseInput: CreateCourseInput,
@@ -98,15 +103,34 @@ export class CourseService {
     return result;
   }
 
-  async getById(courseId: string): Promise<Course> {
+  async getById(courseId: string, req: Request): Promise<CourseWithEnrollment> {
     if (!courseId) {
       throw new HttpException('Course Id is required', 404);
     }
-    const course = await this.courseModel.findById(courseId);
+
+    const course = await this.courseModel.findById(courseId).lean();
     if (!course) {
       throw new HttpException('Course not found', 404);
     }
-    return course;
+
+    const user = req.user;
+
+    // Default: field not present
+    let is_enrolled = false;
+
+    if (user && user.roles === USER_ROLES.USER) {
+      const enrollmentExists = await this.enrollmentModel.exists({
+        user_id: user.id,
+        course_id: course._id,
+        status: ENROLLMENT_STATUS.ACTIVE,
+      });
+      is_enrolled = !!enrollmentExists;
+    }
+
+    return {
+      ...course,
+      is_enrolled,
+    };
   }
 
   async togglePublishStatus(courseId: string): Promise<string> {
@@ -120,7 +144,6 @@ export class CourseService {
 
     course.is_published = isPublishing;
     course.published_at = isPublishing ? new Date() : null;
-    console.log('Course published', course.published_at);
     await course.save();
 
     return isPublishing

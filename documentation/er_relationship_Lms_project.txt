@@ -80,7 +80,8 @@ erDiagram
         uuid id PK
         uuid user_id FK
         uuid course_id FK
-        string status
+        string status  -- ACTIVE | CANCELLED | REFUNDED
+        uuid payment_id FK
         timestamp enrolled_at
     }
 
@@ -144,3 +145,34 @@ erDiagram
     LESSONS ||--o{ LESSON_PROGRESS : "completed by"
 
     QUIZZES ||--o{ QUIZ_ATTEMPTS : "attempted by"
+
+    USERS ||--o{ ORDERS : places
+    ORDERS ||--o{ PAYMENTS : has
+    PAYMENTS ||--|| ENROLLMENTS : unlocks
+    COURSES ||--o{ ORDERS : purchased_for
+
+
+#Payment Integration
+
+ORDERS {
+    uuid id PK
+    uuid user_id FK
+    uuid course_id FK
+    string razorpay_order_id UNIQUE
+    decimal amount
+    string currency
+    string status  -- CREATED | PAID | FAILED
+    timestamp created_at
+}
+
+PAYMENTS {
+    uuid id PK
+    uuid order_id FK
+    string razorpay_payment_id UNIQUE
+    string razorpay_signature
+    decimal amount
+    string status  -- SUCCESS | FAILED
+    string method  -- UPI / CARD / NETBANKING
+    timestamp paid_at
+    json raw_response
+}

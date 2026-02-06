@@ -2,11 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
-import * as compression from 'compression';
+import compression from 'compression';
 // import * as morgan from 'morgan';
 import { ValidationPipe } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import * as express from 'express';
+import * as bodyParser from "body-parser";
 import { graphqlUploadExpress } from 'graphql-upload-ts';
 import { join } from 'path';
 async function bootstrap() {
@@ -52,6 +53,11 @@ async function bootstrap() {
   app.use(
     '/graphql',
     graphqlUploadExpress({ maxFileSize: 500000000, maxFiles: 10 }),
+  );
+
+  app.use(
+    '/webhooks/razorpay',
+    bodyParser.raw({ type: '*/*' }),
   );
 
   app.use(compression());
