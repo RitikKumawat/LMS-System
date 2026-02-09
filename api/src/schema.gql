@@ -125,6 +125,12 @@ type CourseWithEnrollment {
   is_enrolled: Boolean!
 }
 
+type CourseProgress {
+  totalLessons: Int!
+  completedLessons: Int!
+  percentage: Int!
+}
+
 type PaginatedCourse {
   docs: [CourseResponse!]!
   totalDocs: Int!
@@ -151,6 +157,7 @@ type LessonForStudentResponse {
   title: String!
   order: Int!
   lesson_type: String
+  duration_minutes: Int!
 }
 
 type CourseModuleResponse {
@@ -209,6 +216,7 @@ type Query {
   getAllCourses(paginationInput: PaginationInput!, courseFilters: CourseFilters!): PaginatedCourse!
   getCourseById(courseId: String!): CourseWithEnrollment!
   getPublishedCourses(paginationInput: PaginationInput!, courseFilters: CourseFilters!): PaginatedCourse!
+  getCourseProgress(courseId: String!): CourseProgress!
   getAllCourseModules(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModule!
   getCourseModuleById(courseModuleId: String!): CourseModuleResponse!
   getCourseModuleByCourseId(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModuleForStudent!

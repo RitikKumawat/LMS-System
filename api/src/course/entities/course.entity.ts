@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID, Float } from '@nestjs/graphql';
+import { ObjectType, Field, ID, Float, Int } from '@nestjs/graphql';
 import { COURSE_LEVEL } from 'src/enum/courseLevel';
 import { Course } from 'src/schemas/course.schema';
 
@@ -43,4 +43,16 @@ export class CourseResponse {
 export class CourseWithEnrollment extends Course {
   @Field(() => Boolean)
   is_enrolled: boolean;
+}
+
+@ObjectType()
+export class CourseProgress {
+  @Field(() => Int)
+  totalLessons: number;
+
+  @Field(() => Int)
+  completedLessons: number;
+
+  @Field(() => Int)
+  percentage: number;
 }

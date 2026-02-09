@@ -59,6 +59,7 @@
 }
 
 .btnPrimary {
+    @extend .btn;
     background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%);
     color: white;
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
@@ -70,6 +71,7 @@
 }
 
 .btnSecondary {
+    @extend .btn;
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     color: white;
@@ -82,6 +84,7 @@
 }
 
 .btnGhost {
+    @extend .btn;
     background: transparent;
     color: #9CA3AF;
     /* text-secondary */
@@ -98,4 +101,22 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+}
+
+
+.content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.loading .content {
+    visibility: hidden;
+}
+
+.loader {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

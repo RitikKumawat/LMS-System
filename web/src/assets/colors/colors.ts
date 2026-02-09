@@ -8,6 +8,11 @@ export const COLORS = {
     glassHover: "rgba(255, 255, 255, 0.1)",
   },
 
+  primary: {
+    main: "#3B82F6",
+    light: "#60A5FA",
+  },
+
   text: {
     primary: "#F9FAFB",
     secondary: "#9CA3AF",
@@ -15,6 +20,7 @@ export const COLORS = {
   },
 
   accent: {
+    main: "#8B5CF6",
     blue: "#3B82F6",
     cyan: "#06B6D4",
     violet: "#8B5CF6",

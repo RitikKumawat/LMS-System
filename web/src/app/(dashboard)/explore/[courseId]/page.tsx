@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@apollo/client/react";
 import {
     CreateCourseOrderDocument,
     FindOneCourseDocument,
+    GetCourseProgressDocument,
     GetOrderDocument,
     GetProfileDataDocument,
 } from "@/generated/graphql";
@@ -21,6 +22,7 @@ import {
     Paper,
     Divider,
     Box,
+    Progress,
 } from "@mantine/core";
 import { useParams, useRouter } from "next/navigation";
 import { COLORS } from "@/assets/colors/colors";
@@ -30,6 +32,7 @@ import CourseModulesAccordion from "@/components/course/CourseModulesAccordion";
 import { startRazorpayPayment } from "@/lib/razorpay/startRazorpayPayment";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { notifications } from "@mantine/notifications";
+import GlassProgressBar from "@/components/ui/GlassProgressBar";
 
 export default function CourseDetailPage() {
     const params = useParams();
@@ -50,6 +53,10 @@ export default function CourseDetailPage() {
         }
     );
 
+    const { data: courseProgress, loading: courseProgressLoading } = useQuery(GetCourseProgressDocument, {
+        variables: { courseId: courseId as string },
+        skip: !courseId,
+    })
     /* ===================== USER QUERY ===================== */
 
     const { data: userData } = useQuery(GetProfileDataDocument, { fetchPolicy: "network-only" });
@@ -289,16 +296,24 @@ export default function CourseDetailPage() {
                                     alt={course.title}
                                 />
 
-                                <Text size="3xl" fw={700}>
-                                    ₹{course.price}
-                                </Text>
-
+                                {
+                                    !course.is_enrolled && (
+                                        <Text size="3xl" fw={700}>
+                                            ₹{course.price}
+                                        </Text>
+                                    )
+                                }
+                                {
+                                    course.is_enrolled && courseProgress?.getCourseProgress && courseProgress?.getCourseProgress?.percentage > 0 && (
+                                        <GlassProgressBar value={courseProgress?.getCourseProgress.percentage as number} />
+                                    )
+                                }
                                 <FButton
                                     loading={creatingOrder || !!pollingOrderId}
                                     onClick={handleEnroll}
                                     disabled={course.is_enrolled || creatingOrder || !!pollingOrderId}
                                 >
-                                    {course.is_enrolled ? "Enrolled" : "Enroll Now"}
+                                    {course.is_enrolled ? "Continue Learning" : "Enroll Now"}
                                 </FButton>
                             </Stack>
                         </Paper>

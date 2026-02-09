@@ -62,6 +62,7 @@ export default function CourseModulesAccordion({ courseId }: CourseModulesAccord
                                             <Text size="sm" style={{ color: COLORS.text.secondary }}>{lesson.title}</Text>
                                         </Group>
                                         <Text size="xs" c="dimmed">{lesson.lesson_type}</Text>
+                                        <Text size="xs" c="dimmed">{lesson.duration_minutes} minutes</Text>
                                     </Group>
                                 </Paper>
                             ))}

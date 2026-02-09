@@ -41,4 +41,7 @@ export class LessonForStudentResponse {
 
   @Field(() => String, { nullable: true })
   lesson_type?: string;
+
+  @Field(() => Int)
+  duration_minutes: number;
 }

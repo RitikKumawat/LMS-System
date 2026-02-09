@@ -15,10 +15,12 @@ import {
   PaginatedResult,
 } from 'src/utils/paginate-aggregate';
 import { getAllCoursePipeline } from 'src/aggregation/getAllCourse.aggregation';
-import { CourseResponse, CourseWithEnrollment } from './entities/course.entity';
+import { CourseProgress, CourseResponse, CourseWithEnrollment } from './entities/course.entity';
 import { USER_ROLES } from 'src/enum/roles';
 import { Enrollment } from 'src/schemas/enrollment.schema';
 import { ENROLLMENT_STATUS } from 'src/enum/enrollmentStatus';
+import { getCourseProgressPipeline } from 'src/aggregation/getCourseProgress.aggregation';
+import { Lesson } from 'src/schemas/lesson.schema';
 
 @Injectable()
 export class CourseService {
@@ -27,6 +29,8 @@ export class CourseService {
     private readonly courseModel: Model<Course>,
     @InjectModel(Enrollment.name)
     private readonly enrollmentModel: Model<Enrollment>,
+    @InjectModel(Lesson.name)
+    private readonly lessonModel: Model<Lesson>,
   ) { }
   async create(
     req: Request,
@@ -149,5 +153,49 @@ export class CourseService {
     return isPublishing
       ? 'Course published successfully'
       : 'Course unpublished successfully';
+  }
+
+  async getCourseProgress(courseId: string, req: Request): Promise<CourseProgress> {
+    if (!courseId) {
+      throw new HttpException('Course Id is required', 404);
+    }
+
+    const course = await this.courseModel.findById(courseId).lean();
+    if (!course) {
+      throw new HttpException('Course not found', 404);
+    }
+
+    const user = req.user;
+
+    if (user && user.roles === USER_ROLES.USER) {
+      const enrollmentExists = await this.enrollmentModel.exists({
+        user_id: user.id,
+        course_id: course._id,
+        status: ENROLLMENT_STATUS.ACTIVE,
+      });
+      if (!enrollmentExists) {
+        throw new HttpException('You are not enrolled in this course', 404);
+      }
+    }
+    const pipeline = await getCourseProgressPipeline(courseId, user.id);
+    const result = await this.lessonModel.aggregate(pipeline);
+
+    if (!result.length) {
+      return {
+        totalLessons: 0,
+        completedLessons: 0,
+        percentage: 0,
+      };
+    }
+
+    const { totalLessons, completedLessons } = result[0];
+
+    return {
+      totalLessons,
+      completedLessons,
+      percentage: Math.floor(
+        (completedLessons / totalLessons) * 100
+      ),
+    };
   }
 }

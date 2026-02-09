@@ -53,7 +53,7 @@ export function getAllCourseModuleForStudentPipeline(courseId: string): Pipeline
                             _id: '$$lesson._id',
                             title: '$$lesson.title',
                             order: '$$lesson.order',
-                            duration: '$$lesson.duration',
+                            duration_minutes: '$$lesson.duration_minutes',
                             lesson_type: '$$lesson.lesson_type',
                         },
                     },

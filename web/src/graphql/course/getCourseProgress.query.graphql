@@ -1,0 +1,7 @@
+query GetCourseProgress($courseId: String!) {
+  getCourseProgress(courseId: $courseId) {
+    totalLessons
+    completedLessons
+    percentage
+  }
+}

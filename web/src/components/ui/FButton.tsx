@@ -1,19 +1,22 @@
 import React from "react";
-import { Button, ButtonProps } from "@mantine/core";
+import { Button, ButtonProps, Loader } from "@mantine/core";
 import styles from "./ui.module.scss";
 
 type NativeButtonProps = React.ComponentPropsWithoutRef<"button">;
 
-type FButtonProps = ButtonProps &
+type FButtonProps =
     NativeButtonProps & {
         variant?: "primary" | "secondary" | "ghost";
+        loading?: boolean;
+        fullWidth?: boolean;
     };
 
 export default function FButton({
     children,
     variant = "primary",
-    fullWidth = false,
     className = "",
+    loading = false,
+    fullWidth = false,
     style,
     ...props
 }: FButtonProps) {
@@ -27,12 +30,24 @@ export default function FButton({
     const widthStyle = fullWidth ? { width: "100%", display: "flex" } : {};
 
     return (
-        <Button
-            className={`${styles.btn} ${variantClass} ${className}`}
-            style={{ ...widthStyle, ...style }}
+        <button
+            className={`${styles.btn} ${variantClass} ${loading ? styles.loading : ""} ${className}`}
+            style={{
+                width: fullWidth ? "100%" : undefined,
+                ...style,
+            }}
+            disabled={loading}
             {...props}
         >
-            {children}
-        </Button>
+            {/* Keeps width */}
+            <span className={styles.content}>{children}</span>
+
+            {/* Loader overlay */}
+            {loading && (
+                <span className={styles.loader}>
+                    <Loader color="white" size={16} />
+                </span>
+            )}
+        </button>
     );
 }

@@ -12,6 +12,7 @@ query GetCourseModuleByCourseId($courseId: String!, $paginationInput: Pagination
         title
         order
         lesson_type
+        duration_minutes
       }
     }
     totalDocs

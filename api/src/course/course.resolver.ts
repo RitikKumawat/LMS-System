@@ -6,12 +6,12 @@ import {
   PaginatedCourse,
 } from './dto/create-course.input';
 import { Roles } from 'src/decorators/roles.decorator';
-import { ADMIN_ROLES } from 'src/enum/roles';
+import { ADMIN_ROLES, USER_ROLES } from 'src/enum/roles';
 import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
 import { Course } from 'src/schemas/course.schema';
 import { PaginationInput } from 'src/category/pagination.dto';
 import { Public } from 'src/decorators/public.decorator';
-import { CourseWithEnrollment } from './entities/course.entity';
+import { CourseProgress, CourseWithEnrollment } from './entities/course.entity';
 import { UseGuards } from '@nestjs/common';
 import { OptionalAuthGuard } from 'src/auth/optionalAuth.guard';
 
@@ -60,5 +60,12 @@ export class CourseResolver {
   ) {
     courseFilters.isPublished = true;
     return this.courseService.getAll(paginationInput, courseFilters);
+  }
+
+  @Roles(USER_ROLES.USER)
+  @Query(() => CourseProgress)
+  getCourseProgress(@Args('courseId') courseId: string,
+    @Context() ctx,) {
+    return this.courseService.getCourseProgress(courseId, ctx.req);
   }
 }
