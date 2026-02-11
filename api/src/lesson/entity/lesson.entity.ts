@@ -1,4 +1,5 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { LESSON_STATUS } from 'src/enum/lessonStatus';
 
 @ObjectType()
 export class LessonResponse {
@@ -44,4 +45,10 @@ export class LessonForStudentResponse {
 
   @Field(() => Int)
   duration_minutes: number;
+
+  @Field(() => Boolean)
+  isUnlocked: boolean;
+
+  @Field(() => LESSON_STATUS, { nullable: true })
+  status?: LESSON_STATUS;
 }

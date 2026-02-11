@@ -158,6 +158,14 @@ type LessonForStudentResponse {
   order: Int!
   lesson_type: String
   duration_minutes: Int!
+  isUnlocked: Boolean!
+  status: LESSON_STATUS
+}
+
+enum LESSON_STATUS {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
 }
 
 type CourseModuleResponse {

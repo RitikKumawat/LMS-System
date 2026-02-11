@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@apollo/client/react";
-import { GetCourseModuleByCourseIdDocument } from "@/generated/graphql";
-import { Accordion, Text, Loader, Center, Stack, ThemeIcon, Group, Paper } from "@mantine/core";
+import { GetCourseModuleByCourseIdDocument, Lesson_Status } from "@/generated/graphql";
+import { Accordion, Text, Loader, Center, Stack, ThemeIcon, Group, Paper, Button, Flex } from "@mantine/core";
 import { COLORS } from "@/assets/colors/colors";
 import { PlayCircle, FileText, CheckCircle } from "lucide-react";
 
@@ -17,6 +17,7 @@ export default function CourseModulesAccordion({ courseId }: CourseModulesAccord
             paginationInput: { page: 1, limit: 100 } // Fetch all modules, adjust limit if needed
         },
         skip: !courseId,
+        fetchPolicy: "network-only"
     });
 
     if (loading) {
@@ -54,15 +55,31 @@ export default function CourseModulesAccordion({ courseId }: CourseModulesAccord
                     </Accordion.Control>
                     <Accordion.Panel>
                         <Stack gap="xs">
-                            {module.lessons?.map((lesson: any) => (
+                            {module.lessons?.map((lesson) => (
                                 <Paper key={lesson._id} p="sm" radius="sm" withBorder style={{ borderColor: COLORS.border.glass, backgroundColor: "rgba(255,255,255,0.02)" }}>
                                     <Group justify="space-between">
                                         <Group gap="sm">
                                             <PlayCircle size={16} color={COLORS.text.primary} />
                                             <Text size="sm" style={{ color: COLORS.text.secondary }}>{lesson.title}</Text>
                                         </Group>
-                                        <Text size="xs" c="dimmed">{lesson.lesson_type}</Text>
-                                        <Text size="xs" c="dimmed">{lesson.duration_minutes} minutes</Text>
+                                        {/* <Text size="xs" c="dimmed">{lesson.lesson_type}</Text> */}
+                                        <Flex align="center" gap="sm">
+
+                                            <Text size="xs" c="dimmed">{lesson.duration_minutes} minutes</Text>
+                                            {
+                                                lesson.isUnlocked && (
+                                                    <Button
+                                                        variant="subtle"
+                                                        size="xs"
+                                                        leftSection={<PlayCircle size={14} />}
+                                                    // onClick={() => handleLessonClick(lesson)}
+                                                    >
+                                                        {lesson.status?.toLowerCase() === Lesson_Status.NotStarted.toLowerCase() ? "Start Lesson" : lesson.status?.toLowerCase() === Lesson_Status.InProgress.toLowerCase() ? "Continue Lesson" : "View Lesson"}
+                                                    </Button>
+
+                                                )
+                                            }
+                                        </Flex>
                                     </Group>
                                 </Paper>
                             ))}

@@ -50,8 +50,9 @@ export class OptionalAuthGuard implements CanActivate {
             // ✅ Validate token and ATTACH user
             const user = this.jwtHelper.validateToken(token);
             ctx.user = user;
-        } catch {
+        } catch (error) {
             // ❌ swallow all errors → guest mode
+            console.log("error in optional auth guard", error)
         }
 
         return true;

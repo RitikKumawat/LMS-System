@@ -14,6 +14,8 @@ import {
 } from './entity/course-module.entity';
 import { PaginationInput } from 'src/category/pagination.dto';
 import { Public } from 'src/decorators/public.decorator';
+import { UseGuards } from '@nestjs/common';
+import { OptionalAuthGuard } from 'src/auth/optionalAuth.guard';
 
 @Resolver()
 export class CourseModuleResolver {
@@ -70,9 +72,11 @@ export class CourseModuleResolver {
   }
 
   @Public()
+  @UseGuards(OptionalAuthGuard)
   @Query(() => PaginatedCourseModuleForStudent)
   getCourseModuleByCourseId(@Args('courseId') courseId: string,
-    @Args('paginationInput') paginationInput: PaginationInput,) {
-    return this.courseModuleService.getCourseModuleByCourseId(courseId, paginationInput);
+    @Args('paginationInput') paginationInput: PaginationInput,
+    @Context() ctx,) {
+    return this.courseModuleService.getCourseModuleByCourseId(courseId, paginationInput, ctx.req);
   }
 }

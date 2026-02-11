@@ -28,6 +28,7 @@ import { UploadsModule } from './uploads/uploads.module';
 import { OrdersModule } from './orders/orders.module';
 import { EnrollmentModule } from './enrollment/enrollment.module';
 import { PaymentModule } from './payment/payment.module';
+import { LessonProgressModule } from './lesson-progress/lesson-progress.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -63,6 +64,7 @@ import { PaymentModule } from './payment/payment.module';
     OrdersModule,
     EnrollmentModule,
     PaymentModule,
+    LessonProgressModule,
     // CommonModule,
   ],
   controllers: [AppController],

@@ -162,8 +162,10 @@ export class CourseModuleService {
 
   async getCourseModuleByCourseId(courseId: string,
     paginationInput: PaginationInput,
+    req: Request
   ): Promise<PaginatedResult<CourseModuleForStudentResponse>> {
-    const pipeline = getAllCourseModuleForStudentPipeline(courseId);
+    const userId = req.user?.id ?? null;
+    const pipeline = getAllCourseModuleForStudentPipeline(courseId, userId);
     const result = await paginateAggregate<CourseModuleForStudentResponse>(
       this.courseModuleModel,
       pipeline,
