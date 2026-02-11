@@ -4,7 +4,7 @@ import { Request } from 'express';
 import { FileUpload } from 'graphql-upload-ts';
 import { generateSlug } from 'src/utils/slug.util';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { validateSlugUniqueness } from 'src/utils/validateSlugUniqueness.utils';
 import { generateFileUrl } from 'src/utils/generateFileUrl.util';
 import { validateFileUpload } from 'src/utils/checkFileValidation';
@@ -124,7 +124,7 @@ export class CourseService {
 
     if (user && user.roles === USER_ROLES.USER) {
       const enrollmentExists = await this.enrollmentModel.exists({
-        user_id: user.id,
+        user_id: new Types.ObjectId(user.id),
         course_id: course._id,
         status: ENROLLMENT_STATUS.ACTIVE,
       });
@@ -169,7 +169,7 @@ export class CourseService {
 
     if (user && user.roles === USER_ROLES.USER) {
       const enrollmentExists = await this.enrollmentModel.exists({
-        user_id: user.id,
+        user_id: new Types.ObjectId(user.id),
         course_id: course._id,
         status: ENROLLMENT_STATUS.ACTIVE,
       });

@@ -11,6 +11,7 @@ import { PaymentService } from 'src/payment/payment.service';
 import { EnrollmentService } from 'src/enrollment/enrollment.service';
 import { PaymentStatus } from 'src/enum/paymentStatus';
 import Razorpay from 'razorpay';
+import { LessonProgressService } from 'src/lesson-progress/lesson-progress.service';
 @Injectable()
 export class OrdersService {
     constructor(
@@ -19,6 +20,7 @@ export class OrdersService {
 
         private readonly paymentService: PaymentService,
         private readonly enrollmentService: EnrollmentService,
+        private readonly lessonProgressService: LessonProgressService,
 
         @Inject('RAZORPAY')
         private readonly razorpay: Razorpay,
@@ -51,7 +53,7 @@ export class OrdersService {
             /* ===================== 2️⃣ Check existing DB order ===================== */
 
             const existingOrder = await this.orderModel.findOne({
-                user_id: user.id,
+                user_id: new Types.ObjectId(user.id),
                 course_id: course._id,
                 status: OrderStatus.CREATED,
             }).session(session);
@@ -109,7 +111,7 @@ export class OrdersService {
             const [order] = await this.orderModel.create(
                 [
                     {
-                        user_id: user.id,
+                        user_id: new Types.ObjectId(user.id),
                         course_id: course._id,
                         amount: razorpayOrder.amount,
                         currency: razorpayOrder.currency,
@@ -235,6 +237,7 @@ export class OrdersService {
             course_id: order.course_id,
             payment_id: new mongoose.Types.ObjectId(payment._id),
         });
+        await this.lessonProgressService.unlockInitialLessons(order.user_id.toString(), order.course_id.toString());
     }
 
     private async handlePaymentFailed(payload: any) {

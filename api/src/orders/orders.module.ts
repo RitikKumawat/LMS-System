@@ -7,10 +7,11 @@ import { RazorpayProvider } from 'src/lib/razorpay.provider';
 import { PaymentService } from 'src/payment/payment.service';
 import { EnrollmentService } from 'src/enrollment/enrollment.service';
 import { OrdersController } from './orders.controller';
+import { LessonProgressService } from 'src/lesson-progress/lesson-progress.service';
 
 @Module({
   imports: [MongooseModule.forFeature(SCHEMAS)],
-  providers: [OrdersResolver, OrdersService, RazorpayProvider, PaymentService, EnrollmentService],
+  providers: [OrdersResolver, OrdersService, RazorpayProvider, PaymentService, EnrollmentService, LessonProgressService],
   controllers: [OrdersController]
 })
 export class OrdersModule { }

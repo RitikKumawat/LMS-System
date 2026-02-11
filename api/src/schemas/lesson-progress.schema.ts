@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { LESSON_STATUS } from 'src/enum/lessonStatus';
 
 export type LessonProgressDocument = HydratedDocument<LessonProgress>;
 
@@ -18,13 +19,21 @@ export class LessonProgress {
   @Field(() => String)
   user_id: string;
 
-  @Prop({ default: false })
-  @Field(() => Boolean)
-  is_completed: boolean;
+  @Prop({
+    type: String,
+    enum: LESSON_STATUS,
+    default: LESSON_STATUS.NOT_STARTED,
+  })
+  @Field(() => String)
+  status: LESSON_STATUS;
 
   @Prop({ type: Date, default: null })
   @Field(() => Date, { nullable: true })
   completed_at: Date | null;
+
+  @Prop({ type: Date, default: null })
+  @Field(() => Date, { nullable: true })
+  last_accessed_at: Date | null;
 }
 
 export const LessonProgressSchema =

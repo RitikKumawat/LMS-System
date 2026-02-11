@@ -13,6 +13,8 @@ query GetCourseModuleByCourseId($courseId: String!, $paginationInput: Pagination
         order
         lesson_type
         duration_minutes
+        isUnlocked
+        status
       }
     }
     totalDocs

@@ -2,10 +2,10 @@
 
 import { useQuery } from "@apollo/client/react";
 import { FindOneCourseDocument } from "@/generated/graphql";
-import { Container, Title, Text, Button, Image, Group, Stack, Badge, Loader, Center, Grid, Paper, Divider, Avatar, Box } from "@mantine/core";
+import { Title, Text, Image, Group, Stack, Loader, Center, Grid, Paper, Divider, Box } from "@mantine/core";
 import { useParams, useRouter } from "next/navigation";
 import { COLORS } from "@/assets/colors/colors";
-import { Clock, BarChart, Users, Star, ArrowLeft } from "lucide-react";
+import { BarChart, Users } from "lucide-react";
 import FButton from "@/components/ui/FButton";
 import Navbar from "@/components/navbar/Navbar";
 import FContainer from "@/ui/FContainer/FContainer";
@@ -18,6 +18,7 @@ export default function CourseDetailPage() {
     const { data, loading, error } = useQuery(FindOneCourseDocument, {
         variables: { courseId: courseId as string },
         skip: !courseId,
+        fetchPolicy: "network-only",
     });
 
     if (loading) {

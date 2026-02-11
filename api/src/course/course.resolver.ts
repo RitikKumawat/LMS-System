@@ -39,6 +39,7 @@ export class CourseResolver {
     return this.courseService.getAll(paginationInput, courseFilters);
   }
 
+  @Public()
   @UseGuards(OptionalAuthGuard)
   @Query(() => CourseWithEnrollment)
   getCourseById(@Args('courseId') courseId: string,

@@ -50,12 +50,14 @@ export default function CourseDetailPage() {
         {
             variables: { courseId: courseId as string },
             skip: !courseId,
+            fetchPolicy: "network-only",
         }
     );
 
     const { data: courseProgress, loading: courseProgressLoading } = useQuery(GetCourseProgressDocument, {
         variables: { courseId: courseId as string },
         skip: !courseId,
+        fetchPolicy: "network-only",
     })
     /* ===================== USER QUERY ===================== */
 
@@ -81,7 +83,6 @@ export default function CourseDetailPage() {
     } = useQuery(GetOrderDocument, {
         variables: { id: pollingOrderId as string },
         skip: !pollingOrderId,
-        notifyOnNetworkStatusChange: true,
     });
 
     /* ===================== HANDLE POLLING ERROR ===================== */
