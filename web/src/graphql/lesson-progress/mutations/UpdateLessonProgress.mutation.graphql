@@ -1,0 +1,6 @@
+mutation UpdateLessonProgress($lessonId: String!, $operation: LESSON_OPERATION!) {
+  updateLessonProgress(lessonId: $lessonId, operation: $operation) {
+    _id
+    status
+  }
+}

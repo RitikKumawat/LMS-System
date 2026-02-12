@@ -71,7 +71,7 @@ export const DashboardNavbar = () => {
     })
     const links = [
         { icon: LayoutDashboard, label: "Dashboard", route: ROUTES.DASHBOARD },
-        { icon: BookOpen, label: "Explore", route: "/explore" },
+        { icon: BookOpen, label: "Explore", route: "/courses" },
         // Add more routes as they become available
     ];
 

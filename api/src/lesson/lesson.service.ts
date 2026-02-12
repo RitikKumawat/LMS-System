@@ -7,14 +7,20 @@ import { Request } from 'express';
 import { FileUpload } from 'graphql-upload-ts';
 import { validateFileUpload } from 'src/utils/checkFileValidation';
 import { generateFileUrl } from 'src/utils/generateFileUrl.util';
-import { LessonResponse } from './entity/lesson.entity';
+import { LessonProgressUpdate, LessonResponse } from './entity/lesson.entity';
+import { LessonProgress, LessonProgressDocument } from 'src/schemas/lesson-progress.schema';
+import { LESSON_STATUS } from 'src/enum/lessonStatus';
+import { LESSON_OPERATION } from 'src/enum/lessonOperation';
 
 @Injectable()
 export class LessonService {
   constructor(
     @InjectModel(Lesson.name)
     private readonly lessonModel: Model<LessonDocument>,
-  ) {}
+
+    @InjectModel(LessonProgress.name)
+    private readonly lessonProgressModel: Model<LessonProgressDocument>,
+  ) { }
 
   async create(
     req: Request,
@@ -128,6 +134,59 @@ export class LessonService {
       return 'Lesson deleted successfully';
     } catch (error) {
       console.error('Error deleting the Lesson', error);
+      throw new HttpException('Something went wrong', 500);
+    }
+  }
+
+  private readonly operationHandlers: Record<
+    LESSON_OPERATION,
+    (lesson: Lesson, progress: LessonProgress, req: Request) => Promise<any>
+  > = {
+      [LESSON_OPERATION.START]: this.handleStart.bind(this),
+      [LESSON_OPERATION.COMPLETED]: this.handleComplete.bind(this),
+      [LESSON_OPERATION.VISIT]: this.handleVisit.bind(this),
+    };
+
+  private async handleStart(lesson: Lesson, progress: LessonProgress, req: Request) {
+    progress.status = LESSON_STATUS.IN_PROGRESS;
+    progress.last_accessed_at = new Date();
+  }
+  private async handleComplete(lesson: Lesson, progress: LessonProgress, req: Request) {
+    progress.status = LESSON_STATUS.COMPLETED;
+    progress.completed_at = new Date();
+  }
+  private async handleVisit(lesson: Lesson, progress: LessonProgress, req: Request) {
+    progress.last_accessed_at = new Date();
+  }
+  async updateLessonProgress(lessonId: string, req: Request, operation: LESSON_OPERATION): Promise<LessonProgressUpdate> {
+    try {
+      if (!lessonId) {
+        throw new HttpException('Please provide lesson id', 404);
+      }
+      const lesson = await this.lessonModel.findById(lessonId);
+      if (!lesson) {
+        throw new HttpException('Lesson does not exists', 404);
+      }
+      const lesson_progress = await this.lessonProgressModel.findOne({
+        lesson_id: new Types.ObjectId(lessonId),
+        user_id: new Types.ObjectId(req.user.id),
+      });
+      if (!lesson_progress) {
+        throw new HttpException('Lesson progress does not exists', 404);
+      }
+      const handler = this.operationHandlers[operation];
+      if (!handler) {
+        throw new HttpException('Invalid operation', 400);
+      }
+      await handler(lesson, lesson_progress, req);
+      await lesson_progress.save();
+
+      return {
+        _id: lesson._id,
+        status: lesson_progress.status
+      }
+    } catch (error) {
+      console.error('Error starting the lesson', error);
       throw new HttpException('Something went wrong', 500);
     }
   }

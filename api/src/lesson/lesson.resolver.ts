@@ -2,17 +2,18 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { LessonService } from './lesson.service';
 import { Lesson } from 'src/schemas/lesson.schema';
 import { Roles } from 'src/decorators/roles.decorator';
-import { ADMIN_ROLES } from 'src/enum/roles';
+import { ADMIN_ROLES, USER_ROLES } from 'src/enum/roles';
 import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
 import {
   CreateLessonInput,
   ReorderLessonInput,
 } from './dto/create-lesson.input';
-import { LessonResponse } from './entity/lesson.entity';
+import { LessonProgressUpdate, LessonResponse } from './entity/lesson.entity';
+import { LESSON_OPERATION } from 'src/enum/lessonOperation';
 
 @Resolver()
 export class LessonResolver {
-  constructor(private readonly lessonService: LessonService) {}
+  constructor(private readonly lessonService: LessonService) { }
 
   @Mutation(() => Lesson)
   @Roles(ADMIN_ROLES.INSTRUCTOR)
@@ -46,5 +47,15 @@ export class LessonResolver {
     lessonId: string,
   ) {
     return this.lessonService.deleteLesson(lessonId);
+  }
+
+  @Mutation(() => LessonProgressUpdate)
+  @Roles(USER_ROLES.USER)
+  updateLessonProgress(@Args('lessonId') lessonId: string,
+    @Args('operation', { type: () => LESSON_OPERATION })
+    operation: LESSON_OPERATION,
+    @Context() ctx,
+  ): Promise<LessonProgressUpdate> {
+    return this.lessonService.updateLessonProgress(lessonId, ctx.req, operation);
   }
 }

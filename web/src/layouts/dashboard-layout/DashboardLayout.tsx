@@ -13,53 +13,58 @@ import { COLORS } from "@/assets/colors/colors";
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const [opened, { toggle }] = useDisclosure();
-  const { data, loading, error } = useQuery(GetProfileDataDocument, { fetchPolicy: "network-only" });
+  const { data, loading, error } = useQuery(GetProfileDataDocument, {
+    fetchPolicy: "network-only",
+  });
   const router = useRouter();
-  useEffect(() => {
-    if (error) {
-      router.push(ROUTES.LOGIN);
-    }
-  }, [error, router]);
 
-  if (loading) {
+  useEffect(() => {
+    if (!loading && (!data?.getProfileData || error)) {
+      router.replace(ROUTES.LOGIN);
+    }
+  }, [loading, data, error, router]);
+
+  // Always show loader while deciding
+  if (loading || !data?.getProfileData) {
     return (
-      <Center h={"100vh"} style={{ backgroundColor: COLORS.background.primary }}>
-        <Loader color="blue" size={"md"} />
+      <Center h="100vh" style={{ backgroundColor: COLORS.background.primary }}>
+        <Loader color="blue" size="md" />
       </Center>
     );
   }
 
-  if (data?.getProfileData && !loading) {
-    return (
-      <AppShell
-        header={{ height: 60 }}
-        navbar={{
-          width: 300,
-          breakpoint: "sm",
-          collapsed: { mobile: !opened },
-        }}
-        padding="md"
-        styles={{
-          main: {
-            backgroundColor: COLORS.background.primary,
-            color: COLORS.text.primary,
-          },
+  return (
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 300,
+        breakpoint: "sm",
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+      styles={{
+        main: {
+          backgroundColor: COLORS.background.primary,
+          color: COLORS.text.primary,
+        },
+      }}
+    >
+      <AppShell.Header style={{ borderBottom: `1px solid ${COLORS.border.glass}` }}>
+        <DashboardHeader opened={opened} toggle={toggle} />
+      </AppShell.Header>
+
+      <AppShell.Navbar
+        style={{
+          borderRight: `1px solid ${COLORS.border.glass}`,
+          backgroundColor: COLORS.background.secondary,
         }}
       >
-        <AppShell.Header style={{ borderBottom: `1px solid ${COLORS.border.glass}` }}>
-          <DashboardHeader opened={opened} toggle={toggle} />
-        </AppShell.Header>
+        <DashboardNavbar />
+      </AppShell.Navbar>
 
-        <AppShell.Navbar style={{ borderRight: `1px solid ${COLORS.border.glass}`, backgroundColor: COLORS.background.secondary }}>
-          <DashboardNavbar />
-        </AppShell.Navbar>
-
-        <AppShell.Main>{children}</AppShell.Main>
-      </AppShell>
-    );
-  }
-
-  return null;
+      <AppShell.Main>{children}</AppShell.Main>
+    </AppShell>
+  );
 };
 
 export default DashboardLayout;

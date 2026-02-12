@@ -168,6 +168,11 @@ enum LESSON_STATUS {
   COMPLETED
 }
 
+type LessonProgressUpdate {
+  _id: ID!
+  status: LESSON_STATUS!
+}
+
 type CourseModuleResponse {
   _id: ID!
   title: String!
@@ -268,6 +273,7 @@ type Mutation {
   createLesson(createLessonInput: CreateLessonInput!, document: Upload): Lesson!
   reorderLessons(reorderLessonInput: ReorderLessonInput!): Boolean!
   deleteLesson(lessonId: String!): String!
+  updateLessonProgress(lessonId: String!, operation: LESSON_OPERATION!): LessonProgressUpdate!
   createCourseOrder(course_id: String!): CourseOrderResponse!
 }
 
@@ -345,4 +351,10 @@ input CreateLessonInput {
 input ReorderLessonInput {
   moduleId: String!
   lessonIds: [String!]!
+}
+
+enum LESSON_OPERATION {
+  START
+  VISIT
+  COMPLETED
 }
