@@ -1,10 +1,12 @@
 "use client";
 
-import { useQuery } from "@apollo/client/react";
-import { GetCourseModuleByCourseIdDocument, Lesson_Status } from "@/generated/graphql";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { GetCourseModuleByCourseIdDocument, Lesson, Lesson_Operation, Lesson_Status, LessonForStudentResponse, UpdateLessonProgressDocument } from "@/generated/graphql";
 import { Accordion, Text, Loader, Center, Stack, ThemeIcon, Group, Paper, Button, Flex } from "@mantine/core";
 import { COLORS } from "@/assets/colors/colors";
 import { PlayCircle, FileText, CheckCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { notifications } from "@mantine/notifications";
 
 interface CourseModulesAccordionProps {
     courseId: string;
@@ -19,6 +21,19 @@ export default function CourseModulesAccordion({ courseId }: CourseModulesAccord
         skip: !courseId,
         fetchPolicy: "network-only"
     });
+    const router = useRouter();
+    const [updateLessonProgress, { loading: updateLessonProgressLoading }] = useMutation(UpdateLessonProgressDocument, {
+        onCompleted: (data) => {
+            router.push(`/courses/${courseId}/lesson/${data.updateLessonProgress._id}`);
+        },
+        onError: (error) => {
+            notifications.show({
+                title: "Error",
+                message: error.message,
+                color: "red"
+            })
+        }
+    })
 
     if (loading) {
         return (
@@ -40,7 +55,16 @@ export default function CourseModulesAccordion({ courseId }: CourseModulesAccord
 
     // Sort modules by order if needed, assuming API returns sorted or we sort here
     // modules.sort((a, b) => a.order - b.order);
-
+    const handleLessonClick = (lesson: LessonForStudentResponse) => {
+        if (lesson.isUnlocked) {
+            updateLessonProgress({
+                variables: {
+                    lessonId: lesson._id,
+                    operation: lesson.status === Lesson_Status.NotStarted ? Lesson_Operation.Start : Lesson_Operation.Visit
+                }
+            })
+        }
+    }
     return (
         <Accordion variant="separated" radius="md">
             {modules.map((module, index) => (
@@ -70,9 +94,11 @@ export default function CourseModulesAccordion({ courseId }: CourseModulesAccord
                                                 lesson.isUnlocked && (
                                                     <Button
                                                         variant="subtle"
+                                                        loading={updateLessonProgressLoading}
+                                                        disabled={updateLessonProgressLoading}
                                                         size="xs"
                                                         leftSection={<PlayCircle size={14} />}
-                                                    // onClick={() => handleLessonClick(lesson)}
+                                                        onClick={() => handleLessonClick(lesson)}
                                                     >
                                                         {lesson.status?.toLowerCase() === Lesson_Status.NotStarted.toLowerCase() ? "Start Lesson" : lesson.status?.toLowerCase() === Lesson_Status.InProgress.toLowerCase() ? "Continue Lesson" : "View Lesson"}
                                                     </Button>

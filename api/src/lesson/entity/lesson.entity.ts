@@ -52,3 +52,11 @@ export class LessonForStudentResponse {
   @Field(() => LESSON_STATUS, { nullable: true })
   status?: LESSON_STATUS;
 }
+@ObjectType()
+export class LessonProgressUpdate {
+  @Field(() => ID)
+  _id: string;
+
+  @Field(() => LESSON_STATUS)
+  status?: LESSON_STATUS;
+}
