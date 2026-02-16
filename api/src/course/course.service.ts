@@ -16,7 +16,7 @@ import {
 } from 'src/utils/paginate-aggregate';
 import { getAllCoursePipeline } from 'src/aggregation/getAllCourse.aggregation';
 import { CourseProgress, CourseResponse, CourseWithEnrollment } from './entities/course.entity';
-import { USER_ROLES } from 'src/enum/roles';
+import { ADMIN_ROLES, USER_ROLES } from 'src/enum/roles';
 import { Enrollment } from 'src/schemas/enrollment.schema';
 import { ENROLLMENT_STATUS } from 'src/enum/enrollmentStatus';
 import { getCourseProgressPipeline } from 'src/aggregation/getCourseProgress.aggregation';
@@ -95,10 +95,13 @@ export class CourseService {
   }
 
   async getAll(
+    req: Request,
     paginationInput: PaginationInput,
     courseFilters: CourseFilters,
   ): Promise<PaginatedResult<CourseResponse>> {
-    const pipeline = getAllCoursePipeline(courseFilters);
+    const role = req.user.roles;
+    const userId = req.user.id;
+    const pipeline = getAllCoursePipeline(courseFilters, role as ADMIN_ROLES, userId);
     const result = await paginateAggregate<CourseResponse>(
       this.courseModel,
       pipeline,

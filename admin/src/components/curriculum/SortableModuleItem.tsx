@@ -116,30 +116,30 @@ const SortableModuleItem = ({
               <Text fw={600}>{module.title}</Text>
               <Flex gap={"5px"}>
                 <ActionIcon color="green" variant="light">
-                <SquarePen
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    openCourseModuleModal({
-                      course_id: id as string,
-                      courseModuleId: module._id,
-                    });
-                  }}
-                  size={14}
-                  color="green"
-                />
-              </ActionIcon>
-              <ActionIcon color="red" variant="light">
-                <Trash2
-                  size={14}
-                  color="red"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    handleDeleteModule(module._id);
-                  }}
-                />
-              </ActionIcon>
+                  <SquarePen
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      openCourseModuleModal({
+                        course_id: id as string,
+                        courseModuleId: module._id,
+                      });
+                    }}
+                    size={14}
+                    color="green"
+                  />
+                </ActionIcon>
+                <ActionIcon color="red" variant="light">
+                  <Trash2
+                    size={14}
+                    color="red"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      handleDeleteModule(module._id);
+                    }}
+                  />
+                </ActionIcon>
               </Flex>
             </Flex>
             <Text>{module.description}</Text>
@@ -187,7 +187,7 @@ const SortableModuleItem = ({
               </Text>
             </Flex>
           )}
-          <Box style={{ width: "fit-content" }}>
+          <Flex gap={"lg"} align={"center"} style={{ width: "fit-content" }}>
             <FButton
               handleClick={() =>
                 openLessonModal({ lesson_id: "", module_id: module._id })
@@ -195,7 +195,18 @@ const SortableModuleItem = ({
               title="Add Lesson"
               variant="dark"
             />
-          </Box>
+            {
+              stateLessons.length > 0 && (
+                <FButton
+                  handleClick={() =>
+                    console.log("QUIZ MODAL OPEN")
+                  }
+                  title="Add Quiz"
+                  variant="outline"
+                />
+              )
+            }
+          </Flex>
         </Flex>
       </Accordion.Panel>
     </Accordion.Item>

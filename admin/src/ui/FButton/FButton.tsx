@@ -13,8 +13,9 @@ interface FButtonProps {
   rightIcon?: React.ReactNode;
   className?: string;
   handleClick?: () => void;
-  loading?:boolean;
-  disabled?:boolean;
+  loading?: boolean;
+  disabled?: boolean;
+  minWidth?: string;
 }
 
 const getColor = (variant: FButtonProps["variant"]) => {
@@ -54,10 +55,12 @@ const FButton = ({
   handleClick,
   loading,
   disabled,
+  minWidth
 }: FButtonProps) => {
   return (
     <Button
       type={type}
+      miw={minWidth}
       variant={variant === "outline" ? "outline" : ""}
       c={getColor(variant)}
       bg={getBgColor(variant)}

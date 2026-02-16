@@ -1,6 +1,7 @@
 import { PipelineStage, Types } from 'mongoose';
 import { CourseFilters } from 'src/course/dto/create-course.input';
 import { ENROLLMENT_STATUS } from 'src/enum/enrollmentStatus';
+import { ADMIN_ROLES } from 'src/enum/roles';
 import { buildCourseMatchStage } from 'src/utils/buildCourseMatchStage';
 
 export function getUserPurchasedCourses(filters: CourseFilters, userId: string): PipelineStage[] {

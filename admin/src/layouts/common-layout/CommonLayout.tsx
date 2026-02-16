@@ -27,7 +27,7 @@ const CommonLayout = ({ children }: { children: React.ReactNode }) => {
   const { data, refetch } = useQuery(GetAdminDataDocument);
 
   const filteredLinks = navbarLinks.filter(
-    (link) => link.allowedRole === data?.getAdminData.role
+    (link) => link.allowedRole.includes(data?.getAdminData.role as Admin_Roles)
   );
 
   const [adminLogout, { loading }] = useMutation(AdminLogoutDocument, {

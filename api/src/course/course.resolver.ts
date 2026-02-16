@@ -33,10 +33,11 @@ export class CourseResolver {
   @Roles(ADMIN_ROLES.INSTRUCTOR, ADMIN_ROLES.ADMIN)
   @Query(() => PaginatedCourse)
   getAllCourses(
+    @Context() ctx,
     @Args('paginationInput') paginationInput: PaginationInput,
     @Args('courseFilters') courseFilters: CourseFilters,
   ) {
-    return this.courseService.getAll(paginationInput, courseFilters);
+    return this.courseService.getAll(ctx.req, paginationInput, courseFilters);
   }
 
   @Public()
@@ -58,9 +59,10 @@ export class CourseResolver {
   getPublishedCourses(
     @Args('paginationInput') paginationInput: PaginationInput,
     @Args('courseFilters') courseFilters: CourseFilters,
+    @Context() ctx,
   ) {
     courseFilters.isPublished = true;
-    return this.courseService.getAll(paginationInput, courseFilters);
+    return this.courseService.getAll(ctx.req, paginationInput, courseFilters);
   }
 
   @Roles(USER_ROLES.USER)

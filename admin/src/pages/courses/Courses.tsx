@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../enum/routes";
 import { useQuery } from "@apollo/client/react";
 import {
+  Admin_Roles,
   Course_Level,
+  GetAdminDataDocument,
   GetAllCategoriesDocument,
   GetAllCoursesDocument,
 } from "../../generated/graphql";
@@ -15,6 +17,7 @@ import { CONSTANT } from "../../constants";
 import FilterBar from "../../components/FilterBar/FilterBar";
 import FInput from "../../ui/FInput/FInput";
 import { useDebouncedValue } from "@mantine/hooks";
+import { adminCourseColumns } from "../../columns/adminCourses.columns";
 
 type CourseFilters = {
   search?: string;
@@ -26,10 +29,10 @@ type CourseFilters = {
 const Courses = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-   
+
   const [filters, setFilters] = useState<CourseFilters>({});
   const [debouncedFilterSearch] = useDebouncedValue(filters.search, 500);
-  console.log("debounced filter search",debouncedFilterSearch);
+  const { data: adminData } = useQuery(GetAdminDataDocument)
   /* -------------------- Categories -------------------- */
   const { data: categories } = useQuery(GetAllCategoriesDocument, {
     variables: { paginationInput: { limit: 100, page: 1 } },
@@ -48,11 +51,11 @@ const Courses = () => {
         limit: CONSTANT.PAGE_LIMIT,
         page,
       },
-      courseFilters:{
-        categoryId:filters.categoryId,
-        isPublished:filters.isPublished,
-        level:filters.level,
-        search:debouncedFilterSearch,
+      courseFilters: {
+        categoryId: filters.categoryId,
+        isPublished: filters.isPublished,
+        level: filters.level,
+        search: debouncedFilterSearch,
       }
     },
   });
@@ -76,17 +79,11 @@ const Courses = () => {
     }));
   };
 
-   
+
   return (
     <Box>
       {/* Header */}
-      <Flex justify="space-between" align="center" mb="md">
-        <FButton
-          title="Add Course"
-          variant="dark"
-          handleClick={() => navigate(ROUTES.ADD_COURSE)}
-        />
-      </Flex>
+
 
       {/* Filters */}
       <FilterBar
@@ -94,59 +91,71 @@ const Courses = () => {
         searchValue={filters.search}
         onSearchChange={(val) => updateFilter("search", val)}
       >
-        <FInput
-          label=""
-          
-          variant="select"
-          placeholder="Level"
-          value={filters.level}
-          selectOptions={[
-            { label: "Beginner", value: Course_Level.Beginner },
-            { label: "Intermediate", value: Course_Level.Intermediate },
-            { label: "Advanced", value: Course_Level.Advanced },
-          ]}
-          clearable
-          onChange={(val) => updateFilter("level", val as Course_Level)}
-        />
+        <Flex gap={"md"} align={"center"}>
+          <FInput
+            label=""
 
-        <FInput
-          label=""
-          variant="select"
-          placeholder="Category"
-          value={filters.categoryId}
-          selectOptions={categoryOptions}
-          clearable
-          onChange={(val) => updateFilter("categoryId", val as string)}
-        />
+            variant="select"
+            placeholder="Level"
+            value={filters.level}
+            selectOptions={[
+              { label: "Beginner", value: Course_Level.Beginner },
+              { label: "Intermediate", value: Course_Level.Intermediate },
+              { label: "Advanced", value: Course_Level.Advanced },
+            ]}
+            clearable
+            onChange={(val) => updateFilter("level", val as Course_Level)}
+          />
 
-        <FInput
-          label=""
-          variant="select"
-          placeholder="Status"
-          value={
-            filters.isPublished !== undefined
-              ? String(filters.isPublished)
-              : undefined
-          }
-          selectOptions={[
-            { label: "Published", value: "true" },
-            { label: "Draft", value: "false" },
-          ]}
-          clearable
-          onChange={(val) =>
-            updateFilter(
-              "isPublished",
-              val === "true" ? true : val === "false" ? false : undefined
-            )
-          }
-          
-        />
+          <FInput
+            label=""
+            variant="select"
+            placeholder="Category"
+            value={filters.categoryId}
+            selectOptions={categoryOptions}
+            clearable
+            onChange={(val) => updateFilter("categoryId", val as string)}
+          />
+
+          <FInput
+            label=""
+            variant="select"
+            placeholder="Status"
+            value={
+              filters.isPublished !== undefined
+                ? String(filters.isPublished)
+                : undefined
+            }
+            selectOptions={[
+              { label: "Published", value: "true" },
+              { label: "Draft", value: "false" },
+            ]}
+            clearable
+            onChange={(val) =>
+              updateFilter(
+                "isPublished",
+                val === "true" ? true : val === "false" ? false : undefined
+              )
+            }
+
+          />
+
+          {adminData?.getAdminData.role === Admin_Roles.Instructor && (
+
+            <FButton
+              title="Add Course"
+              variant="dark"
+              minWidth="130px"
+              handleClick={() => navigate(ROUTES.ADD_COURSE)}
+            />
+          )}
+        </Flex>
       </FilterBar>
 
       {/* Table */}
       <Box mt="lg" style={{ overflowX: "auto" }}>
         <FTable
-          columns={courseColumns}
+          columns={adminData?.getAdminData.role === Admin_Roles.Admin ? adminCourseColumns : courseColumns}
           data={coursesData}
           page={page}
           setPage={setPage}

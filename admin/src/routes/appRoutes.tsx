@@ -22,9 +22,9 @@ export const appRoutes = createBrowserRouter([
   },
   {
     path: ROUTES.INSTRUCTOR_DASHBOARD,
-    element:(
+    element: (
       <PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
-        <InstructorDashboard/>
+        <InstructorDashboard />
       </PrivateLayout>
     )
   },
@@ -45,27 +45,27 @@ export const appRoutes = createBrowserRouter([
     ),
   },
   {
-    path:ROUTES.COURSES,
-    element:<PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
-      <Courses/>
+    path: ROUTES.COURSES,
+    element: <PrivateLayout allowedRoles={[Admin_Roles.Instructor, Admin_Roles.Admin]}>
+      <Courses />
     </PrivateLayout>
   },
   {
-    path:ROUTES.ADD_COURSE,
-    element:<PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
-      <AddCourse/>
+    path: ROUTES.ADD_COURSE,
+    element: <PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
+      <AddCourse />
     </PrivateLayout>
   },
   {
-    path:ROUTES.COURSES + '/:id',
-    element:<PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
-      <AddCourse/>
+    path: ROUTES.COURSES + '/:id',
+    element: <PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
+      <AddCourse />
     </PrivateLayout>
   },
   {
-    path:ROUTES.COURSE_CURRICULUM + '/:id',
-    element:<PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
-      <Curriculum/>
+    path: ROUTES.COURSE_CURRICULUM + '/:id',
+    element: <PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
+      <Curriculum />
     </PrivateLayout>
-  }
+  },
 ]);

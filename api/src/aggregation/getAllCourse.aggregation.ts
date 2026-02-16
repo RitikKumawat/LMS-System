@@ -1,9 +1,10 @@
 import { PipelineStage } from 'mongoose';
 import { CourseFilters } from 'src/course/dto/create-course.input';
+import { ADMIN_ROLES } from 'src/enum/roles';
 import { buildCourseMatchStage } from 'src/utils/buildCourseMatchStage';
 
-export function getAllCoursePipeline(filters: CourseFilters): PipelineStage[] {
-  const matchStage = buildCourseMatchStage(filters);
+export function getAllCoursePipeline(filters: CourseFilters, role: ADMIN_ROLES, userId: string): PipelineStage[] {
+  const matchStage = buildCourseMatchStage(filters, role, userId);
   return [
     {
       $addFields: {

@@ -9,6 +9,7 @@ import {
 } from "../../generated/graphql";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { notifications } from "@mantine/notifications";
+import { openConfirmModal } from "../modals/confirmation-modals/ConfirmationModal";
 
 type Props = {
   course: CourseResponse;
@@ -17,9 +18,9 @@ type Props = {
 const CourseTableActions = ({ course }: Props) => {
   const navigate = useNavigate();
   const { refetch } = useQuery(GetAllCoursesDocument, {
-    variables: { courseFilters:{},paginationInput:{limit:10,page:1} },
+    variables: { courseFilters: {}, paginationInput: { limit: 10, page: 1 } },
   });
-  const [togglePublish] = useMutation(TogglePublishStatusDocument, {
+  const [togglePublish, { loading }] = useMutation(TogglePublishStatusDocument, {
     onCompleted: async (data) => {
       notifications.show({
         message: data.togglePublishStatus,
@@ -48,7 +49,16 @@ const CourseTableActions = ({ course }: Props) => {
           icon: course.is_published ? <EyeOff size={18} /> : <Eye size={18} />,
           color: course.is_published ? "red" : "teal",
           onClick: (row) => {
-            togglePublish({ variables: { courseId: row._id } });
+            openConfirmModal({
+              title: "Visibility Changes Warning",
+              message: "Are you sure to change the visibility of the course?",
+              confirmText: "Yes",
+              cancelText: "No",
+              loading: loading,
+              onConfirm: () => {
+                togglePublish({ variables: { courseId: row._id } });
+              }
+            })
           },
         },
       ]}
