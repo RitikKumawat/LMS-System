@@ -1,0 +1,16 @@
+query GetLessonContent($lessonId: String!, $courseId: String!) {
+  getLessonContent(lessonId: $lessonId, courseId: $courseId) {
+    _id
+    status
+    lesson {
+      _id
+      title
+      order
+      video_url
+      pdf_url
+      content
+      duration_minutes
+      is_preview
+    }
+  }
+}

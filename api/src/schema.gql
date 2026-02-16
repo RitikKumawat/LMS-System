@@ -173,6 +173,12 @@ type LessonProgressUpdate {
   status: LESSON_STATUS!
 }
 
+type LessonDetails {
+  _id: ID!
+  status: LESSON_STATUS!
+  lesson: LessonResponse!
+}
+
 type CourseModuleResponse {
   _id: ID!
   title: String!
@@ -234,6 +240,7 @@ type Query {
   getCourseModuleById(courseModuleId: String!): CourseModuleResponse!
   getCourseModuleByCourseId(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModuleForStudent!
   getLessonById(lessonId: String!): LessonResponse!
+  getLessonContent(lessonId: String!, courseId: String!): LessonDetails!
   getOrder(id: String!): CourseOrderResponse!
 }
 

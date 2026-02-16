@@ -3,9 +3,10 @@ import { LessonService } from './lesson.service';
 import { LessonResolver } from './lesson.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SCHEMAS } from 'src/schemas';
+import { EnrollmentService } from 'src/enrollment/enrollment.service';
 
 @Module({
   imports: [MongooseModule.forFeature(SCHEMAS)],
-  providers: [LessonResolver, LessonService],
+  providers: [LessonResolver, LessonService, EnrollmentService],
 })
-export class LessonModule {}
+export class LessonModule { }

@@ -1,0 +1,14 @@
+@use "../../../../../assets/colors/colors.scss" as *;
+
+.lessonHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    padding: 0.5rem;
+    top: 60px;
+    z-index: 80;
+    backdrop-filter: blur(12px);
+    border-radius: 13px;
+    background-color: rgba(10, 15, 25, 0.5);
+}

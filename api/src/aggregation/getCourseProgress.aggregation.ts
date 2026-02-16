@@ -1,4 +1,5 @@
 import { PipelineStage, Types } from "mongoose";
+import { LESSON_STATUS } from "src/enum/lessonStatus";
 
 export function getCourseProgressPipeline(courseId: string, userId: string): PipelineStage[] {
     return [
@@ -34,7 +35,7 @@ export function getCourseProgressPipeline(courseId: string, userId: string): Pip
                                 $and: [
                                     { $eq: ["$lesson_id", "$$lessonId"] },
                                     { $eq: ["$user_id", new Types.ObjectId(userId)] },
-                                    { $eq: ["$is_completed", true] }
+                                    { $eq: ["$status", LESSON_STATUS.COMPLETED] }
                                 ]
                             }
                         }

@@ -8,8 +8,10 @@ import {
   CreateLessonInput,
   ReorderLessonInput,
 } from './dto/create-lesson.input';
-import { LessonProgressUpdate, LessonResponse } from './entity/lesson.entity';
+import { LessonDetails, LessonProgressUpdate, LessonResponse } from './entity/lesson.entity';
 import { LESSON_OPERATION } from 'src/enum/lessonOperation';
+import { UseGuards } from '@nestjs/common';
+import { EnrolledCourseGuard } from 'src/guards/enrolled-course.guard';
 
 @Resolver()
 export class LessonResolver {
@@ -57,5 +59,15 @@ export class LessonResolver {
     @Context() ctx,
   ): Promise<LessonProgressUpdate> {
     return this.lessonService.updateLessonProgress(lessonId, ctx.req, operation);
+  }
+
+
+  @Query(() => LessonDetails)
+  @Roles(USER_ROLES.USER)
+  @UseGuards(EnrolledCourseGuard)
+  getLessonContent(@Args('lessonId') lessonId: string,
+    @Args('courseId') courseId: string,
+    @Context() ctx,): Promise<LessonDetails> {
+    return this.lessonService.getLessonForUserById(lessonId, ctx.req);
   }
 }

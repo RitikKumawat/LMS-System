@@ -60,3 +60,16 @@ export class LessonProgressUpdate {
   @Field(() => LESSON_STATUS)
   status?: LESSON_STATUS;
 }
+
+
+@ObjectType()
+export class LessonDetails {
+  @Field(() => ID)
+  _id: string;
+
+  @Field(() => LESSON_STATUS)
+  status: LESSON_STATUS;
+
+  @Field(() => LessonResponse)
+  lesson: LessonResponse;
+}

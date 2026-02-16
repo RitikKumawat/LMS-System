@@ -55,7 +55,7 @@ export function useVideoUpload() {
         setUploading(false);
       });
 
-      await fetch(`${API_URL}${uploadUrl}`, {
+      await fetch(`${uploadUrl}`, {
         method: "POST",
         body: file,
         credentials: "include",

@@ -36,8 +36,8 @@ export class EnrollmentService {
 
     async isEnrolled(userId: string, courseId: string): Promise<boolean> {
         const enrollment = await this.enrollmentModel.findOne({
-            user_id: userId,
-            course_id: courseId,
+            user_id: new Types.ObjectId(userId),
+            course_id: new Types.ObjectId(courseId),
             status: ENROLLMENT_STATUS.ACTIVE,
         });
 

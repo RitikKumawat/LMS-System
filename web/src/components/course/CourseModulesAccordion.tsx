@@ -5,14 +5,16 @@ import { GetCourseModuleByCourseIdDocument, Lesson, Lesson_Operation, Lesson_Sta
 import { Accordion, Text, Loader, Center, Stack, ThemeIcon, Group, Paper, Button, Flex } from "@mantine/core";
 import { COLORS } from "@/assets/colors/colors";
 import { PlayCircle, FileText, CheckCircle } from "lucide-react";
+import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
 
 interface CourseModulesAccordionProps {
     courseId: string;
+    activeLessonId?: string;
 }
 
-export default function CourseModulesAccordion({ courseId }: CourseModulesAccordionProps) {
+export default function CourseModulesAccordion({ courseId, activeLessonId }: CourseModulesAccordionProps) {
     const { data, loading, error } = useQuery(GetCourseModuleByCourseIdDocument, {
         variables: {
             courseId,
@@ -22,11 +24,15 @@ export default function CourseModulesAccordion({ courseId }: CourseModulesAccord
         fetchPolicy: "network-only"
     });
     const router = useRouter();
+    const [loadingLessonId, setLoadingLessonId] = useState<string | null>(null);
+
     const [updateLessonProgress, { loading: updateLessonProgressLoading }] = useMutation(UpdateLessonProgressDocument, {
         onCompleted: (data) => {
+            setLoadingLessonId(null);
             router.push(`/courses/${courseId}/lesson/${data.updateLessonProgress._id}`);
         },
         onError: (error) => {
+            setLoadingLessonId(null);
             notifications.show({
                 title: "Error",
                 message: error.message,
@@ -57,6 +63,7 @@ export default function CourseModulesAccordion({ courseId }: CourseModulesAccord
     // modules.sort((a, b) => a.order - b.order);
     const handleLessonClick = (lesson: LessonForStudentResponse) => {
         if (lesson.isUnlocked) {
+            setLoadingLessonId(lesson._id);
             updateLessonProgress({
                 variables: {
                     lessonId: lesson._id,
@@ -80,11 +87,30 @@ export default function CourseModulesAccordion({ courseId }: CourseModulesAccord
                     <Accordion.Panel>
                         <Stack gap="xs">
                             {module.lessons?.map((lesson) => (
-                                <Paper key={lesson._id} p="sm" radius="sm" withBorder style={{ borderColor: COLORS.border.glass, backgroundColor: "rgba(255,255,255,0.02)" }}>
+                                <Paper
+                                    key={lesson._id}
+                                    p="sm"
+                                    radius="sm"
+                                    withBorder
+                                    style={{
+                                        borderColor: lesson._id === activeLessonId ? COLORS.primary.light : COLORS.border.glass,
+                                        backgroundColor: lesson._id === activeLessonId ? "rgba(59, 130, 246, 0.1)" : "rgba(255,255,255,0.02)"
+                                    }}
+                                >
                                     <Group justify="space-between">
                                         <Group gap="sm">
-                                            <PlayCircle size={16} color={COLORS.text.primary} />
-                                            <Text size="sm" style={{ color: COLORS.text.secondary }}>{lesson.title}</Text>
+
+                                            <PlayCircle size={16} color={lesson._id === activeLessonId ? COLORS.primary.main : COLORS.text.primary} />
+
+                                            <Text
+                                                size="sm"
+                                                style={{
+                                                    color: lesson._id === activeLessonId ? COLORS.accent.blue : COLORS.text.secondary,
+                                                    fontWeight: lesson._id === activeLessonId ? 700 : 400
+                                                }}
+                                            >
+                                                {lesson.title}
+                                            </Text>
                                         </Group>
                                         {/* <Text size="xs" c="dimmed">{lesson.lesson_type}</Text> */}
                                         <Flex align="center" gap="sm">
@@ -93,14 +119,15 @@ export default function CourseModulesAccordion({ courseId }: CourseModulesAccord
                                             {
                                                 lesson.isUnlocked && (
                                                     <Button
-                                                        variant="subtle"
-                                                        loading={updateLessonProgressLoading}
-                                                        disabled={updateLessonProgressLoading}
+                                                        variant={"transparent"}
+                                                        loading={updateLessonProgressLoading && loadingLessonId === lesson._id}
+                                                        disabled={updateLessonProgressLoading || lesson._id === activeLessonId}
                                                         size="xs"
                                                         leftSection={<PlayCircle size={14} />}
                                                         onClick={() => handleLessonClick(lesson)}
+                                                        color={lesson._id === activeLessonId ? "blue" : "gray"}
                                                     >
-                                                        {lesson.status?.toLowerCase() === Lesson_Status.NotStarted.toLowerCase() ? "Start Lesson" : lesson.status?.toLowerCase() === Lesson_Status.InProgress.toLowerCase() ? "Continue Lesson" : "View Lesson"}
+                                                        {lesson._id === activeLessonId ? "Playing" : lesson.status?.toLowerCase() === Lesson_Status.NotStarted.toLowerCase() ? "Start Lesson" : lesson.status?.toLowerCase() === Lesson_Status.InProgress.toLowerCase() ? "Continue Lesson" : "View Lesson"}
                                                     </Button>
 
                                                 )

@@ -7,7 +7,7 @@ import { Request } from 'express';
 import { FileUpload } from 'graphql-upload-ts';
 import { validateFileUpload } from 'src/utils/checkFileValidation';
 import { generateFileUrl } from 'src/utils/generateFileUrl.util';
-import { LessonProgressUpdate, LessonResponse } from './entity/lesson.entity';
+import { LessonDetails, LessonProgressUpdate, LessonResponse } from './entity/lesson.entity';
 import { LessonProgress, LessonProgressDocument } from 'src/schemas/lesson-progress.schema';
 import { LESSON_STATUS } from 'src/enum/lessonStatus';
 import { LESSON_OPERATION } from 'src/enum/lessonOperation';
@@ -187,6 +187,55 @@ export class LessonService {
       }
     } catch (error) {
       console.error('Error starting the lesson', error);
+      throw new HttpException('Something went wrong', 500);
+    }
+  }
+
+  async getLessonForUserById(lessonId: string, req: Request): Promise<LessonDetails> {
+    try {
+      if (!lessonId) {
+        throw new HttpException('Please provide lesson id', 404);
+      }
+      const lesson = await this.lessonModel.exists({ _id: lessonId });
+      if (!lesson) {
+        throw new HttpException('Lesson does not exists', 404);
+      }
+      const lessonDetails = await this.lessonProgressModel.aggregate([
+        {
+          $match: {
+            lesson_id: lesson._id,
+            user_id: new Types.ObjectId(req.user.id),
+          }
+        },
+        {
+          $lookup: {
+            from: "lessons",
+            localField: "lesson_id",
+            foreignField: "_id",
+            as: "lesson"
+          }
+        },
+        {
+          $unwind: "$lesson"
+        },
+        {
+          $project: {
+            _id: 1,
+            status: 1,
+            lesson: 1,
+          }
+        }
+      ])
+      if (!lessonDetails) {
+        throw new HttpException('Lesson progress does not exists', 404);
+      }
+      return {
+        _id: lessonDetails[0]._id,
+        status: lessonDetails[0].status,
+        lesson: lessonDetails[0].lesson,
+      };
+    } catch (error) {
+      console.error('Error getting the lesson', error);
       throw new HttpException('Something went wrong', 500);
     }
   }

@@ -14,7 +14,7 @@ import { COLORS } from "@/assets/colors/colors";
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const [opened, { toggle }] = useDisclosure();
   const { data, loading, error } = useQuery(GetProfileDataDocument, {
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-first",
   });
   const router = useRouter();
 

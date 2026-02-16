@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { createWriteStream, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { Request } from 'express';
@@ -7,13 +8,17 @@ import { UploadsGateway } from './uploads.gateway';
 
 @Injectable()
 export class UploadsService {
-  constructor(private gateway: UploadsGateway) {}
+  constructor(
+    private gateway: UploadsGateway,
+    private configService: ConfigService,
+  ) { }
 
   createUploadSession() {
     const uploadId = randomUUID();
+    const baseUrl = this.configService.get('app.baseUrl');
     return {
       uploadId,
-      uploadUrl: `/uploads/${uploadId}`,
+      uploadUrl: `${baseUrl}/uploads/${uploadId}`,
     };
   }
 
@@ -40,7 +45,8 @@ export class UploadsService {
       stream.on('error', (err) => reject(err));
     });
 
-    const videoUrl = `/uploads/videos/${uploadId}.mp4`;
+    const baseUrl = this.configService.get('app.baseUrl');
+    const videoUrl = `${baseUrl}/uploads/videos/${uploadId}.mp4`;
     this.gateway.emitProgress(uploadId, 100, videoUrl);
 
     return { success: true, videoUrl };

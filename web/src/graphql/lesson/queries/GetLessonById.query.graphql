@@ -1,0 +1,12 @@
+query GetLessonById($lessonId: String!) {
+  getLessonById(lessonId: $lessonId) {
+    _id
+    title
+    order
+    video_url
+    pdf_url
+    content
+    duration_minutes
+    is_preview
+  }
+}

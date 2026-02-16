@@ -1,4 +1,3 @@
-import DashboardLayout from "@/layouts/dashboard-layout/DashboardLayout";
 import React from "react";
 
 export default function RootLayout({
@@ -6,5 +5,5 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return <DashboardLayout>{children}</DashboardLayout>;
+    return <>{children}</>;
 }

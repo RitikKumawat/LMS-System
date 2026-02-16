@@ -9,4 +9,5 @@ export const envSchema = Joi.object({
   JWT_SECRET: Joi.string().required(),
   CORS_ORIGIN: Joi.string().required(),
   PLAYGROUND: Joi.boolean().required(),
+  BASE_URL: Joi.string().default('http://localhost:4000'),
 });
