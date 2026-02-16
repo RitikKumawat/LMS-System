@@ -1,0 +1,23 @@
+query GetUserCourses($paginationInput: PaginationInput!, $courseFilters: CourseFilters!) {
+  getUserCourses(paginationInput: $paginationInput, courseFilters: $courseFilters) {
+    docs {
+      _id
+      title
+      slug
+      description
+      thumbnail_url
+      category_name
+      level
+      language
+      price
+      is_published
+      createdAt
+    }
+    totalDocs
+    limit
+    totalPages
+    page
+    hasNextPage
+    hasPrevPage
+  }
+}

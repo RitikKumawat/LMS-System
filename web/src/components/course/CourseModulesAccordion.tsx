@@ -6,7 +6,7 @@ import { Accordion, Text, Loader, Center, Stack, ThemeIcon, Group, Paper, Button
 import { COLORS } from "@/assets/colors/colors";
 import { PlayCircle, FileText, CheckCircle } from "lucide-react";
 import React, { useState } from 'react';
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
 
 interface CourseModulesAccordionProps {
@@ -15,6 +15,7 @@ interface CourseModulesAccordionProps {
 }
 
 export default function CourseModulesAccordion({ courseId, activeLessonId }: CourseModulesAccordionProps) {
+    const path = usePathname();
     const { data, loading, error } = useQuery(GetCourseModuleByCourseIdDocument, {
         variables: {
             courseId,
@@ -29,7 +30,8 @@ export default function CourseModulesAccordion({ courseId, activeLessonId }: Cou
     const [updateLessonProgress, { loading: updateLessonProgressLoading }] = useMutation(UpdateLessonProgressDocument, {
         onCompleted: (data) => {
             setLoadingLessonId(null);
-            router.push(`/courses/${courseId}/lesson/${data.updateLessonProgress._id}`);
+            const myCoursesPath = path.includes("my-courses");
+            router.push(myCoursesPath ? `/my-courses/${courseId}/lesson/${data.updateLessonProgress._id}` : `/courses/${courseId}/lesson/${data.updateLessonProgress._id}`);
         },
         onError: (error) => {
             setLoadingLessonId(null);

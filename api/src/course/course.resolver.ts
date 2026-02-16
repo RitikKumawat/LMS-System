@@ -69,4 +69,14 @@ export class CourseResolver {
     @Context() ctx,) {
     return this.courseService.getCourseProgress(courseId, ctx.req);
   }
+
+  @Roles(USER_ROLES.USER)
+  @Query(() => PaginatedCourse)
+  getUserCourses(
+    @Args('paginationInput') paginationInput: PaginationInput,
+    @Args('courseFilters') courseFilters: CourseFilters,
+    @Context() ctx,
+  ) {
+    return this.courseService.getUserCourses(paginationInput, courseFilters, ctx.req);
+  }
 }

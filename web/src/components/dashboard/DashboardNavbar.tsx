@@ -1,7 +1,7 @@
 "use client";
 
 import { Stack, UnstyledButton, Text, Group, ThemeIcon, Button } from "@mantine/core";
-import { LayoutDashboard, BookOpen, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, BookOpen, Settings, LogOut, FileUser } from "lucide-react";
 import React from "react";
 import { COLORS } from "@/assets/colors/colors";
 import { ROUTES } from "@/enum/routes.enum";
@@ -72,6 +72,7 @@ export const DashboardNavbar = () => {
     const links = [
         { icon: LayoutDashboard, label: "Dashboard", route: ROUTES.DASHBOARD },
         { icon: BookOpen, label: "Explore", route: "/courses" },
+        { icon: FileUser, label: "My Courses", route: "/my-courses" }
         // Add more routes as they become available
     ];
 

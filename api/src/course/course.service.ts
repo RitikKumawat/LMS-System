@@ -21,6 +21,7 @@ import { Enrollment } from 'src/schemas/enrollment.schema';
 import { ENROLLMENT_STATUS } from 'src/enum/enrollmentStatus';
 import { getCourseProgressPipeline } from 'src/aggregation/getCourseProgress.aggregation';
 import { Lesson } from 'src/schemas/lesson.schema';
+import { getUserPurchasedCourses } from 'src/aggregation/getUserCourses.aggregation';
 
 @Injectable()
 export class CourseService {
@@ -197,5 +198,20 @@ export class CourseService {
         (completedLessons / totalLessons) * 100
       ),
     };
+  }
+
+  async getUserCourses(
+    paginationInput: PaginationInput,
+    courseFilters: CourseFilters,
+    req: Request,
+  ): Promise<PaginatedResult<CourseResponse>> {
+    const pipeline = getUserPurchasedCourses(courseFilters, req.user.id);
+    const result = await paginateAggregate<CourseResponse>(
+      this.courseModel,
+      pipeline,
+      paginationInput.page,
+      paginationInput.limit,
+    );
+    return result;
   }
 }

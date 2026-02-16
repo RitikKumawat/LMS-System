@@ -31,7 +31,7 @@ export class CreateCourseInput {
 }
 
 @ObjectType()
-export class PaginatedCourse extends Paginated(CourseResponse) {}
+export class PaginatedCourse extends Paginated(CourseResponse) { }
 
 @InputType()
 export class CourseFilters {
@@ -46,4 +46,7 @@ export class CourseFilters {
 
   @Field(() => Boolean, { nullable: true })
   isPublished?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  isPurchased?: boolean;
 }

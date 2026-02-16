@@ -236,6 +236,7 @@ type Query {
   getCourseById(courseId: String!): CourseWithEnrollment!
   getPublishedCourses(paginationInput: PaginationInput!, courseFilters: CourseFilters!): PaginatedCourse!
   getCourseProgress(courseId: String!): CourseProgress!
+  getUserCourses(paginationInput: PaginationInput!, courseFilters: CourseFilters!): PaginatedCourse!
   getAllCourseModules(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModule!
   getCourseModuleById(courseModuleId: String!): CourseModuleResponse!
   getCourseModuleByCourseId(courseId: String!, paginationInput: PaginationInput!): PaginatedCourseModuleForStudent!
@@ -254,6 +255,7 @@ input CourseFilters {
   level: COURSE_LEVEL
   categoryId: String
   isPublished: Boolean
+  isPurchased: Boolean
 }
 
 enum COURSE_LEVEL {
