@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { ROUTES } from "../enum/routes";
 import Dashboard from "../pages/dashboard/Dashboard";
 import LoginPage from "../pages/login-page/LoginPage";
@@ -19,6 +19,11 @@ export const appRoutes = createBrowserRouter([
         <Dashboard />,
       </PrivateLayout>
     ),
+  },
+  {
+    path: "/",
+    element:
+      <Navigate to={ROUTES.ADMIN} />
   },
   {
     path: ROUTES.INSTRUCTOR_DASHBOARD,
