@@ -141,6 +141,46 @@ export default function CourseModulesAccordion({ courseId, activeLessonId }: Cou
                             {(!module.lessons || module.lessons.length === 0) && (
                                 <Text size="xs" c="dimmed" fs="italic">No lessons in this module.</Text>
                             )}
+
+                            {module.quizzes?.map((quiz) => (
+                                <Paper
+                                    key={quiz._id}
+                                    p="sm"
+                                    radius="sm"
+                                    withBorder
+                                    style={{
+                                        borderColor: COLORS.border.glass,
+                                        backgroundColor: "rgba(255,255,255,0.02)"
+                                    }}
+                                >
+                                    <Group justify="space-between">
+                                        <Group gap="sm">
+                                            <FileText size={16} color={COLORS.text.primary} />
+                                            <Text
+                                                size="sm"
+                                                style={{
+                                                    color: COLORS.text.secondary,
+                                                    fontWeight: 400
+                                                }}
+                                            >
+                                                {quiz.title}
+                                            </Text>
+                                        </Group>
+                                        <Flex align="center" gap="sm">
+                                            <Text size="xs" c="dimmed">Passing Score: {quiz.passing_score}%</Text>
+                                            {/* <Button
+                                                variant={"transparent"}
+                                                size="xs"
+                                                leftSection={<PlayCircle size={14} />}
+                                                
+                                                disabled
+                                            >
+                                                Start Quiz
+                                            </Button> */}
+                                        </Flex>
+                                    </Group>
+                                </Paper>
+                            ))}
                         </Stack>
                     </Accordion.Panel>
                 </Accordion.Item>

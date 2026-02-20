@@ -31,6 +31,38 @@ export function getAllCourseModuleForStudentPipeline(
                 },
             },
         },
+        {
+            $lookup: {
+                from: 'quizzes',
+                let: { moduleId: '$_id' },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: { $eq: ['$module_id', '$$moduleId'] }
+                        }
+                    },
+                    {
+                        $project: {
+                            module_id: 0,
+                        }
+                    },
+                    {
+                        $sort: { createdAt: 1 }
+                    }
+                ],
+                as: 'quizzes'
+            }
+        },
+        {
+            $addFields: {
+                quizzes: {
+                    $sortArray: {
+                        input: '$quizzes',
+                        sortBy: { createdAt: 1 },
+                    },
+                },
+            },
+        },
     ];
 
     // 👤 USER-SPECIFIC PART (only if logged in)

@@ -16,6 +16,11 @@ query GetCourseModuleByCourseId($courseId: String!, $paginationInput: Pagination
         isUnlocked
         status
       }
+      quizzes {
+        _id
+        title
+        passing_score
+      }
     }
     totalDocs
     limit

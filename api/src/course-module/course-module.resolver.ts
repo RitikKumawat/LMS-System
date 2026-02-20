@@ -34,6 +34,7 @@ export class CourseModuleResolver {
     );
   }
 
+  @Public()
   @Query(() => PaginatedCourseModule)
   getAllCourseModules(
     @Args('courseId') courseId: string,

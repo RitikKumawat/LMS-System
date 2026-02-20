@@ -55,6 +55,7 @@ export class CourseResolver {
   }
 
   @Public()
+  @UseGuards(OptionalAuthGuard)
   @Query(() => PaginatedCourse)
   getPublishedCourses(
     @Args('paginationInput') paginationInput: PaginationInput,

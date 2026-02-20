@@ -1,0 +1,3 @@
+mutation DeleteQuiz($quizId: String!) {
+  deleteQuiz(quiz_id: $quizId)
+}

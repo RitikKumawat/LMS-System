@@ -1,0 +1,5 @@
+mutation CreateQuiz($createQuizInput: CreateQuizDto!) {
+  createQuiz(createQuizInput: $createQuizInput) {
+    quiz_id
+  }
+}

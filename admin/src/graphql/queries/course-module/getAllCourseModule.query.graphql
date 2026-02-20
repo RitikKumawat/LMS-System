@@ -17,6 +17,12 @@ query GetAllCourseModules($courseId: String!, $paginationInput: PaginationInput!
         duration_minutes
         is_preview
       }
+      quizzes {
+        _id
+        title
+        passing_score
+        created_at
+      }
     }
     totalDocs
     limit

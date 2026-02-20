@@ -1,0 +1,9 @@
+query GetQuizById($quizId: String!) {
+  getQuizById(quizId: $quizId) {
+    _id
+    module_id
+    title
+    passing_score
+    created_at
+  }
+}

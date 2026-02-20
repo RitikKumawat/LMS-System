@@ -78,10 +78,9 @@ const SortableLessonItem = ({
         <Flex gap={"lg"} align={"center"}>
           <Text size="sm">{lesson.title}</Text>
           <Flex gap={"5px"}>
-            <ActionIcon color="green" variant="light">
-            <SquarePen
-              size={14}
-              style={{ cursor: "pointer" }}
+            <ActionIcon
+              color="green"
+              variant="light"
               onClick={(e) => {
                 e.preventDefault();
                 openLessonModal({
@@ -89,20 +88,24 @@ const SortableLessonItem = ({
                   module_id: module_id,
                 });
               }}
-            />
-          </ActionIcon>
-          <ActionIcon color="red" variant="light">
-            <Trash2
-              style={{ cursor: "pointer" }}
-              size={14}
+            >
+              <SquarePen size={14} style={{ cursor: "pointer" }} />
+            </ActionIcon>
+            <ActionIcon
               color="red"
+              variant="light"
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
                 handleDeleteLesson(lesson._id);
               }}
-            />
-          </ActionIcon>
+            >
+              <Trash2
+                style={{ cursor: "pointer" }}
+                size={14}
+                color="red"
+              />
+            </ActionIcon>
           </Flex>
         </Flex>
       </Flex>

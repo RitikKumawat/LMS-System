@@ -12,6 +12,7 @@ import {
   DeleteCourseModuleDocument,
   GetAllCourseModulesDocument,
   LessonResponse,
+  QuizResponse,
   ReorderLessonsDocument,
 } from "../../generated/graphql";
 import FButton from "../../ui/FButton/FButton";
@@ -25,13 +26,17 @@ import { openCourseModuleModal } from "../modals/course-module/openCourseModuleM
 import { useParams } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
 import { openConfirmModal } from "../modals/confirmation-modals/ConfirmationModal";
+import { openQuizModal } from "../modals/quiz/openQuizModal";
+import QuizItem from "./QuizItem";
 
 const SortableModuleItem = ({
   module,
   lessons,
+  quizzes,
 }: {
   module: CourseModuleResponse;
   lessons: LessonResponse[];
+  quizzes: QuizResponse[];
 }) => {
   const { id } = useParams<{ id: string }>();
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -115,30 +120,32 @@ const SortableModuleItem = ({
             <Flex align={"center"} gap={"lg"}>
               <Text fw={600}>{module.title}</Text>
               <Flex gap={"5px"}>
-                <ActionIcon color="green" variant="light">
-                  <SquarePen
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      openCourseModuleModal({
-                        course_id: id as string,
-                        courseModuleId: module._id,
-                      });
-                    }}
-                    size={14}
-                    color="green"
-                  />
+                <ActionIcon
+                  component="div"
+                  color="green"
+                  variant="light"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    openCourseModuleModal({
+                      course_id: id as string,
+                      courseModuleId: module._id,
+                    });
+                  }}
+                >
+                  <SquarePen size={14} color="green" />
                 </ActionIcon>
-                <ActionIcon color="red" variant="light">
-                  <Trash2
-                    size={14}
-                    color="red"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      handleDeleteModule(module._id);
-                    }}
-                  />
+                <ActionIcon
+                  component="div"
+                  color="red"
+                  variant="light"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handleDeleteModule(module._id);
+                  }}
+                >
+                  <Trash2 size={14} color="red" />
                 </ActionIcon>
               </Flex>
             </Flex>
@@ -187,6 +194,15 @@ const SortableModuleItem = ({
               </Text>
             </Flex>
           )}
+
+          {quizzes && quizzes.length > 0 && (
+            <Flex direction={"column"} gap={"sm"} w={"100%"}>
+              <Text size="sm" fw={600} c="dimmed">Quizzes</Text>
+              {quizzes.map((quiz) => (
+                <QuizItem key={quiz._id} quiz={quiz} module_id={module._id} />
+              ))}
+            </Flex>
+          )}
           <Flex gap={"lg"} align={"center"} style={{ width: "fit-content" }}>
             <FButton
               handleClick={() =>
@@ -199,7 +215,7 @@ const SortableModuleItem = ({
               stateLessons.length > 0 && (
                 <FButton
                   handleClick={() =>
-                    console.log("QUIZ MODAL OPEN")
+                    openQuizModal({ courseModuleId: module._id, quiz_id: "" })
                   }
                   title="Add Quiz"
                   variant="outline"

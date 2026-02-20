@@ -1,5 +1,6 @@
 import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 import { LessonForStudentResponse, LessonResponse } from 'src/lesson/entity/lesson.entity';
+import { QuizResponse } from 'src/quiz/entity/quiz.entity';
 import { Paginated } from 'src/utils/pagination.util';
 
 @ObjectType()
@@ -24,6 +25,9 @@ export class CourseModuleResponse {
 
   @Field(() => [LessonResponse])
   lessons?: LessonResponse[];
+
+  @Field(() => [QuizResponse])
+  quizzes?: QuizResponse[];
 }
 
 @ObjectType()
@@ -52,6 +56,9 @@ export class CourseModuleForStudentResponse {
 
   @Field(() => [LessonForStudentResponse])
   lessons?: LessonForStudentResponse[];
+
+  @Field(() => [QuizResponse])
+  quizzes?: QuizResponse[];
 }
 
 @ObjectType()

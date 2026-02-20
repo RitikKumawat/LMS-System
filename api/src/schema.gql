@@ -64,6 +64,14 @@ type Lesson {
   updatedAt: DateTime!
 }
 
+type Quiz {
+  _id: ID!
+  module_id: String!
+  title: String!
+  passing_score: Int!
+  created_at: DateTime!
+}
+
 type AdminResponse {
   _id: String!
   name: String!
@@ -179,6 +187,17 @@ type LessonDetails {
   lesson: LessonResponse!
 }
 
+type CreateQuizResponse {
+  quiz_id: ID!
+}
+
+type QuizResponse {
+  _id: ID!
+  title: String!
+  passing_score: Int!
+  created_at: DateTime!
+}
+
 type CourseModuleResponse {
   _id: ID!
   title: String!
@@ -187,6 +206,7 @@ type CourseModuleResponse {
   order: Int!
   createdAt: DateTime!
   lessons: [LessonResponse!]!
+  quizzes: [QuizResponse!]!
 }
 
 type PaginatedCourseModule {
@@ -207,6 +227,7 @@ type CourseModuleForStudentResponse {
   order: Int!
   createdAt: DateTime!
   lessons: [LessonForStudentResponse!]!
+  quizzes: [QuizResponse!]!
 }
 
 type PaginatedCourseModuleForStudent {
@@ -243,6 +264,7 @@ type Query {
   getLessonById(lessonId: String!): LessonResponse!
   getLessonContent(lessonId: String!, courseId: String!): LessonDetails!
   getOrder(id: String!): CourseOrderResponse!
+  getQuizById(quizId: String!): Quiz!
 }
 
 input PaginationInput {
@@ -284,6 +306,8 @@ type Mutation {
   deleteLesson(lessonId: String!): String!
   updateLessonProgress(lessonId: String!, operation: LESSON_OPERATION!): LessonProgressUpdate!
   createCourseOrder(course_id: String!): CourseOrderResponse!
+  createQuiz(createQuizInput: CreateQuizDto!): CreateQuizResponse!
+  deleteQuiz(quiz_id: String!): String!
 }
 
 input VerifyOtpInput {
@@ -366,4 +390,11 @@ enum LESSON_OPERATION {
   START
   VISIT
   COMPLETED
+}
+
+input CreateQuizDto {
+  title: String!
+  passing_score: Int!
+  courseModuleId: String!
+  quizId: String
 }

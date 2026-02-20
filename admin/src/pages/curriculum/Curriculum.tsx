@@ -48,7 +48,7 @@ const Curriculum = () => {
           page: 1,
         },
       },
-      fetchPolicy:"network-only"
+      fetchPolicy: "network-only"
     }
   );
 
@@ -123,14 +123,14 @@ const Curriculum = () => {
       );
       const reordered = arrayMove(items, oldIndex, newIndex);
       reorderModules({
-      variables: {
-        reorderCourseModulesInput: {
-          courseId: id as string,
-          moduleIds: reordered.map((m) => m._id),
+        variables: {
+          reorderCourseModulesInput: {
+            courseId: id as string,
+            moduleIds: reordered.map((m) => m._id),
+          },
         },
-      },
-    });
-    return reordered;
+      });
+      return reordered;
     });
   };
 
@@ -175,7 +175,7 @@ const Curriculum = () => {
               title="Add Module"
               handleClick={() => {
                 // 🔥 open create module modal
-                openCourseModuleModal({course_id:id as string});
+                openCourseModuleModal({ course_id: id as string });
               }}
             />
           </Flex>
@@ -192,7 +192,7 @@ const Curriculum = () => {
               handleClick={() => {
                 // 🔥 open create module modal
                 console.log("ADD MODULE CLICKED")
-                openCourseModuleModal({course_id:id as string});
+                openCourseModuleModal({ course_id: id as string });
               }}
             />
           </Flex>
@@ -206,12 +206,13 @@ const Curriculum = () => {
               items={modules.map((m) => m._id)}
               strategy={verticalListSortingStrategy}
             >
-              <Accordion multiple classNames={{root:classes.accordionRoot}}>
+              <Accordion multiple classNames={{ root: classes.accordionRoot }}>
                 {modules.map((module) => (
                   <SortableModuleItem
                     key={module._id}
                     module={module}
                     lessons={module.lessons}
+                    quizzes={module.quizzes}
                   />
                 ))}
               </Accordion>
