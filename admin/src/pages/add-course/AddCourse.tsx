@@ -1,6 +1,6 @@
 import { FormErrors, useForm } from "@mantine/form";
 import { yupResolver } from "mantine-form-yup-resolver";
-import { Box, Flex, Stepper, Text } from "@mantine/core";
+import { Box, Flex, Stepper, Text, Paper, Grid, Stack, Group } from "@mantine/core";
 import { useEffect } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -47,7 +47,7 @@ const AddCourse = () => {
   });
 
   const { refetch } = useQuery(GetAllCoursesDocument, {
-    variables: { paginationInput: { limit: 10, page: 1 }, courseFilters:{} },
+    variables: { paginationInput: { limit: 10, page: 1 }, courseFilters: {} },
   });
 
   /* ------------------ Mutation ------------------ */
@@ -90,33 +90,33 @@ const AddCourse = () => {
   /* ------------------ Scroll to First Error ------------------ */
 
   const scrollToFirstError = (errors: FormErrors) => {
-  const errorFields = Object.keys(errors);
-  if (errorFields.length === 0) return;
+    const errorFields = Object.keys(errors);
+    if (errorFields.length === 0) return;
 
-  const firstError = errorFields[0];
-  const el = document.getElementById(firstError);
-  if (!el) return;
+    const firstError = errorFields[0];
+    const el = document.getElementById(firstError);
+    if (!el) return;
 
-  const NAVBAR_HEIGHT = 72;
+    const NAVBAR_HEIGHT = 72;
 
-  const y =
-    el.getBoundingClientRect().top +
-    window.pageYOffset -
-    NAVBAR_HEIGHT -
-    16;
+    const y =
+      el.getBoundingClientRect().top +
+      window.pageYOffset -
+      NAVBAR_HEIGHT -
+      16;
 
-  window.scrollTo({
-    top: y,
-    behavior: "smooth",
-  });
+    window.scrollTo({
+      top: y,
+      behavior: "smooth",
+    });
 
-  const input =
-    el.querySelector("input, textarea, select") ?? el;
+    const input =
+      el.querySelector("input, textarea, select") ?? el;
 
-  setTimeout(() => {
-    (input as HTMLElement)?.focus();
-  }, 300);
-};
+    setTimeout(() => {
+      (input as HTMLElement)?.focus();
+    }, 300);
+  };
 
 
   /* ------------------ Submit ------------------ */
@@ -161,23 +161,23 @@ const AddCourse = () => {
     <div>
       <Box className={classes.stepperContainer}>
         <Flex gap="lg" align="center">
-        <FButton
-          variant="outline"
-          size="xs"
-          handleClick={() => navigate(ROUTES.COURSES)}
-          leftIcon={<ArrowLeft size={15} />}
-          title=""
-        />
-        <Text fw={600} size="24px">
-          {id ? "Edit" : "Add"} Course Details
-        </Text>
-      </Flex>
-      <Stepper active={0} w={"70%"}>
-        <Stepper.Step label="Course Details" />
-        <Stepper.Step label="Curriculum"/>
-      </Stepper>
+          <FButton
+            variant="outline"
+            size="xs"
+            handleClick={() => navigate(ROUTES.COURSES)}
+            leftIcon={<ArrowLeft size={15} />}
+            title=""
+          />
+          <Text fw={600} size="24px">
+            {id ? "Edit" : "Add"} Course Details
+          </Text>
+        </Flex>
+        <Stepper active={0} w={"70%"}>
+          <Stepper.Step label="Course Details" />
+          <Stepper.Step label="Curriculum" />
+        </Stepper>
       </Box>
-      
+
 
       <form
         onSubmit={(e) => {
@@ -185,106 +185,136 @@ const AddCourse = () => {
           handleSubmit();
         }}
       >
-        <Flex direction="column" gap="lg" mt="lg">
-          <Flex gap="lg">
-            <div id="title">
-              <FInput
-                label="Course Title"
-                placeholder="Enter Course Title"
-                {...form.getInputProps("title")}
-                formHandler={form.getInputProps("title")}
-              />
-            </div>
+        <Stack gap="xl" mt="xl" pb="xl">
+          {/* Basic Information Card */}
+          <Paper shadow="sm" radius="md" p="xl" withBorder>
+            <Text fw={600} size="lg" mb="md" c="dimmed">
+              Basic Information
+            </Text>
+            <Grid gutter="xl">
+              <Grid.Col span={{ base: 12, md: 8 }}>
+                <div id="title">
+                  <FInput
+                    label="Course Title"
+                    placeholder="Enter Course Title"
+                    {...form.getInputProps("title")}
+                    formHandler={form.getInputProps("title")}
+                  />
+                </div>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, md: 4 }}>
+                <div id="price">
+                  <FInput
+                    label="Course Price (₹)"
+                    variant="number"
+                    placeholder="Enter Price"
+                    {...form.getInputProps("price")}
+                    formHandler={form.getInputProps("price")}
+                  />
+                </div>
+              </Grid.Col>
+            </Grid>
+          </Paper>
 
-            <div id="price">
-              <FInput
-                label="Course Price"
-                variant="number"
-                placeholder="Enter Price"
-                {...form.getInputProps("price")}
-                formHandler={form.getInputProps("price")}
-              />
-            </div>
-          </Flex>
+          {/* Classification Card */}
+          <Paper shadow="sm" radius="md" p="xl" withBorder>
+            <Text fw={600} size="lg" mb="md" c="dimmed">
+              Classification
+            </Text>
+            <Grid gutter="xl">
+              <Grid.Col span={{ base: 12, md: 4 }}>
+                <div id="level">
+                  <FInput
+                    label="Course Level"
+                    variant="select"
+                    placeholder="Select Course Level"
+                    {...form.getInputProps("level")}
+                    formHandler={form.getInputProps("level")}
+                    selectOptions={[
+                      { label: "Beginner", value: Course_Level.Beginner },
+                      { label: "Intermediate", value: Course_Level.Intermediate },
+                      { label: "Advanced", value: Course_Level.Advanced },
+                    ]}
+                  />
+                </div>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, md: 4 }}>
+                <div id="language">
+                  <FInput
+                    label="Course Language"
+                    placeholder="e.g. English, Spanish"
+                    {...form.getInputProps("language")}
+                    formHandler={form.getInputProps("language")}
+                  />
+                </div>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, md: 4 }}>
+                <div id="category">
+                  <FInput
+                    label="Course Category"
+                    variant="select"
+                    placeholder="Select Category"
+                    {...form.getInputProps("category")}
+                    formHandler={form.getInputProps("category")}
+                    selectOptions={categoryOptions}
+                  />
+                </div>
+              </Grid.Col>
+            </Grid>
+          </Paper>
 
-          <div id="thumbnail">
-            <FImageUploader
-              value={form.values.thumbnail ? [form.values.thumbnail] : []}
-              onChange={(files) =>
-                form.setFieldValue("thumbnail", files[0] || null)
-              }
-              onClear={() => {
-                form.setFieldValue("thumbnail", null);
-                form.setFieldValue("thumbnail_url", "");
-              }}
-              accept="image/*"
-              label="Course Thumbnail"
-              maxSize={5 * 1024 * 1024}
-              formError={form.errors.thumbnail?.toString()}
+          {/* Media & Description Card */}
+          <Paper shadow="sm" radius="md" p="xl" withBorder>
+            <Text fw={600} size="lg" mb="md" c="dimmed">
+              Media & Content
+            </Text>
+            <Stack gap="xl">
+              <div id="thumbnail">
+                <Text fw={500} size="sm" mb={4}>Course Thumbnail</Text>
+                <FImageUploader
+                  value={form.values.thumbnail ? [form.values.thumbnail] : []}
+                  onChange={(files) =>
+                    form.setFieldValue("thumbnail", files[0] || null)
+                  }
+                  onClear={() => {
+                    form.setFieldValue("thumbnail", null);
+                    form.setFieldValue("thumbnail_url", "");
+                  }}
+                  accept="image/*"
+                  // label="Course Thumbnail" -> using Text above instead for better alignment
+                  maxSize={5 * 1024 * 1024}
+                  formError={form.errors.thumbnail?.toString()}
+                />
+              </div>
 
+              <div id="description">
+                <Text fw={500} size="sm" mb={4}>Course Description</Text>
+                {form.errors.description && (
+                  <Text c="red" size="xs" mb={4}>
+                    {form.errors.description}
+                  </Text>
+                )}
+                <Box style={{ border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+                  <RichTextEditorComponent
+                    value={form.values.description}
+                    onChange={(val) => form.setFieldValue("description", val)}
+                  />
+                </Box>
+              </div>
+            </Stack>
+          </Paper>
+
+          {/* Actions */}
+          <Group justify="flex-end">
+            <FButton
+              type="submit"
+              loading={loading}
+              disabled={loading}
+              title={"Save and Next"}
+              variant="dark"
             />
-          </div>
-
-          <Flex gap="lg">
-            <div id="level">
-              <FInput
-                label="Course Level"
-                variant="select"
-                placeholder="Select Course Level"
-                {...form.getInputProps("level")}
-                formHandler={form.getInputProps("level")}
-                selectOptions={[
-                  { label: "Beginner", value: Course_Level.Beginner },
-                  { label: "Intermediate", value: Course_Level.Intermediate },
-                  { label: "Advanced", value: Course_Level.Advanced },
-                ]}
-              />
-            </div>
-
-            <div id="language">
-              <FInput
-                label="Course Language"
-                placeholder="Enter Language"
-                {...form.getInputProps("language")}
-                formHandler={form.getInputProps("language")}
-              />
-            </div>
-
-            <div id="category">
-              <FInput
-                label="Course Category"
-                variant="select"
-                placeholder="Select Category"
-                {...form.getInputProps("category")}
-                formHandler={form.getInputProps("category")}
-                selectOptions={categoryOptions}
-              />
-            </div>
-          </Flex>
-
-          <Text fw={500}>Course Description</Text>
-
-          <div id="description">
-            {form.errors.description && (
-              <Text c="red" size="xs">
-                {form.errors.description}
-              </Text>
-            )}
-
-            <RichTextEditorComponent
-              value={form.values.description}
-              onChange={(val) => form.setFieldValue("description", val)}
-            />
-          </div>
-
-          <FButton
-            type="submit"
-            loading={loading}
-            disabled={loading}
-            title={"Save and Next"}
-            variant="dark"
-          />
-        </Flex>
+          </Group>
+        </Stack>
       </form>
     </div>
   );

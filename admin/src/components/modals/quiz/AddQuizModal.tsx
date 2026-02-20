@@ -95,12 +95,22 @@ const AddQuizModal = ({ courseModuleId, quiz_id }: Iprops) => {
                     formHandler={form.getInputProps("passing_score")}
                 />
                 <FButton
-                    title={quiz_id ? "Update Quiz" : "Add Quiz"}
+                    title={quiz_id ? "Update Quiz Settings" : "Add Quiz"}
                     variant="dark"
                     type="submit"
                     disabled={createQuizLoading}
                     loading={createQuizLoading}
                 />
+                {quiz_id && (
+                    <FButton
+                        title="Update Quiz Questions"
+                        variant="light"
+                        handleClick={() => {
+                            modals.close('quiz-modal');
+                            navigate(`${ROUTES.COURSE_CURRICULUM}/${courseModuleId}/quiz/${quiz_id}`);
+                        }}
+                    />
+                )}
             </Flex>
         </form>
     );

@@ -20,6 +20,9 @@ export class QuizResponse {
     @Field(() => Int)
     passing_score: number;
 
+    @Field(() => Int, { nullable: true })
+    questionCount?: number;
+
     @Field(() => Date)
     created_at: Date;
 }

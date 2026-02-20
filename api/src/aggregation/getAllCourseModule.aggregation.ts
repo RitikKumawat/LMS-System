@@ -43,8 +43,22 @@ export function getAllCourseModulePipeline(courseId: string): PipelineStage[] {
             }
           },
           {
+            $lookup: {
+              from: 'quizquestions',
+              localField: '_id',
+              foreignField: 'quiz_id',
+              as: 'questions'
+            }
+          },
+          {
+            $addFields: {
+              questionCount: { $size: '$questions' }
+            }
+          },
+          {
             $project: {
               module_id: 0,
+              questions: 0
             }
           },
           {

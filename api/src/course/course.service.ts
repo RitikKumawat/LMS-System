@@ -150,6 +150,35 @@ export class CourseService {
 
     const isPublishing = !course.is_published;
 
+    if (isPublishing) {
+      // Validate Modules: course must have at least one module
+      const moduleCount = await this.courseModel.db.collection('coursemodules').countDocuments({ course_id: new Types.ObjectId(courseId) });
+      if (moduleCount === 0) {
+        throw new HttpException('Cannot publish course: At least one module is required.', HttpStatus.BAD_REQUEST);
+      }
+
+      // Validate Quizzes: every quiz in this course must have at least one question
+      const modules = await this.courseModel.db.collection('coursemodules').find({ course_id: new Types.ObjectId(courseId) }).toArray();
+      const moduleIds = modules.map(m => m._id);
+
+      // Validate Lessons: every module must have at least one lesson
+      for (const module of modules) {
+        const lessonCount = await this.courseModel.db.collection('lessons').countDocuments({ module_id: module._id });
+        if (lessonCount === 0) {
+          throw new HttpException(`Cannot publish course: Module "${module.title}" is empty. Every module must have at least one lesson.`, HttpStatus.BAD_REQUEST);
+        }
+      }
+
+      const quizzes = await this.courseModel.db.collection('quizzes').find({ module_id: { $in: moduleIds } }).toArray();
+
+      for (const quiz of quizzes) {
+        const questionCount = await this.courseModel.db.collection('quizquestions').countDocuments({ quiz_id: quiz._id });
+        if (questionCount === 0) {
+          throw new HttpException(`Cannot publish course: Quiz "${quiz.title}" has no questions.`, HttpStatus.BAD_REQUEST);
+        }
+      }
+    }
+
     course.is_published = isPublishing;
     course.published_at = isPublishing ? new Date() : null;
     await course.save();

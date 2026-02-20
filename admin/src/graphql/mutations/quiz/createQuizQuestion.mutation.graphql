@@ -1,0 +1,11 @@
+mutation CreateQuizQuestion($createQuizQuestionInput: CreateQuizQuestionInput!) {
+  createQuizQuestion(createQuizQuestionInput: $createQuizQuestionInput) {
+    _id
+    question_text
+    type
+    options {
+      option_text
+      is_correct
+    }
+  }
+}

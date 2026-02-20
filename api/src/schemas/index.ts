@@ -11,6 +11,7 @@ import { Order, OrderSchema } from './order.schema';
 import { Otp, OtpSchema } from './otp.schema';
 import { Payment, PaymentSchema } from './payment.schema';
 import { QuizAttempt, QuizAttemptSchema } from './quiz-attempt.schema';
+import { QuizQuestion, QuizQuestionSchema } from './quiz-question.schema';
 import { Quiz, QuizSchema } from './quiz.schema';
 import { User, UserSchema } from './user.schema';
 
@@ -30,4 +31,5 @@ export const SCHEMAS = [
   { name: Quiz.name, schema: QuizSchema },
   { name: Order.name, schema: OrderSchema },
   { name: Payment.name, schema: PaymentSchema },
+  { name: QuizQuestion.name, schema: QuizQuestionSchema },
 ];

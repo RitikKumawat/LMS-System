@@ -64,6 +64,20 @@ type Lesson {
   updatedAt: DateTime!
 }
 
+type Options {
+  option_text: String!
+  is_correct: Boolean!
+}
+
+type QuizQuestion {
+  _id: ID!
+  quiz_id: String!
+  question_text: String!
+  type: String!
+  options: [Options!]!
+  created_at: DateTime!
+}
+
 type Quiz {
   _id: ID!
   module_id: String!
@@ -195,6 +209,7 @@ type QuizResponse {
   _id: ID!
   title: String!
   passing_score: Int!
+  questionCount: Int
   created_at: DateTime!
 }
 
@@ -265,6 +280,8 @@ type Query {
   getLessonContent(lessonId: String!, courseId: String!): LessonDetails!
   getOrder(id: String!): CourseOrderResponse!
   getQuizById(quizId: String!): Quiz!
+  getQuizQuestionsByQuizId(quizId: String!): [QuizQuestion!]!
+  quizQuestion(id: String!): QuizQuestion!
 }
 
 input PaginationInput {
@@ -308,6 +325,8 @@ type Mutation {
   createCourseOrder(course_id: String!): CourseOrderResponse!
   createQuiz(createQuizInput: CreateQuizDto!): CreateQuizResponse!
   deleteQuiz(quiz_id: String!): String!
+  createQuizQuestion(createQuizQuestionInput: CreateQuizQuestionInput!): QuizQuestion!
+  removeQuizQuestion(id: String!): QuizQuestion!
 }
 
 input VerifyOtpInput {
@@ -397,4 +416,16 @@ input CreateQuizDto {
   passing_score: Int!
   courseModuleId: String!
   quizId: String
+}
+
+input CreateQuizQuestionInput {
+  quiz_id: String!
+  question_text: String!
+  type: String!
+  options: [CreateOptionInput!]!
+}
+
+input CreateOptionInput {
+  option_text: String!
+  is_correct: Boolean!
 }

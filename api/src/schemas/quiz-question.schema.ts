@@ -5,6 +5,7 @@ import { QUIZ_QUESTION_TYPE } from 'src/enum/quizQuestionType';
 
 export type QuizQuestionDocument = HydratedDocument<QuizQuestion>;
 
+@ObjectType()
 class Options {
   @Field(() => String)
   option_text: string;
@@ -31,8 +32,8 @@ export class QuizQuestion {
   @Field(() => String)
   type: QUIZ_QUESTION_TYPE; // e.g., "single", "multiple", "true_false"
 
-  @Prop({ required: true })
-  @Field(() => Options)
+  @Prop({ type: [Object], required: true })
+  @Field(() => [Options])
   options: Options[];
 
   @Field(() => Date)

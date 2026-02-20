@@ -30,6 +30,8 @@ import { EnrollmentModule } from './enrollment/enrollment.module';
 import { PaymentModule } from './payment/payment.module';
 import { LessonProgressModule } from './lesson-progress/lesson-progress.module';
 import { QuizModule } from './quiz/quiz.module';
+import { QuizQuestionModule } from './quiz-question/quiz-question.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -67,6 +69,7 @@ import { QuizModule } from './quiz/quiz.module';
     PaymentModule,
     LessonProgressModule,
     QuizModule,
+    QuizQuestionModule,
     // CommonModule,
   ],
   controllers: [AppController],
@@ -80,4 +83,4 @@ import { QuizModule } from './quiz/quiz.module';
     UploadsGateway,
   ],
 })
-export class AppModule {}
+export class AppModule { }

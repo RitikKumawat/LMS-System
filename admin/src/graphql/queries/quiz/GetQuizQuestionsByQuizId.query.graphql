@@ -1,0 +1,11 @@
+query GetQuizQuestionsByQuizId($quizId: String!) {
+  getQuizQuestionsByQuizId(quizId: $quizId) {
+    _id
+    question_text
+    type
+    options {
+      option_text
+      is_correct
+    }
+  }
+}

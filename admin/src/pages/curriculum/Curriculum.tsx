@@ -6,6 +6,7 @@ import {
   Loader,
   Stepper,
   Text,
+  Paper,
 } from "@mantine/core";
 import FButton from "../../ui/FButton/FButton";
 import { ArrowLeft } from "lucide-react";
@@ -157,78 +158,89 @@ const Curriculum = () => {
         <Stepper active={1} w="70%">
           <Stepper.Step label="Course Details" />
           <Stepper.Step label="Curriculum" />
+          <Stepper.Step label="Review & Publish" />
         </Stepper>
       </Box>
 
       {/* ------------------------------ CONTENT ------------------------------ */}
-      {loading && modules.length === 0 ? (
-        <Center h="70vh">
-          <Loader size="md" color={COLORS.primaryBlueDark} />
-        </Center>
-      ) : modules.length === 0 ? (
-        /* --------------------------- EMPTY STATE --------------------------- */
-        <Center h="60vh">
-          <Flex direction="column" gap="md" align="center">
-            <Text c="dimmed">No modules created yet</Text>
-            <FButton
-              variant="dark"
-              title="Add Module"
-              handleClick={() => {
-                // 🔥 open create module modal
-                openCourseModuleModal({ course_id: id as string });
-              }}
-            />
-          </Flex>
-        </Center>
-      ) : (
-        <>
-          {/* ------------------------ ADD MODULE CTA ------------------------ */}
-          <Flex justify="space-between" mb="md">
-            <Text fw={600}>Modules</Text>
-            <FButton
-              variant="dark"
-              title="Add Module"
-              size="sm"
-              handleClick={() => {
-                // 🔥 open create module modal
-                console.log("ADD MODULE CLICKED")
-                openCourseModuleModal({ course_id: id as string });
-              }}
-            />
-          </Flex>
+      <Paper shadow="sm" radius="md" p="xl" withBorder mt="xl">
+        {loading && modules.length === 0 ? (
+          <Center h="50vh">
+            <Loader size="md" color={COLORS.primaryBlueDark} />
+          </Center>
+        ) : modules.length === 0 ? (
+          /* --------------------------- EMPTY STATE --------------------------- */
+          <Center h="50vh">
+            <Flex direction="column" gap="md" align="center">
+              <Text c="dimmed" size="lg" fw={500}>No modules created yet</Text>
+              <Text c="dimmed" size="sm" mb="md">Start building your course by adding your first module.</Text>
+              <FButton
+                variant="dark"
+                title="Add Your First Module"
+                handleClick={() => {
+                  openCourseModuleModal({ course_id: id as string });
+                }}
+              />
+            </Flex>
+          </Center>
+        ) : (
+          <>
+            {/* ------------------------ ADD MODULE CTA ------------------------ */}
+            <Flex justify="space-between" align="center" mb="xl" pb="md" style={{ borderBottom: '1px solid #eee' }}>
+              <Text fw={600} size="lg">Course Modules</Text>
+              <FButton
+                variant="dark"
+                title="+ Add Module"
+                size="sm"
+                handleClick={() => {
+                  console.log("ADD MODULE CLICKED")
+                  openCourseModuleModal({ course_id: id as string });
+                }}
+              />
+            </Flex>
 
-          {/* -------------------------- DND + LIST -------------------------- */}
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={modules.map((m) => m._id)}
-              strategy={verticalListSortingStrategy}
+            {/* -------------------------- DND + LIST -------------------------- */}
+            <DndContext
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
             >
-              <Accordion multiple classNames={{ root: classes.accordionRoot }}>
-                {modules.map((module) => (
-                  <SortableModuleItem
-                    key={module._id}
-                    module={module}
-                    lessons={module.lessons}
-                    quizzes={module.quizzes}
-                  />
-                ))}
-              </Accordion>
-            </SortableContext>
-          </DndContext>
+              <SortableContext
+                items={modules.map((m) => m._id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <Accordion multiple classNames={{ root: classes.accordionRoot }}>
+                  {modules.map((module) => (
+                    <SortableModuleItem
+                      key={module._id}
+                      module={module}
+                      lessons={module.lessons}
+                      quizzes={module.quizzes}
+                    />
+                  ))}
+                </Accordion>
+              </SortableContext>
+            </DndContext>
 
-          {/* ----------------------- INFINITE SCROLL ----------------------- */}
-          <div ref={observerRef} />
+            {/* ----------------------- INFINITE SCROLL ----------------------- */}
+            <div ref={observerRef} />
 
-          {hasMore && (
-            <Center mt="md">
-              <Loader size="sm" />
-            </Center>
-          )}
-        </>
-      )}
+            {hasMore && (
+              <Center mt="md">
+                <Loader size="sm" />
+              </Center>
+            )}
+
+            {/* Next Button */}
+            <Flex justify="flex-end" mt="xl" pt="md" style={{ borderTop: '1px solid #eee' }}>
+              <FButton
+                title="Next: Review"
+                variant="dark"
+                handleClick={() => navigate(ROUTES.COURSE_REVIEW + `/${id}`)}
+              />
+            </Flex>
+          </>
+        )}
+      </Paper>
     </div>
   );
 };

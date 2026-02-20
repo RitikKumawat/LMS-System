@@ -13,6 +13,8 @@ import Curriculum from "../pages/curriculum/Curriculum";
 import QuizPage from "../pages/quiz/QuizPage";
 import RootLayout from "../layouts/root-layout/RootLayout";
 
+import ReviewCourse from "../pages/review-course/ReviewCourse";
+
 export const appRoutes = createBrowserRouter([
   {
     path: "/",
@@ -83,6 +85,12 @@ export const appRoutes = createBrowserRouter([
         path: ROUTES.COURSE_CURRICULUM + '/:id/quiz/:quizId',
         element: <PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
           <QuizPage />
+        </PrivateLayout>
+      },
+      {
+        path: ROUTES.COURSE_REVIEW + '/:id',
+        element: <PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
+          <ReviewCourse />
         </PrivateLayout>
       }
     ]
