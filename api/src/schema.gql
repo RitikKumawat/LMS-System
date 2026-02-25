@@ -73,9 +73,15 @@ type QuizQuestion {
   _id: ID!
   quiz_id: String!
   question_text: String!
-  type: String!
+  type: QUIZ_QUESTION_TYPE!
   options: [Options!]!
   created_at: DateTime!
+}
+
+enum QUIZ_QUESTION_TYPE {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  TRUE_FALSE
 }
 
 type Quiz {
@@ -211,6 +217,12 @@ type QuizResponse {
   passing_score: Int!
   questionCount: Int
   created_at: DateTime!
+  score: Int
+}
+
+type SubmitQuizAttemptResponse {
+  score: Int!
+  passed: Boolean!
 }
 
 type CourseModuleResponse {
@@ -280,6 +292,7 @@ type Query {
   getLessonContent(lessonId: String!, courseId: String!): LessonDetails!
   getOrder(id: String!): CourseOrderResponse!
   getQuizById(quizId: String!): Quiz!
+  getQuizForStudent(quizId: String!): Quiz!
   getQuizQuestionsByQuizId(quizId: String!): [QuizQuestion!]!
   quizQuestion(id: String!): QuizQuestion!
 }
@@ -325,6 +338,7 @@ type Mutation {
   createCourseOrder(course_id: String!): CourseOrderResponse!
   createQuiz(createQuizInput: CreateQuizDto!): CreateQuizResponse!
   deleteQuiz(quiz_id: String!): String!
+  submitQuizAttempt(quizId: String!, score: Int!): SubmitQuizAttemptResponse!
   createQuizQuestion(createQuizQuestionInput: CreateQuizQuestionInput!): QuizQuestion!
   removeQuizQuestion(id: String!): QuizQuestion!
 }
@@ -419,9 +433,10 @@ input CreateQuizDto {
 }
 
 input CreateQuizQuestionInput {
+  id: String
   quiz_id: String!
   question_text: String!
-  type: String!
+  type: QUIZ_QUESTION_TYPE!
   options: [CreateOptionInput!]!
 }
 

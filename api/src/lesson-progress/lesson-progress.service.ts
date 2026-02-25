@@ -89,4 +89,11 @@ export class LessonProgressService {
             alreadyCompleted: false,
         };
     }
+
+    async unlockNextLessonsByModuleId(user_id: string, module_id: string) {
+        const module = await this.courseModuleModel.findById(module_id);
+        if (module && module.course_id) {
+            await this.unlockInitialLessons(user_id, module.course_id.toString());
+        }
+    }
 }

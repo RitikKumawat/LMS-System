@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "@apollo/client/react";
 import { GetCourseModuleByCourseIdDocument, Lesson, Lesson_Operation, Lesson_Status, LessonForStudentResponse, UpdateLessonProgressDocument } from "@/generated/graphql";
 import { Accordion, Text, Loader, Center, Stack, ThemeIcon, Group, Paper, Button, Flex } from "@mantine/core";
 import { COLORS } from "@/assets/colors/colors";
-import { PlayCircle, FileText, CheckCircle } from "lucide-react";
+import { PlayCircle, FileText, CheckCircle, Lock } from "lucide-react";
 import React, { useState } from 'react';
 import { usePathname, useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
@@ -12,9 +12,10 @@ import { notifications } from "@mantine/notifications";
 interface CourseModulesAccordionProps {
     courseId: string;
     activeLessonId?: string;
+    isEnrolled?: boolean;
 }
 
-export default function CourseModulesAccordion({ courseId, activeLessonId }: CourseModulesAccordionProps) {
+export default function CourseModulesAccordion({ courseId, activeLessonId, isEnrolled }: CourseModulesAccordionProps) {
     const path = usePathname();
     const { data, loading, error } = useQuery(GetCourseModuleByCourseIdDocument, {
         variables: {
@@ -61,8 +62,25 @@ export default function CourseModulesAccordion({ courseId, activeLessonId }: Cou
         return <Text c="dimmed" size="sm" ta="center" py="md">No modules found for this course.</Text>;
     }
 
-    // Sort modules by order if needed, assuming API returns sorted or we sort here
-    // modules.sort((a, b) => a.order - b.order);
+    let lastItemCompleted = true; // The first item is always sequentially unlocked.
+    const computedModules = modules.map(module => {
+        const computedLessons = (module.lessons || []).map(lesson => {
+            const sequentialUnlock = lastItemCompleted || lesson.isUnlocked;
+            const isActuallyUnlocked = !!isEnrolled && sequentialUnlock;
+            lastItemCompleted = lesson.status?.toLowerCase() === Lesson_Status.Completed.toLowerCase();
+            return { ...lesson, isUnlocked: isActuallyUnlocked };
+        });
+
+        const computedQuizzes = (module.quizzes || []).map(quiz => {
+            const sequentialUnlock = lastItemCompleted;
+            const isActuallyUnlocked = !!isEnrolled && sequentialUnlock;
+            lastItemCompleted = (quiz.score !== null && quiz.score !== undefined && quiz.score >= quiz.passing_score);
+            return { ...quiz, isUnlocked: isActuallyUnlocked };
+        });
+
+        return { ...module, lessons: computedLessons, quizzes: computedQuizzes };
+    });
+
     const handleLessonClick = (lesson: LessonForStudentResponse) => {
         if (lesson.isUnlocked) {
             setLoadingLessonId(lesson._id);
@@ -76,7 +94,7 @@ export default function CourseModulesAccordion({ courseId, activeLessonId }: Cou
     }
     return (
         <Accordion variant="separated" radius="md">
-            {modules.map((module, index) => (
+            {computedModules.map((module, index) => (
                 <Accordion.Item key={module._id} value={module._id} mb="sm" style={{ border: `1px solid ${COLORS.border.glass}`, backgroundColor: COLORS.background.secondary }}>
                     <Accordion.Control icon={
                         <ThemeIcon variant="light" color="blue" size="sm" radius="xl">
@@ -119,7 +137,7 @@ export default function CourseModulesAccordion({ courseId, activeLessonId }: Cou
 
                                             <Text size="xs" c="dimmed">{lesson.duration_minutes} minutes</Text>
                                             {
-                                                lesson.isUnlocked && (
+                                                lesson.isUnlocked ? (
                                                     <Button
                                                         variant={"transparent"}
                                                         loading={updateLessonProgressLoading && loadingLessonId === lesson._id}
@@ -132,7 +150,11 @@ export default function CourseModulesAccordion({ courseId, activeLessonId }: Cou
                                                         {lesson._id === activeLessonId ? "Playing" : lesson.status?.toLowerCase() === Lesson_Status.NotStarted.toLowerCase() ? "Start Lesson" : lesson.status?.toLowerCase() === Lesson_Status.InProgress.toLowerCase() ? "Continue Lesson" : "View Lesson"}
                                                     </Button>
 
-                                                )
+                                                ) : lesson.isUnlocked === false ? (
+                                                    <ThemeIcon variant="light" color="gray" size="sm" radius="xl" style={{ opacity: 0.5 }}>
+                                                        <Lock size={12} />
+                                                    </ThemeIcon>
+                                                ) : null
                                             }
                                         </Flex>
                                     </Group>
@@ -168,15 +190,25 @@ export default function CourseModulesAccordion({ courseId, activeLessonId }: Cou
                                         </Group>
                                         <Flex align="center" gap="sm">
                                             <Text size="xs" c="dimmed">Passing Score: {quiz.passing_score}%</Text>
-                                            {/* <Button
-                                                variant={"transparent"}
-                                                size="xs"
-                                                leftSection={<PlayCircle size={14} />}
-                                                
-                                                disabled
-                                            >
-                                                Start Quiz
-                                            </Button> */}
+                                            {
+                                                quiz.isUnlocked ? (
+                                                    <Button
+                                                        variant="transparent"
+                                                        size="xs"
+                                                        leftSection={<PlayCircle size={14} />}
+                                                        onClick={() => {
+                                                            const basePath = path.includes("my-courses") ? `/my-courses/${courseId}` : `/courses/${courseId}`;
+                                                            router.push(`${basePath}/quiz/${quiz._id}`);
+                                                        }}
+                                                    >
+                                                        {quiz.score !== null && quiz.score !== undefined && quiz.score >= quiz.passing_score ? "Retake Quiz" : "Start Quiz"}
+                                                    </Button>
+                                                ) : quiz.isUnlocked === false ? (
+                                                    <ThemeIcon variant="light" color="gray" size="sm" radius="xl" style={{ opacity: 0.5 }}>
+                                                        <Lock size={12} />
+                                                    </ThemeIcon>
+                                                ) : null
+                                            }
                                         </Flex>
                                     </Group>
                                 </Paper>

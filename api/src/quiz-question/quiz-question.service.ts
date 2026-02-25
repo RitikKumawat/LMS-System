@@ -12,6 +12,19 @@ export class QuizQuestionService {
     ) { }
 
     async create(createQuizQuestionInput: CreateQuizQuestionInput) {
+        if (createQuizQuestionInput.id) {
+            return this.quizQuestionModel.findByIdAndUpdate(
+                createQuizQuestionInput.id,
+                {
+                    quiz_id: new Types.ObjectId(createQuizQuestionInput.quiz_id),
+                    question_text: createQuizQuestionInput.question_text,
+                    type: createQuizQuestionInput.type,
+                    options: createQuizQuestionInput.options,
+                },
+                { new: true }
+            );
+        }
+
         const createdQuestion = new this.quizQuestionModel({
             quiz_id: new Types.ObjectId(createQuizQuestionInput.quiz_id),
             question_text: createQuizQuestionInput.question_text,
@@ -29,7 +42,7 @@ export class QuizQuestionService {
         return this.quizQuestionModel.findById(id).exec();
     }
 
-    async update(id: string, updateQuizQuestionInput: any) { // Define UpdateDTO if needed
+    async update(id: string, updateQuizQuestionInput: Partial<QuizQuestion>) { // Define UpdateDTO if needed
         return this.quizQuestionModel.findByIdAndUpdate(id, updateQuizQuestionInput, { new: true }).exec();
     }
 

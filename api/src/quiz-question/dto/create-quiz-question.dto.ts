@@ -12,13 +12,16 @@ class CreateOptionInput {
 
 @InputType()
 export class CreateQuizQuestionInput {
+    @Field(() => String, { nullable: true })
+    id?: string;
+
     @Field(() => String)
     quiz_id: string;
 
     @Field(() => String)
     question_text: string;
 
-    @Field(() => String)
+    @Field(() => QUIZ_QUESTION_TYPE)
     type: QUIZ_QUESTION_TYPE;
 
     @Field(() => [CreateOptionInput])

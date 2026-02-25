@@ -12,6 +12,8 @@ import { LessonProgress, LessonProgressDocument } from 'src/schemas/lesson-progr
 import { LESSON_STATUS } from 'src/enum/lessonStatus';
 import { LESSON_OPERATION } from 'src/enum/lessonOperation';
 
+import { LessonProgressService } from 'src/lesson-progress/lesson-progress.service';
+
 @Injectable()
 export class LessonService {
   constructor(
@@ -20,6 +22,8 @@ export class LessonService {
 
     @InjectModel(LessonProgress.name)
     private readonly lessonProgressModel: Model<LessonProgressDocument>,
+
+    private readonly lessonProgressService: LessonProgressService,
   ) { }
 
   async create(
@@ -154,6 +158,8 @@ export class LessonService {
   private async handleComplete(lesson: Lesson, progress: LessonProgress, req: Request) {
     progress.status = LESSON_STATUS.COMPLETED;
     progress.completed_at = new Date();
+    // Use the injected service (need to bind or access it)
+    await this.lessonProgressService.unlockNextLessonsByModuleId(req.user.id as string, lesson.module_id.toString());
   }
   private async handleVisit(lesson: Lesson, progress: LessonProgress, req: Request) {
     progress.last_accessed_at = new Date();

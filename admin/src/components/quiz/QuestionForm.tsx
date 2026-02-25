@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useEffect } from 'react';
 import {
     Button,
     Select,
@@ -9,11 +9,16 @@ import {
     Text,
     ActionIcon,
     Radio,
+    Box
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { yupResolver } from 'mantine-form-yup-resolver';
 import { Trash2, Plus } from 'lucide-react';
 import RichTextEditorComponent from '../../ui/RichTextEditor/RichTextEditorComponent';
-import { CreateQuizQuestionInput } from '../../generated/graphql';
+import { CreateOptionInput, CreateQuizQuestionInput, Quiz_Question_Type } from '../../generated/graphql';
 import { COLORS } from '../../assets/colors/colors';
+import { INITIAL_VALUES } from '../../form/initial-values';
+import { VALIDATIONS } from '../../form/validations';
 
 interface QuestionFormProps {
     initialValues?: Partial<CreateQuizQuestionInput>;
@@ -28,59 +33,71 @@ export default function QuestionForm({
     onCancel,
     loading,
 }: QuestionFormProps) {
-    const [questionText, setQuestionText] = useState(initialValues?.question_text || '');
-    const [type, setType] = useState<string>(initialValues?.type || 'single');
-    const [options, setOptions] = useState(
-        initialValues?.options && initialValues.options.length > 0
-            ? initialValues.options
-            : [
-                { option_text: '', is_correct: false },
-                { option_text: '', is_correct: false },
-            ]
-    );
+    const form = useForm({
+        initialValues: INITIAL_VALUES.addQuizQuestion,
+        validate: yupResolver(VALIDATIONS.addQuizQuestion),
+    });
+
+    useEffect(() => {
+        if (initialValues) {
+            form.setValues({
+                question_text: initialValues.question_text || '',
+                type: initialValues.type || Quiz_Question_Type.SingleChoice,
+                options: (initialValues.options && initialValues.options.length > 0)
+                    ? initialValues.options.map(opt => ({
+                        option_text: opt.option_text,
+                        is_correct: opt.is_correct
+                    }))
+                    : [
+                        { option_text: '', is_correct: false },
+                        { option_text: '', is_correct: false },
+                    ]
+            });
+        }
+    }, [initialValues]);
 
     const handleOptionChange = (index: number, field: 'option_text' | 'is_correct', value: any) => {
-        const newOptions = [...options];
-
-        if (field === 'is_correct' && type === 'single') {
-            newOptions.forEach((opt, i) => {
-                opt.is_correct = i === index ? value : false;
-            });
-        } else if (field === 'is_correct' && type === 'true_false') {
-            newOptions.forEach((opt, i) => {
-                opt.is_correct = i === index ? value : false;
-            });
+        const type = form.values.type;
+        if (field === 'is_correct' && type === Quiz_Question_Type.SingleChoice) {
+            const newOptions = form.values.options.map((opt, i) => ({
+                ...opt,
+                is_correct: i === index ? value : false
+            }));
+            form.setFieldValue('options', newOptions);
+        } else if (field === 'is_correct' && type === Quiz_Question_Type.TrueFalse) {
+            const newOptions = form.values.options.map((opt, i) => ({
+                ...opt,
+                is_correct: i === index ? value : false
+            }));
+            form.setFieldValue('options', newOptions);
         } else {
-            newOptions[index] = { ...newOptions[index], [field]: value };
+            form.setFieldValue(`options.${index}.${field}`, value);
         }
-
-        setOptions(newOptions);
     };
 
     const addOption = () => {
-        setOptions([...options, { option_text: '', is_correct: false }]);
+        form.insertListItem('options', { option_text: '', is_correct: false });
     };
 
     const removeOption = (index: number) => {
-        const newOptions = options.filter((_, i) => i !== index);
-        setOptions(newOptions);
+        form.removeListItem('options', index);
     };
 
-    const handleTypeChange = (newType: string) => {
-        setType(newType);
-        if (newType === 'true_false') {
-            setOptions([
+    const handleTypeChange = (newType: Quiz_Question_Type) => {
+        form.setFieldValue('type', newType);
+        if (newType === Quiz_Question_Type.TrueFalse) {
+            form.setFieldValue('options', [
                 { option_text: 'True', is_correct: true },
                 { option_text: 'False', is_correct: false },
             ]);
-        } else if (type === 'true_false') {
-            setOptions([
+        } else if (form.values.type === Quiz_Question_Type.SingleChoice) {
+            form.setFieldValue('options', [
                 { option_text: '', is_correct: false },
                 { option_text: '', is_correct: false },
             ]);
         } else {
-            if (newType === 'single') {
-                const newOptions = [...options];
+            if (newType === Quiz_Question_Type.SingleChoice) {
+                const newOptions = [...form.values.options];
                 let foundCorrect = false;
                 newOptions.forEach((opt) => {
                     if (opt.is_correct && !foundCorrect) {
@@ -89,22 +106,33 @@ export default function QuestionForm({
                         opt.is_correct = false;
                     }
                 });
-                setOptions(newOptions);
+                form.setFieldValue('options', newOptions);
             }
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onSubmit({
-            question_text: questionText,
-            type: type,
-            options: options.map((opt) => ({
+    const handleSubmit = form.onSubmit((values) => {
+        const payload: Partial<CreateQuizQuestionInput> = {
+            question_text: values.question_text,
+            type: values.type as Quiz_Question_Type,
+            options: values.options.map((opt) => ({
                 option_text: opt.option_text,
                 is_correct: opt.is_correct,
             })),
+            quiz_id: initialValues?.quiz_id
+        };
+
+        if (initialValues?.id) {
+            payload.id = initialValues.id;
+        }
+
+        onSubmit({
+            options: payload.options as CreateOptionInput[],
+            question_text: payload.question_text as string,
+            type: payload.type as Quiz_Question_Type,
+            id: payload.id,
         });
-    };
+    });
 
     return (
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
@@ -112,12 +140,12 @@ export default function QuestionForm({
                 <Select
                     label="Question Type"
                     data={[
-                        { value: 'single', label: 'Single Choice' },
-                        { value: 'multiple', label: 'Multiple Choice' },
-                        { value: 'true_false', label: 'True / False' },
+                        { value: Quiz_Question_Type.SingleChoice, label: 'Single Choice' },
+                        { value: Quiz_Question_Type.MultipleChoice, label: 'Multiple Choice' },
+                        { value: Quiz_Question_Type.TrueFalse, label: 'True / False' },
                     ]}
-                    value={type}
-                    onChange={(val) => handleTypeChange(val as string)}
+                    {...form.getInputProps('type')}
+                    onChange={(val) => handleTypeChange(val as Quiz_Question_Type)}
                     required
                 />
 
@@ -127,13 +155,19 @@ export default function QuestionForm({
                     </Text>
                     <div
                         style={{
-                            border: `1px solid ${COLORS.blueHover}`,
+                            border: form.errors.question_text ? '1px solid red' : `1px solid ${COLORS.blueHover}`,
                             borderRadius: 4,
                             overflow: 'hidden',
                         }}
                     >
-                        <RichTextEditorComponent value={questionText} onChange={setQuestionText} />
+                        <RichTextEditorComponent
+                            value={form.values.question_text}
+                            onChange={(val) => form.setFieldValue('question_text', val)}
+                        />
                     </div>
+                    {form.errors.question_text && (
+                        <Text c="red" size="xs">{form.errors.question_text as string}</Text>
+                    )}
                 </Stack>
 
                 <Stack gap="sm">
@@ -141,7 +175,7 @@ export default function QuestionForm({
                         <Text size="sm" fw={500}>
                             Options
                         </Text>
-                        {type !== 'true_false' && (
+                        {form.values.type !== Quiz_Question_Type.TrueFalse && (
                             <Button
                                 size="xs"
                                 variant="light"
@@ -152,36 +186,37 @@ export default function QuestionForm({
                             </Button>
                         )}
                     </Group>
+                    {form.errors.options && typeof form.errors.options === 'string' && (
+                        <Text c="red" size="xs">{form.errors.options}</Text>
+                    )}
 
-                    {options.map((option, index) => (
-                        <Group key={index} align="center" wrap="nowrap">
-                            {type === 'multiple' ? (
-                                <Checkbox
-                                    checked={option.is_correct}
-                                    onChange={(event) =>
-                                        handleOptionChange(index, 'is_correct', event.currentTarget.checked)
-                                    }
-                                />
-                            ) : (
-                                <Radio
-                                    checked={option.is_correct}
-                                    onChange={() => handleOptionChange(index, 'is_correct', true)}
-                                />
-                            )}
+                    {form.values.options.map((option, index) => (
+                        <Group key={index} align="flex-start" wrap="nowrap">
+                            <Box mt={6}>
+                                {form.values.type === Quiz_Question_Type.MultipleChoice ? (
+                                    <Checkbox
+                                        checked={option.is_correct}
+                                        onChange={(event) =>
+                                            handleOptionChange(index, 'is_correct', event.currentTarget.checked)
+                                        }
+                                    />
+                                ) : (
+                                    <Radio
+                                        checked={option.is_correct}
+                                        onChange={() => handleOptionChange(index, 'is_correct', true)}
+                                    />
+                                )}
+                            </Box>
 
                             <TextInput
                                 style={{ flex: 1 }}
                                 placeholder={`Option ${index + 1}`}
-                                value={option.option_text}
-                                onChange={(event) =>
-                                    handleOptionChange(index, 'option_text', event.currentTarget.value)
-                                }
-                                required
-                                disabled={type === 'true_false'}
+                                {...form.getInputProps(`options.${index}.option_text`)}
+                                disabled={form.values.type === Quiz_Question_Type.TrueFalse}
                             />
 
-                            {type !== 'true_false' && options.length > 2 && (
-                                <ActionIcon color="red" onClick={() => removeOption(index)} variant="subtle">
+                            {form.values.type !== Quiz_Question_Type.TrueFalse && form.values.options.length > 2 && (
+                                <ActionIcon mt={6} color="red" onClick={() => removeOption(index)} variant="subtle">
                                     <Trash2 size={16} />
                                 </ActionIcon>
                             )}
@@ -193,8 +228,8 @@ export default function QuestionForm({
                     <Button variant="default" onClick={onCancel}>
                         Cancel
                     </Button>
-                    <Button type="submit" loading={loading} disabled={!questionText}>
-                        Save Question
+                    <Button type="submit" loading={loading}>
+                        {(initialValues as any)?._id ? 'Update Question' : 'Save Question'}
                     </Button>
                 </Group>
             </Stack>

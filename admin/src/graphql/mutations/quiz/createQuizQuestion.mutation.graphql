@@ -1,11 +1,13 @@
 mutation CreateQuizQuestion($createQuizQuestionInput: CreateQuizQuestionInput!) {
   createQuizQuestion(createQuizQuestionInput: $createQuizQuestionInput) {
     _id
+    quiz_id
     question_text
     type
     options {
       option_text
       is_correct
     }
+    created_at
   }
 }

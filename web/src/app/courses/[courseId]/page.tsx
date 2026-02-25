@@ -277,7 +277,7 @@ export default function CourseDetailPage() {
                         </Group>
 
                         <Divider label="Course Content" labelPosition="left" />
-                        <CourseModulesAccordion courseId={courseId!} />
+                        <CourseModulesAccordion courseId={courseId!} isEnrolled={course.is_enrolled} />
                     </Stack>
                 </Grid.Col>
 

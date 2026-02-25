@@ -24,9 +24,9 @@ type Documents = {
     "mutation DeleteLesson($lessonId: String!) {\n  deleteLesson(lessonId: $lessonId)\n}": typeof types.DeleteLessonDocument,
     "mutation ReorderLessons($reorderLessonInput: ReorderLessonInput!) {\n  reorderLessons(reorderLessonInput: $reorderLessonInput)\n}": typeof types.ReorderLessonsDocument,
     "mutation CreateQuiz($createQuizInput: CreateQuizDto!) {\n  createQuiz(createQuizInput: $createQuizInput) {\n    quiz_id\n  }\n}": typeof types.CreateQuizDocument,
-    "mutation CreateQuizQuestion($createQuizQuestionInput: CreateQuizQuestionInput!) {\n  createQuizQuestion(createQuizQuestionInput: $createQuizQuestionInput) {\n    _id\n    question_text\n    type\n    options {\n      option_text\n      is_correct\n    }\n  }\n}": typeof types.CreateQuizQuestionDocument,
+    "mutation CreateQuizQuestion($createQuizQuestionInput: CreateQuizQuestionInput!) {\n  createQuizQuestion(createQuizQuestionInput: $createQuizQuestionInput) {\n    _id\n    quiz_id\n    question_text\n    type\n    options {\n      option_text\n      is_correct\n    }\n    created_at\n  }\n}": typeof types.CreateQuizQuestionDocument,
     "mutation DeleteQuiz($quizId: String!) {\n  deleteQuiz(quiz_id: $quizId)\n}": typeof types.DeleteQuizDocument,
-    "mutation RemoveQuizQuestion($id: String!) {\n  removeQuizQuestion(id: $id) {\n    _id\n  }\n}": typeof types.RemoveQuizQuestionDocument,
+    "mutation RemoveQuizQuestion($removeQuizQuestionId: String!) {\n  removeQuizQuestion(id: $removeQuizQuestionId) {\n    _id\n  }\n}": typeof types.RemoveQuizQuestionDocument,
     "query GetAllCategories($paginationInput: PaginationInput!) {\n  getAllCategories(paginationInput: $paginationInput) {\n    docs {\n      _id\n      name\n      slug\n      imageUrl\n      updatedAt\n      createdAt\n    }\n    totalDocs\n    limit\n    totalPages\n    page\n    hasNextPage\n    hasPrevPage\n  }\n}": typeof types.GetAllCategoriesDocument,
     "query GetAllCourseModules($courseId: String!, $paginationInput: PaginationInput!) {\n  getAllCourseModules(courseId: $courseId, paginationInput: $paginationInput) {\n    docs {\n      _id\n      title\n      description\n      course_id\n      order\n      createdAt\n      lessons {\n        _id\n        title\n        order\n        video_url\n        pdf_url\n        content\n        duration_minutes\n        is_preview\n      }\n      quizzes {\n        _id\n        title\n        passing_score\n        questionCount\n        created_at\n      }\n    }\n    totalDocs\n    limit\n    totalPages\n    page\n    hasNextPage\n    hasPrevPage\n  }\n}": typeof types.GetAllCourseModulesDocument,
     "query GetCourseModuleById($courseModuleId: String!) {\n  getCourseModuleById(courseModuleId: $courseModuleId) {\n    _id\n    title\n    description\n    course_id\n    order\n    createdAt\n  }\n}": typeof types.GetCourseModuleByIdDocument,
@@ -48,9 +48,9 @@ const documents: Documents = {
     "mutation DeleteLesson($lessonId: String!) {\n  deleteLesson(lessonId: $lessonId)\n}": types.DeleteLessonDocument,
     "mutation ReorderLessons($reorderLessonInput: ReorderLessonInput!) {\n  reorderLessons(reorderLessonInput: $reorderLessonInput)\n}": types.ReorderLessonsDocument,
     "mutation CreateQuiz($createQuizInput: CreateQuizDto!) {\n  createQuiz(createQuizInput: $createQuizInput) {\n    quiz_id\n  }\n}": types.CreateQuizDocument,
-    "mutation CreateQuizQuestion($createQuizQuestionInput: CreateQuizQuestionInput!) {\n  createQuizQuestion(createQuizQuestionInput: $createQuizQuestionInput) {\n    _id\n    question_text\n    type\n    options {\n      option_text\n      is_correct\n    }\n  }\n}": types.CreateQuizQuestionDocument,
+    "mutation CreateQuizQuestion($createQuizQuestionInput: CreateQuizQuestionInput!) {\n  createQuizQuestion(createQuizQuestionInput: $createQuizQuestionInput) {\n    _id\n    quiz_id\n    question_text\n    type\n    options {\n      option_text\n      is_correct\n    }\n    created_at\n  }\n}": types.CreateQuizQuestionDocument,
     "mutation DeleteQuiz($quizId: String!) {\n  deleteQuiz(quiz_id: $quizId)\n}": types.DeleteQuizDocument,
-    "mutation RemoveQuizQuestion($id: String!) {\n  removeQuizQuestion(id: $id) {\n    _id\n  }\n}": types.RemoveQuizQuestionDocument,
+    "mutation RemoveQuizQuestion($removeQuizQuestionId: String!) {\n  removeQuizQuestion(id: $removeQuizQuestionId) {\n    _id\n  }\n}": types.RemoveQuizQuestionDocument,
     "query GetAllCategories($paginationInput: PaginationInput!) {\n  getAllCategories(paginationInput: $paginationInput) {\n    docs {\n      _id\n      name\n      slug\n      imageUrl\n      updatedAt\n      createdAt\n    }\n    totalDocs\n    limit\n    totalPages\n    page\n    hasNextPage\n    hasPrevPage\n  }\n}": types.GetAllCategoriesDocument,
     "query GetAllCourseModules($courseId: String!, $paginationInput: PaginationInput!) {\n  getAllCourseModules(courseId: $courseId, paginationInput: $paginationInput) {\n    docs {\n      _id\n      title\n      description\n      course_id\n      order\n      createdAt\n      lessons {\n        _id\n        title\n        order\n        video_url\n        pdf_url\n        content\n        duration_minutes\n        is_preview\n      }\n      quizzes {\n        _id\n        title\n        passing_score\n        questionCount\n        created_at\n      }\n    }\n    totalDocs\n    limit\n    totalPages\n    page\n    hasNextPage\n    hasPrevPage\n  }\n}": types.GetAllCourseModulesDocument,
     "query GetCourseModuleById($courseModuleId: String!) {\n  getCourseModuleById(courseModuleId: $courseModuleId) {\n    _id\n    title\n    description\n    course_id\n    order\n    createdAt\n  }\n}": types.GetCourseModuleByIdDocument,
@@ -119,7 +119,7 @@ export function graphql(source: "mutation CreateQuiz($createQuizInput: CreateQui
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation CreateQuizQuestion($createQuizQuestionInput: CreateQuizQuestionInput!) {\n  createQuizQuestion(createQuizQuestionInput: $createQuizQuestionInput) {\n    _id\n    question_text\n    type\n    options {\n      option_text\n      is_correct\n    }\n  }\n}"): (typeof documents)["mutation CreateQuizQuestion($createQuizQuestionInput: CreateQuizQuestionInput!) {\n  createQuizQuestion(createQuizQuestionInput: $createQuizQuestionInput) {\n    _id\n    question_text\n    type\n    options {\n      option_text\n      is_correct\n    }\n  }\n}"];
+export function graphql(source: "mutation CreateQuizQuestion($createQuizQuestionInput: CreateQuizQuestionInput!) {\n  createQuizQuestion(createQuizQuestionInput: $createQuizQuestionInput) {\n    _id\n    quiz_id\n    question_text\n    type\n    options {\n      option_text\n      is_correct\n    }\n    created_at\n  }\n}"): (typeof documents)["mutation CreateQuizQuestion($createQuizQuestionInput: CreateQuizQuestionInput!) {\n  createQuizQuestion(createQuizQuestionInput: $createQuizQuestionInput) {\n    _id\n    quiz_id\n    question_text\n    type\n    options {\n      option_text\n      is_correct\n    }\n    created_at\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -127,7 +127,7 @@ export function graphql(source: "mutation DeleteQuiz($quizId: String!) {\n  dele
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation RemoveQuizQuestion($id: String!) {\n  removeQuizQuestion(id: $id) {\n    _id\n  }\n}"): (typeof documents)["mutation RemoveQuizQuestion($id: String!) {\n  removeQuizQuestion(id: $id) {\n    _id\n  }\n}"];
+export function graphql(source: "mutation RemoveQuizQuestion($removeQuizQuestionId: String!) {\n  removeQuizQuestion(id: $removeQuizQuestionId) {\n    _id\n  }\n}"): (typeof documents)["mutation RemoveQuizQuestion($removeQuizQuestionId: String!) {\n  removeQuizQuestion(id: $removeQuizQuestionId) {\n    _id\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

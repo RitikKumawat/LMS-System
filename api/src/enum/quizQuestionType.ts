@@ -6,6 +6,4 @@ export enum QUIZ_QUESTION_TYPE {
   TRUE_FALSE = 'true_false',
 }
 
-registerEnumType(QUIZ_QUESTION_TYPE, {
-  name: 'QUIZ_QUESTION_TYPE',
-});
+

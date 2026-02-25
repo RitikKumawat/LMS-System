@@ -1,0 +1,8 @@
+query GetQuizForStudent($quizId: String!) {
+  getQuizForStudent(quizId: $quizId) {
+    _id
+    title
+    passing_score
+    created_at
+  }
+}

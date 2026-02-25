@@ -1,0 +1,6 @@
+mutation SubmitQuizAttempt($quizId: String!, $score: Int!) {
+  submitQuizAttempt(quizId: $quizId, score: $score) {
+    score
+    passed
+  }
+}

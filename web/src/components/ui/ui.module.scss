@@ -56,6 +56,14 @@
     transition: all 0.3s ease;
     border: none;
     text-decoration: none;
+
+    &:disabled {
+        cursor: not-allowed !important;
+        color: #000000 !important;
+        background: rgba(255, 255, 255, 0.7) !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
 }
 
 .btnPrimary {

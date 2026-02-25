@@ -29,7 +29,7 @@ export class QuizQuestion {
   question_text: string;
 
   @Prop({ required: true, enum: QUIZ_QUESTION_TYPE })
-  @Field(() => String)
+  @Field(() => QUIZ_QUESTION_TYPE)
   type: QUIZ_QUESTION_TYPE; // e.g., "single", "multiple", "true_false"
 
   @Prop({ type: [Object], required: true })

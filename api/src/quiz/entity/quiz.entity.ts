@@ -25,4 +25,16 @@ export class QuizResponse {
 
     @Field(() => Date)
     created_at: Date;
+
+    @Field(() => Int, { nullable: true })
+    score?: number;
+}
+
+@ObjectType()
+export class SubmitQuizAttemptResponse {
+    @Field(() => Int)
+    score: number;
+
+    @Field(() => Boolean)
+    passed: boolean;
 }

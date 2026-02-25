@@ -88,6 +88,25 @@ export function getAllCourseModuleForStudentPipeline(
                 },
             },
             {
+                $lookup: {
+                    from: 'quizattempts',
+                    let: { quizIds: '$quizzes._id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $in: ['$quiz_id', '$$quizIds'] },
+                                        { $eq: ['$user_id', new Types.ObjectId(userId)] },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: 'quizAttempts',
+                },
+            },
+            {
                 $addFields: {
                     lessons: {
                         $map: {
@@ -141,11 +160,40 @@ export function getAllCourseModuleForStudentPipeline(
                             },
                         },
                     },
+                    quizzes: {
+                        $map: {
+                            input: '$quizzes',
+                            as: 'quiz',
+                            in: {
+                                _id: '$$quiz._id',
+                                title: '$$quiz.title',
+                                passing_score: '$$quiz.passing_score',
+                                created_at: '$$quiz.created_at',
+                                score: {
+                                    $let: {
+                                        vars: {
+                                            attemptsForQuiz: {
+                                                $filter: {
+                                                    input: '$quizAttempts',
+                                                    as: 'qa',
+                                                    cond: { $eq: ['$$qa.quiz_id', '$$quiz._id'] }
+                                                }
+                                            }
+                                        },
+                                        in: {
+                                            $max: '$$attemptsForQuiz.score'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 },
             },
             {
                 $project: {
                     lessonProgress: 0,
+                    quizAttempts: 0,
                 },
             },
         );
@@ -167,6 +215,19 @@ export function getAllCourseModuleForStudentPipeline(
                         },
                     },
                 },
+                quizzes: {
+                    $map: {
+                        input: '$quizzes',
+                        as: 'quiz',
+                        in: {
+                            _id: '$$quiz._id',
+                            title: '$$quiz.title',
+                            passing_score: '$$quiz.passing_score',
+                            created_at: '$$quiz.created_at',
+                            score: null,
+                        }
+                    }
+                }
             },
         });
     }

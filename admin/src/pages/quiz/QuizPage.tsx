@@ -22,12 +22,13 @@ import QuestionForm from '../../components/quiz/QuestionForm';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import { useMutation, useQuery } from '@apollo/client/react';
+import { CreateQuizQuestionInput } from '../../generated/graphql';
 
 const QuizPage = () => {
     const { quizId } = useParams<{ quizId: string }>();
     const navigate = useNavigate();
     const [isAddingMode, setIsAddingMode] = useState(false);
-    // Add editing feature later if needed because update mutation is missing in graphql schema yet.
+    const [editingQuestion, setEditingQuestion] = useState<any>(null);
 
     const { data, loading, error } = useQuery(GetQuizQuestionsByQuizIdDocument, {
         variables: { quizId: quizId as string },
@@ -44,10 +45,11 @@ const QuizPage = () => {
         onCompleted: () => {
             notifications.show({
                 title: 'Success',
-                message: 'Question added successfully',
+                message: editingQuestion ? 'Question updated successfully' : 'Question added successfully',
                 color: 'green',
             });
             setIsAddingMode(false);
+            setEditingQuestion(null);
         },
         onError: (err) => {
             notifications.show({
@@ -79,7 +81,7 @@ const QuizPage = () => {
             confirmProps: { color: 'red' },
             onConfirm: async () => {
                 try {
-                    await deleteQuestion({ variables: { id } });
+                    await deleteQuestion({ variables: { removeQuizQuestionId: id } });
                     notifications.show({
                         title: 'Success',
                         message: 'Question deleted successfully',
@@ -96,8 +98,9 @@ const QuizPage = () => {
         });
     };
 
-    const handleCreateSubmit = async (values: any) => {
+    const handleCreateSubmit = async (values: Omit<CreateQuizQuestionInput, 'quiz_id'>) => {
         if (!quizId) return;
+
         await createQuestion({
             variables: {
                 createQuizQuestionInput: {
@@ -106,6 +109,11 @@ const QuizPage = () => {
                 },
             },
         });
+    };
+
+    const handleEditClick = (question: any) => {
+        setEditingQuestion(question);
+        setIsAddingMode(true);
     };
 
     if (!quizId) {
@@ -136,11 +144,15 @@ const QuizPage = () => {
                 {isAddingMode ? (
                     <Paper p="md" shadow="sm" radius="md" withBorder>
                         <Title order={4} mb="md">
-                            Add New Question
+                            {editingQuestion ? 'Edit Question' : 'Add New Question'}
                         </Title>
                         <QuestionForm
+                            initialValues={editingQuestion || undefined}
                             onSubmit={handleCreateSubmit}
-                            onCancel={() => setIsAddingMode(false)}
+                            onCancel={() => {
+                                setIsAddingMode(false);
+                                setEditingQuestion(null);
+                            }}
                             loading={creating}
                         />
                     </Paper>
@@ -189,7 +201,13 @@ const QuizPage = () => {
                                         </Stack>
                                     </Stack>
                                     <Group gap="xs">
-                                        {/* Add edit button later if needed */}
+                                        <ActionIcon
+                                            color="blue"
+                                            variant="light"
+                                            onClick={() => handleEditClick(question)}
+                                        >
+                                            <Edit size={16} />
+                                        </ActionIcon>
                                         <ActionIcon
                                             color="red"
                                             variant="light"
