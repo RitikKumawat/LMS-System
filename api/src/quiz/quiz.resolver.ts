@@ -5,6 +5,7 @@ import { CreateQuizResponse, SubmitQuizAttemptResponse } from './entity/quiz.ent
 import { Roles } from 'src/decorators/roles.decorator';
 import { ADMIN_ROLES, USER_ROLES } from 'src/enum/roles';
 import { Quiz } from 'src/schemas/quiz.schema';
+import { QuizAttempt } from 'src/schemas/quiz-attempt.schema';
 
 @Resolver()
 export class QuizResolver {
@@ -45,5 +46,14 @@ export class QuizResolver {
     @Args('score', { type: () => Int }) score: number,
   ): Promise<SubmitQuizAttemptResponse> {
     return this.quizService.submitQuizAttempt(ctx.req, quizId, score);
+  }
+
+  @Query(() => QuizAttempt, { nullable: true })
+  @Roles(USER_ROLES.USER)
+  getLatestQuizAttemptForStudent(
+    @Context() ctx,
+    @Args('quizId') quizId: string,
+  ): Promise<QuizAttempt> {
+    return this.quizService.getLatestQuizAttemptForStudent(ctx.req, quizId);
   }
 }

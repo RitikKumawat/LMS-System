@@ -1,16 +1,17 @@
 "use client";
 
 
-import { Container, Title, Text, Stack, Card, Group, Radio, Checkbox, Paper, Center, Loader, Badge, Progress } from "@mantine/core";
+import { Container, Title, Text, Stack, Card, Group, Radio, Checkbox, Center, Loader, Badge, Progress, RingProgress } from "@mantine/core";
 import FButton from "@/components/ui/FButton";
 import { GetQuizForStudentDocument } from "@/generated/graphql";
 import { GetQuizQuestionsByQuizIdDocument } from "@/generated/graphql";
 import { SubmitQuizAttemptDocument } from "@/generated/graphql";
+import { GetLatestQuizAttemptForStudentDocument } from "@/generated/graphql";
 import { Quiz_Question_Type } from "@/generated/graphql";
 import { useRouter } from "next/navigation";
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
-import { ArrowLeft, ArrowRight, CheckCircle, XCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { COLORS } from "@/assets/colors/colors";
 import { useMutation, useQuery } from "@apollo/client/react";
 
@@ -35,10 +36,31 @@ export default function QuizTakingUI({ courseId, quizId, basePath }: QuizTakingU
         variables: { quizId: quizId }
     });
 
+    const { data: latestAttemptData, loading: attemptLoading } = useQuery(GetLatestQuizAttemptForStudentDocument, {
+        variables: { quizId: quizId },
+        fetchPolicy: "network-only"
+    });
+
     const [submitAttempt, { loading: submitting }] = useMutation(SubmitQuizAttemptDocument);
 
     const quiz = quizData?.getQuizForStudent;
     const questions = questionsData?.getQuizQuestionsByQuizId || [];
+
+    const [hasLoadedAttempt, setHasLoadedAttempt] = useState(false);
+
+    useEffect(() => {
+        if (!hasLoadedAttempt && !attemptLoading && latestAttemptData !== undefined && quiz) {
+            setHasLoadedAttempt(true);
+            if (latestAttemptData.getLatestQuizAttemptForStudent) {
+                const attempt = latestAttemptData.getLatestQuizAttemptForStudent;
+                setResult({
+                    score: attempt.score,
+                    passed: attempt.score >= quiz.passing_score
+                });
+                setIsSubmitted(true);
+            }
+        }
+    }, [hasLoadedAttempt, attemptLoading, latestAttemptData, quiz]);
 
     // Automatically grade frontend
     const calculateScore = () => {
@@ -99,7 +121,7 @@ export default function QuizTakingUI({ courseId, quizId, basePath }: QuizTakingU
         }
     };
 
-    if (quizLoading || questionsLoading) {
+    if (quizLoading || questionsLoading || attemptLoading) {
         return <Center h={400}><Loader /></Center>;
     }
 
@@ -111,28 +133,64 @@ export default function QuizTakingUI({ courseId, quizId, basePath }: QuizTakingU
     const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
     if (isSubmitted && result) {
+        const isPassed = result.passed;
+        const color = isPassed ? "teal" : "red";
+
         return (
             <Container size="sm" py="xl">
-                <Paper shadow="sm" radius="md" p="xl" withBorder style={{ backgroundColor: COLORS.background.secondary, textAlign: "center", borderColor: COLORS.border.glass }}>
-                    {result.passed ? (
-                        <CheckCircle size={64} color="var(--mantine-color-green-6)" style={{ margin: "0 auto" }} />
-                    ) : (
-                        <XCircle size={64} color="var(--mantine-color-red-6)" style={{ margin: "0 auto" }} />
-                    )}
-                    <Title order={3} mt="md" c="white">{result.passed ? "Congratulations! You passed!" : "You did not pass the quiz."}</Title>
-                    <Text c="dimmed" mt="xs">Your Score: {result.score}% (Passing: {quiz.passing_score}%)</Text>
-                    <Group justify="center" mt="xl">
-                        <FButton variant="secondary" onClick={() => router.push(basePath)}>Return to Course</FButton>
-                        {!result.passed && (
-                            <FButton onClick={() => {
-                                setIsSubmitted(false);
-                                setResult(null);
-                                setCurrentQuestionIndex(0);
-                                setAnswers({});
-                            }}>Retake Quiz</FButton>
-                        )}
-                    </Group>
-                </Paper>
+                <Card shadow="xl" radius="xl" p="xl" withBorder style={{
+                    backgroundColor: COLORS.background.secondary,
+                    textAlign: "center",
+                    borderColor: isPassed ? 'rgba(18, 184, 134, 0.3)' : 'rgba(250, 82, 82, 0.3)',
+                    boxShadow: isPassed ? '0 8px 32px rgba(18, 184, 134, 0.1)' : '0 8px 32px rgba(250, 82, 82, 0.1)'
+                }}>
+                    <Stack align="center" gap="md" mt="md">
+                        <RingProgress
+                            size={180}
+                            thickness={16}
+                            roundCaps
+                            sections={[{ value: result.score, color: color }]}
+                            label={
+                                <Center>
+                                    <Stack gap={0} align="center">
+                                        <Text c="white" fw={700} fz={32} lh={1}>{result.score}%</Text>
+                                        <Text c={color} fw={500} size="sm">{isPassed ? "Passed" : "Failed"}</Text>
+                                    </Stack>
+                                </Center>
+                            }
+                        />
+
+                        <Title order={2} c="white" mt="md">
+                            {isPassed ? "Congratulations! You Passed!" : "Keep Trying! You didn't pass."}
+                        </Title>
+
+                        <Text c="dimmed" size="lg" mx="auto" maw={400}>
+                            You scored <Text span fw={700} c={color}>{result.score}%</Text>.
+                            The passing score for this quiz is <Text span fw={600} c="white">{quiz.passing_score}%</Text>.
+                        </Text>
+
+                        <Group justify="center" mt="xl" w="100%">
+                            <FButton
+                                variant={isPassed ? "secondary" : "primary"}
+                                onClick={() => router.push(basePath)}
+                            >
+                                Return to Course
+                            </FButton>
+
+                            <FButton
+                                variant={isPassed ? "primary" : "secondary"}
+                                onClick={() => {
+                                    setIsSubmitted(false);
+                                    setResult(null);
+                                    setCurrentQuestionIndex(0);
+                                    setAnswers({});
+                                }}
+                            >
+                                Retake Quiz
+                            </FButton>
+                        </Group>
+                    </Stack>
+                </Card>
             </Container>
         );
     }

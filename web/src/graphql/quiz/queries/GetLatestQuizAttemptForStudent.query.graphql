@@ -1,0 +1,11 @@
+query GetLatestQuizAttemptForStudent($quizId: String!) {
+  getLatestQuizAttemptForStudent(quizId: $quizId) {
+    _id
+    quiz_id
+    user_id
+    score
+    attempt_number
+    started_at
+    completed_at
+  }
+}

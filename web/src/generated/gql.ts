@@ -26,6 +26,7 @@ type Documents = {
     "query GetOrder($id: String!) {\n  getOrder(id: $id) {\n    order_id\n    amount\n    currency\n    razorpay_order_id\n    status\n  }\n}": typeof types.GetOrderDocument,
     "query GetQuizQuestionsByQuizId($quizId: String!) {\n  getQuizQuestionsByQuizId(quizId: $quizId) {\n    _id\n    question_text\n    type\n    options {\n      option_text\n      is_correct\n    }\n  }\n}": typeof types.GetQuizQuestionsByQuizIdDocument,
     "mutation SubmitQuizAttempt($quizId: String!, $score: Int!) {\n  submitQuizAttempt(quizId: $quizId, score: $score) {\n    score\n    passed\n  }\n}": typeof types.SubmitQuizAttemptDocument,
+    "query GetLatestQuizAttemptForStudent($quizId: String!) {\n  getLatestQuizAttemptForStudent(quizId: $quizId) {\n    _id\n    quiz_id\n    user_id\n    score\n    attempt_number\n    started_at\n    completed_at\n  }\n}": typeof types.GetLatestQuizAttemptForStudentDocument,
     "query GetQuizForStudent($quizId: String!) {\n  getQuizForStudent(quizId: $quizId) {\n    _id\n    title\n    passing_score\n    created_at\n  }\n}": typeof types.GetQuizForStudentDocument,
     "query GetProfileData {\n  getProfileData {\n    _id\n    name\n    email\n    emailVerified\n  }\n}": typeof types.GetProfileDataDocument,
 };
@@ -42,6 +43,7 @@ const documents: Documents = {
     "query GetOrder($id: String!) {\n  getOrder(id: $id) {\n    order_id\n    amount\n    currency\n    razorpay_order_id\n    status\n  }\n}": types.GetOrderDocument,
     "query GetQuizQuestionsByQuizId($quizId: String!) {\n  getQuizQuestionsByQuizId(quizId: $quizId) {\n    _id\n    question_text\n    type\n    options {\n      option_text\n      is_correct\n    }\n  }\n}": types.GetQuizQuestionsByQuizIdDocument,
     "mutation SubmitQuizAttempt($quizId: String!, $score: Int!) {\n  submitQuizAttempt(quizId: $quizId, score: $score) {\n    score\n    passed\n  }\n}": types.SubmitQuizAttemptDocument,
+    "query GetLatestQuizAttemptForStudent($quizId: String!) {\n  getLatestQuizAttemptForStudent(quizId: $quizId) {\n    _id\n    quiz_id\n    user_id\n    score\n    attempt_number\n    started_at\n    completed_at\n  }\n}": types.GetLatestQuizAttemptForStudentDocument,
     "query GetQuizForStudent($quizId: String!) {\n  getQuizForStudent(quizId: $quizId) {\n    _id\n    title\n    passing_score\n    created_at\n  }\n}": types.GetQuizForStudentDocument,
     "query GetProfileData {\n  getProfileData {\n    _id\n    name\n    email\n    emailVerified\n  }\n}": types.GetProfileDataDocument,
 };
@@ -108,6 +110,10 @@ export function graphql(source: "query GetQuizQuestionsByQuizId($quizId: String!
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation SubmitQuizAttempt($quizId: String!, $score: Int!) {\n  submitQuizAttempt(quizId: $quizId, score: $score) {\n    score\n    passed\n  }\n}"): (typeof documents)["mutation SubmitQuizAttempt($quizId: String!, $score: Int!) {\n  submitQuizAttempt(quizId: $quizId, score: $score) {\n    score\n    passed\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query GetLatestQuizAttemptForStudent($quizId: String!) {\n  getLatestQuizAttemptForStudent(quizId: $quizId) {\n    _id\n    quiz_id\n    user_id\n    score\n    attempt_number\n    started_at\n    completed_at\n  }\n}"): (typeof documents)["query GetLatestQuizAttemptForStudent($quizId: String!) {\n  getLatestQuizAttemptForStudent(quizId: $quizId) {\n    _id\n    quiz_id\n    user_id\n    score\n    attempt_number\n    started_at\n    completed_at\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

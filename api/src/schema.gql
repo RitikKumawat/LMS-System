@@ -64,6 +64,16 @@ type Lesson {
   updatedAt: DateTime!
 }
 
+type QuizAttempt {
+  _id: ID!
+  quiz_id: String!
+  user_id: String!
+  score: Int!
+  attempt_number: Int!
+  started_at: DateTime!
+  completed_at: DateTime!
+}
+
 type Options {
   option_text: String!
   is_correct: Boolean!
@@ -293,6 +303,7 @@ type Query {
   getOrder(id: String!): CourseOrderResponse!
   getQuizById(quizId: String!): Quiz!
   getQuizForStudent(quizId: String!): Quiz!
+  getLatestQuizAttemptForStudent(quizId: String!): QuizAttempt
   getQuizQuestionsByQuizId(quizId: String!): [QuizQuestion!]!
   quizQuestion(id: String!): QuizQuestion!
 }

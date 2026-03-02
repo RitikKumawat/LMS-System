@@ -201,7 +201,7 @@ export default function CourseModulesAccordion({ courseId, activeLessonId, isEnr
                                                             router.push(`${basePath}/quiz/${quiz._id}`);
                                                         }}
                                                     >
-                                                        {quiz.score !== null && quiz.score !== undefined && quiz.score >= quiz.passing_score ? "Retake Quiz" : "Start Quiz"}
+                                                        {quiz.score !== null && quiz.score !== undefined ? "View Quiz Score" : "Start Quiz"}
                                                     </Button>
                                                 ) : quiz.isUnlocked === false ? (
                                                     <ThemeIcon variant="light" color="gray" size="sm" radius="xl" style={{ opacity: 0.5 }}>

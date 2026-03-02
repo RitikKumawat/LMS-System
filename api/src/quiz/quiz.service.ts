@@ -6,12 +6,16 @@ import { CreateQuizDto } from './dto/create-quiz.dto';
 import { CreateQuizResponse } from './entity/quiz.entity';
 
 import { LessonProgressService } from 'src/lesson-progress/lesson-progress.service';
+import { QuizAttempt } from 'src/schemas/quiz-attempt.schema';
 
 @Injectable()
 export class QuizService {
     constructor(
         @InjectModel(Quiz.name) private readonly quizModel: Model<Quiz>,
         private readonly lessonProgressService: LessonProgressService,
+
+        @InjectModel(QuizAttempt.name) private readonly quizAttemptModel: Model<QuizAttempt>,
+
     ) { }
     async createQuiz(args: CreateQuizDto): Promise<CreateQuizResponse> {
         const { title, passing_score, courseModuleId, quizId } = args;
@@ -68,18 +72,18 @@ export class QuizService {
             throw new Error("Quiz not found");
         }
 
-        // We do not have a QuizAttempt model imported here, but we can access it if we inject it or use mongoose.model.
-        // Wait, MongooseModule.forFeature([ ... ]) doesn't have QuizAttempt here. 
-        // We must dispatch the attempt creation. Let's use generic mongoose model to save it to avoid circular dependency or import issues.
-        const QuizAttemptModel = this.quizModel.db.model('QuizAttempt');
+        // // We do not have a QuizAttempt model imported here, but we can access it if we inject it or use mongoose.model.
+        // // Wait, MongooseModule.forFeature([ ... ]) doesn't have QuizAttempt here. 
+        // // We must dispatch the attempt creation. Let's use generic mongoose model to save it to avoid circular dependency or import issues.
+        // const QuizAttemptModel = this.quizModel.db.model('QuizAttempt');
 
         // Find previous attempts
-        const previousAttemptsCount = await QuizAttemptModel.countDocuments({
+        const previousAttemptsCount = await this.quizAttemptModel.countDocuments({
             quiz_id: new Types.ObjectId(quizId),
             user_id: new Types.ObjectId(req.user.id),
         });
 
-        const attempt = new QuizAttemptModel({
+        const attempt = new this.quizAttemptModel({
             quiz_id: new Types.ObjectId(quizId),
             user_id: new Types.ObjectId(req.user.id),
             score,
@@ -100,5 +104,27 @@ export class QuizService {
             score,
             passed,
         };
+    }
+
+    async getLatestQuizAttemptForStudent(req: any, quizId: string): Promise<any> {
+        if (!quizId) {
+            throw new Error("Quiz Id is required");
+        }
+
+        const latestAttempt = await this.quizAttemptModel.findOne({
+            quiz_id: new Types.ObjectId(quizId),
+            user_id: new Types.ObjectId(req.user.id),
+        }).sort({ attempt_number: -1 }).lean() as any;
+
+        if (latestAttempt) {
+            return {
+                ...latestAttempt,
+                _id: latestAttempt._id.toString(),
+                quiz_id: latestAttempt.quiz_id.toString(),
+                user_id: latestAttempt.user_id.toString(),
+            };
+        }
+
+        return null;
     }
 }
