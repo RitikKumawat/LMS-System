@@ -285,6 +285,37 @@ type CourseOrderResponse {
   status: String!
 }
 
+type EnrollmentDetails {
+  student_email: String!
+  course_name: String!
+  status: ENROLLMENT_STATUS!
+  enrolled_at: DateTime!
+  payment_status: PaymentStatus
+  method: String
+  payment_id: ID
+}
+
+enum ENROLLMENT_STATUS {
+  ACTIVE
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  SUCCESS
+  FAILED
+}
+
+type PaginatedEnrollments {
+  docs: [EnrollmentDetails!]!
+  totalDocs: Int!
+  limit: Int!
+  totalPages: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
 type Query {
   getProfileData: User!
   getAdminData: AdminResponse!
@@ -301,6 +332,7 @@ type Query {
   getLessonById(lessonId: String!): LessonResponse!
   getLessonContent(lessonId: String!, courseId: String!): LessonDetails!
   getOrder(id: String!): CourseOrderResponse!
+  getAllEnrollments(paginationInput: PaginationInput, filters: EnrollmentFiltersInput): PaginatedEnrollments!
   getQuizById(quizId: String!): Quiz!
   getQuizForStudent(quizId: String!): Quiz!
   getLatestQuizAttemptForStudent(quizId: String!): QuizAttempt
@@ -325,6 +357,12 @@ enum COURSE_LEVEL {
   BEGINNER
   INTERMEDIATE
   ADVANCED
+}
+
+input EnrollmentFiltersInput {
+  search: String
+  payment_status: PaymentStatus
+  enrollment_status: ENROLLMENT_STATUS
 }
 
 type Mutation {

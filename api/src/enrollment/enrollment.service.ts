@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ENROLLMENT_STATUS } from 'src/enum/enrollmentStatus';
 import { Enrollment } from 'src/schemas/enrollment.schema';
+import { getAllEnrollmentsAggregation } from 'src/aggregation/getAllEnrollments.aggregation';
+import { paginateAggregate } from 'src/utils/paginate-aggregate';
 
 @Injectable()
 export class EnrollmentService {
@@ -42,5 +44,21 @@ export class EnrollmentService {
         });
 
         return !!enrollment;
+    }
+
+    async getAllEnrollments(req: any, paginationInput: any, filters?: any) {
+        const { page = 1, limit = 10 } = paginationInput;
+        const user = req.user;
+
+        const basePipeline = getAllEnrollmentsAggregation(user, filters?.search, filters);
+
+        const result = await paginateAggregate(
+            this.enrollmentModel,
+            basePipeline,
+            page,
+            limit
+        );
+
+        return result;
     }
 }

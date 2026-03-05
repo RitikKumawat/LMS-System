@@ -1,0 +1,19 @@
+query GetAllEnrollments($paginationInput: PaginationInput, $filters: EnrollmentFiltersInput) {
+  getAllEnrollments(paginationInput: $paginationInput, filters: $filters) {
+    docs {
+      student_email
+      course_name
+      status
+      enrolled_at
+      payment_status
+      method
+      payment_id
+    }
+    totalDocs
+    limit
+    totalPages
+    page
+    hasNextPage
+    hasPrevPage
+  }
+}

@@ -14,6 +14,7 @@ import QuizPage from "../pages/quiz/QuizPage";
 import RootLayout from "../layouts/root-layout/RootLayout";
 
 import ReviewCourse from "../pages/review-course/ReviewCourse";
+import Enrollments from "../pages/enrollments/Enrollments";
 
 export const appRoutes = createBrowserRouter([
   {
@@ -91,6 +92,12 @@ export const appRoutes = createBrowserRouter([
         path: ROUTES.COURSE_REVIEW + '/:id',
         element: <PrivateLayout allowedRoles={[Admin_Roles.Instructor]}>
           <ReviewCourse />
+        </PrivateLayout>
+      },
+      {
+        path: ROUTES.ENROLLMENTS,
+        element: <PrivateLayout allowedRoles={[Admin_Roles.Instructor, Admin_Roles.Admin]}>
+          <Enrollments />
         </PrivateLayout>
       }
     ]

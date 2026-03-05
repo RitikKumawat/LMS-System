@@ -1,4 +1,4 @@
-import { BookType, LayoutDashboard } from "lucide-react";
+import { BookType, LayoutDashboard, User2, User2Icon } from "lucide-react";
 import { Admin_Roles } from "../generated/graphql";
 
 export const navbarLinks = [
@@ -19,6 +19,12 @@ export const navbarLinks = [
     href: "/courses",
     allowedRole: [Admin_Roles.Instructor, Admin_Roles.Admin],
     icon: BookType,
+  },
+  {
+    name: "Enrollments",
+    href: "/enrollments",
+    allowedRole: [Admin_Roles.Admin, Admin_Roles.Instructor],
+    icon: User2,
   },
 
 ];

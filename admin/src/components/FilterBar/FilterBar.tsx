@@ -7,6 +7,7 @@ interface FilterBarProps {
   searchValue?: string;
   onSearchChange?: (val: string) => void;
   children: React.ReactNode;
+  placeholder?: string;
 }
 
 const FilterBar = ({
@@ -14,6 +15,7 @@ const FilterBar = ({
   searchValue,
   onSearchChange,
   children,
+  placeholder,
 }: FilterBarProps) => {
   return (
     <Box className={classes.filterWrapper}>
@@ -23,11 +25,11 @@ const FilterBar = ({
           {searchable && (
             <FInput
               label=""
-              placeholder="Search courses..."
+              placeholder={placeholder ?? "Search..."}
               value={searchValue ?? ""}
               onChange={(e) => onSearchChange?.(e as string)}
               className={classes.searchInput}
-              
+
             />
           )
           }

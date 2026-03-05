@@ -7,5 +7,5 @@ export const ROUTES = {
   ADD_COURSE: "/courses/add-course",
   COURSE_CURRICULUM: "/courses/curriculum",
   COURSE_REVIEW: "/courses/review",
-
+  ENROLLMENTS: "/enrollments",
 };
