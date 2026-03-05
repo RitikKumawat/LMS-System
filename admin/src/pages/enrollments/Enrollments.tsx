@@ -73,7 +73,7 @@ const Enrollments = () => {
                         label=""
 
                         variant="select"
-                        placeholder="Level"
+                        placeholder="Enrollment Status"
                         value={filters.enrollment_status as string}
                         selectOptions={[
                             { label: "Active", value: Enrollment_Status.Active },
@@ -88,7 +88,7 @@ const Enrollments = () => {
                         label=""
 
                         variant="select"
-                        placeholder="Level"
+                        placeholder="Payemnt Status"
                         value={filters.payment_status as string}
                         selectOptions={[
                             { label: "Success", value: PaymentStatus.Success },
