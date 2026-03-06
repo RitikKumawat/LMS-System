@@ -54,7 +54,6 @@ export class CourseService {
       slug: slug,
       title: createCourseInput.title,
       description: createCourseInput.description,
-      certificate_template_id: createCourseInput.certificate_template_id,
     };
     if (thumbnail) {
       await validateFileUpload(
