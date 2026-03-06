@@ -1,0 +1,30 @@
+.canvasContainer {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    max-width: 800px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
+}
+
+.textElement {
+    display: inline-block;
+    white-space: nowrap;
+    padding: 4px;
+    border: 1px solid transparent;
+    /* Invisible by default */
+    touch-action: none;
+    /* Prevent scroll on touch generic */
+
+    &.selected {
+        border: 1px dashed #228be6;
+        background-color: rgba(34, 139, 230, 0.1);
+    }
+}

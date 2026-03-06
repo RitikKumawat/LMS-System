@@ -38,6 +38,7 @@ export function getAllCoursePipeline(filters: CourseFilters, role: ADMIN_ROLES, 
         is_published: 1,
         createdAt: 1,
         category_name: '$category.name',
+        certificate_template_id: 1,
       },
     },
   ];

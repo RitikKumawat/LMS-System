@@ -28,6 +28,9 @@ export class CreateCourseInput {
 
   @Field(() => String)
   category_id: string;
+
+  @Field(() => String, { nullable: true })
+  certificate_template_id?: string;
 }
 
 @ObjectType()

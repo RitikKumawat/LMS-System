@@ -53,6 +53,7 @@ export function getUserPurchasedCourses(filters: CourseFilters, userId: string):
                 is_published: 1,
                 createdAt: 1,
                 category_name: '$category.name',
+                certificate_template_id: 1,
             },
         },
     ];

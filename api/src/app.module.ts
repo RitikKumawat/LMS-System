@@ -31,6 +31,7 @@ import { PaymentModule } from './payment/payment.module';
 import { LessonProgressModule } from './lesson-progress/lesson-progress.module';
 import { QuizModule } from './quiz/quiz.module';
 import { QuizQuestionModule } from './quiz-question/quiz-question.module';
+import { CertificateEngineModule } from './certificate-engine/certificate-engine.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { QuizQuestionModule } from './quiz-question/quiz-question.module';
     LessonProgressModule,
     QuizModule,
     QuizQuestionModule,
+    CertificateEngineModule,
     // CommonModule,
   ],
   controllers: [AppController],

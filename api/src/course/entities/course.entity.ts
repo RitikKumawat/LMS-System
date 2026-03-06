@@ -34,6 +34,9 @@ export class CourseResponse {
   @Field(() => Boolean)
   is_published: boolean;
 
+  @Field(() => String, { nullable: true })
+  certificate_template_id?: string;
+
   @Field(() => Date)
   createdAt: Date;
 }

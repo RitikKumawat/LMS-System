@@ -45,6 +45,7 @@ type Course {
   price: Float!
   is_published: Boolean!
   created_by: ID!
+  certificate_template_id: ID
   published_at: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -142,6 +143,7 @@ type CourseResponse {
   language: String!
   price: Float!
   is_published: Boolean!
+  certificate_template_id: String
   createdAt: DateTime!
 }
 
@@ -157,6 +159,7 @@ type CourseWithEnrollment {
   price: Float!
   is_published: Boolean!
   created_by: ID!
+  certificate_template_id: ID
   published_at: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -317,6 +320,27 @@ type PaginatedEnrollments {
   hasPrevPage: Boolean!
 }
 
+type CertificateElement {
+  id: String!
+  type: String!
+  text: String!
+  x: Float!
+  y: Float!
+  fontSize: Float!
+  fontFamily: String!
+  color: String!
+}
+
+type CertificateTemplate {
+  _id: ID!
+  name: String!
+  background_image: String
+  elements: [CertificateElement!]!
+  created_by: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Query {
   getProfileData: User!
   getAdminData: AdminResponse!
@@ -339,6 +363,8 @@ type Query {
   getLatestQuizAttemptForStudent(quizId: String!): QuizAttempt
   getQuizQuestionsByQuizId(quizId: String!): [QuizQuestion!]!
   quizQuestion(id: String!): QuizQuestion!
+  certificateTemplates: [CertificateTemplate!]!
+  certificateTemplate(id: String!): CertificateTemplate!
 }
 
 input PaginationInput {
@@ -391,6 +417,9 @@ type Mutation {
   submitQuizAttempt(quizId: String!, score: Int!): SubmitQuizAttemptResponse!
   createQuizQuestion(createQuizQuestionInput: CreateQuizQuestionInput!): QuizQuestion!
   removeQuizQuestion(id: String!): QuizQuestion!
+  createCertificateTemplate(input: CreateCertificateTemplateInput!): CertificateTemplate!
+  updateCertificateTemplate(input: UpdateCertificateTemplateInput!): CertificateTemplate!
+  removeCertificateTemplate(id: String!): Boolean!
 }
 
 input VerifyOtpInput {
@@ -439,6 +468,7 @@ input CreateCourseInput {
   level: COURSE_LEVEL!
   language: String!
   category_id: String!
+  certificate_template_id: String
 }
 
 input CreateCourseModuleInput {
@@ -493,4 +523,28 @@ input CreateQuizQuestionInput {
 input CreateOptionInput {
   option_text: String!
   is_correct: Boolean!
+}
+
+input CreateCertificateTemplateInput {
+  name: String!
+  background_image: String
+  elements: [CertificateElementInput!]
+}
+
+input CertificateElementInput {
+  id: String!
+  type: String!
+  text: String!
+  x: Float!
+  y: Float!
+  fontSize: Float!
+  fontFamily: String!
+  color: String!
+}
+
+input UpdateCertificateTemplateInput {
+  name: String
+  background_image: String
+  elements: [CertificateElementInput!]
+  id: ID!
 }
