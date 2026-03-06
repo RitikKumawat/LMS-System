@@ -4,6 +4,17 @@ import { TColumns } from "../types/table";
 
 export const enrollmentColumns: TColumns<EnrollmentDetails>[] = [
     {
+        key: "student_name",
+        label: "Student Name",
+        render: (val) => (
+            <Text fw={500} size="sm" style={{ color: "#1f2937" }}>
+                {val.student_name}
+            </Text>
+        ),
+        minWidth: 200,
+        filter: false,
+    },
+    {
         key: "student_email",
         label: "Student Email",
         render: (val) => (

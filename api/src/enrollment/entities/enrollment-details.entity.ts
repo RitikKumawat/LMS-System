@@ -8,6 +8,9 @@ export class EnrollmentDetails {
     student_email: string;
 
     @Field()
+    student_name: string;
+
+    @Field()
     course_name: string;
 
     @Field(() => ENROLLMENT_STATUS)

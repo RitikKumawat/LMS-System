@@ -5,6 +5,9 @@ import { ENROLLMENT_STATUS } from 'src/enum/enrollmentStatus';
 import { Enrollment } from 'src/schemas/enrollment.schema';
 import { getAllEnrollmentsAggregation } from 'src/aggregation/getAllEnrollments.aggregation';
 import { paginateAggregate } from 'src/utils/paginate-aggregate';
+import { Request } from 'express';
+import { PaginationInput } from 'src/category/pagination.dto';
+import { EnrollmentFiltersInput, PaginatedEnrollments } from './entities/enrollment-details.entity';
 
 @Injectable()
 export class EnrollmentService {
@@ -46,19 +49,18 @@ export class EnrollmentService {
         return !!enrollment;
     }
 
-    async getAllEnrollments(req: any, paginationInput: any, filters?: any) {
+    async getAllEnrollments(req: Request, paginationInput: PaginationInput, filters?: EnrollmentFiltersInput) {
         const { page = 1, limit = 10 } = paginationInput;
         const user = req.user;
 
         const basePipeline = getAllEnrollmentsAggregation(user, filters?.search, filters);
 
-        const result = await paginateAggregate(
+        const result = await paginateAggregate<PaginatedEnrollments>(
             this.enrollmentModel,
             basePipeline,
             page,
             limit
         );
-
         return result;
     }
 }

@@ -1,32 +1,70 @@
 import { PipelineStage, Types } from 'mongoose';
-import { ENROLLMENT_STATUS } from 'src/enum/enrollmentStatus';
-import { PaymentStatus } from 'src/enum/paymentStatus';
+import { EnrollmentFiltersInput } from 'src/enrollment/entities/enrollment-details.entity';
+import { ADMIN_ROLES, USER_ROLES } from 'src/enum/roles';
 
 export const getAllEnrollmentsAggregation = (
-    user: any,
+    user: {
+        id: string;
+        email: string;
+        roles: ADMIN_ROLES | USER_ROLES;
+    },
     search?: string,
-    filters?: {
-        payment_status?: PaymentStatus;
-        enrollment_status?: ENROLLMENT_STATUS;
-    }
+    filters?: EnrollmentFiltersInput,
+    page = 1,
+    limit = 10
 ): PipelineStage[] => {
+
     const pipeline: PipelineStage[] = [];
 
-    // 1. Lookup Course
+    const matchStage: any = {};
+
+    // enrollment status filter
+    if (filters?.enrollment_status) {
+        matchStage.status = filters.enrollment_status;
+    }
+
+    if (Object.keys(matchStage).length) {
+        pipeline.push({ $match: matchStage });
+    }
+
+    /*
+    --------------------------------
+    COURSE LOOKUP
+    --------------------------------
+    */
     pipeline.push({
         $lookup: {
             from: 'courses',
-            localField: 'course_id',
-            foreignField: '_id',
+            let: { courseId: '$course_id' },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: { $eq: ['$_id', '$$courseId'] }
+                    }
+                },
+                {
+                    $project: {
+                        title: 1,
+                        created_by: 1
+                    }
+                }
+            ],
             as: 'course'
         }
     });
 
     pipeline.push({
-        $unwind: '$course'
+        $unwind: {
+            path: '$course',
+            preserveNullAndEmptyArrays: false
+        }
     });
 
-    // 2. Filter by Instructor ID if role is INSTRUCTOR
+    /*
+    --------------------------------
+    INSTRUCTOR FILTER
+    --------------------------------
+    */
     if (user.roles === 'instructor') {
         pipeline.push({
             $match: {
@@ -35,26 +73,62 @@ export const getAllEnrollmentsAggregation = (
         });
     }
 
-    // 3. Lookup User
+    /*
+    --------------------------------
+    USER LOOKUP
+    --------------------------------
+    */
     pipeline.push({
         $lookup: {
             from: 'users',
-            localField: 'user_id',
-            foreignField: '_id',
+            let: { userId: '$user_id' },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: { $eq: ['$_id', '$$userId'] }
+                    }
+                },
+                {
+                    $project: {
+                        name: 1,
+                        email: 1
+                    }
+                }
+            ],
             as: 'student'
         }
     });
 
     pipeline.push({
-        $unwind: '$student'
+        $unwind: {
+            path: '$student',
+            preserveNullAndEmptyArrays: false
+        }
     });
 
-    // 4. Lookup Payment
+    /*
+    --------------------------------
+    PAYMENT LOOKUP
+    --------------------------------
+    */
     pipeline.push({
         $lookup: {
             from: 'payments',
-            localField: 'payment_id',
-            foreignField: '_id',
+            let: { paymentId: '$payment_id' },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: { $eq: ['$_id', '$$paymentId'] }
+                    }
+                },
+                {
+                    $project: {
+                        status: 1,
+                        method: 1,
+                        razorpay_payment_id: 1
+                    }
+                }
+            ],
             as: 'payment'
         }
     });
@@ -66,15 +140,11 @@ export const getAllEnrollmentsAggregation = (
         }
     });
 
-    // 5. Apply filters
-    if (filters?.enrollment_status) {
-        pipeline.push({
-            $match: {
-                status: filters.enrollment_status
-            }
-        });
-    }
-
+    /*
+    --------------------------------
+    PAYMENT STATUS FILTER
+    --------------------------------
+    */
     if (filters?.payment_status) {
         pipeline.push({
             $match: {
@@ -83,27 +153,44 @@ export const getAllEnrollmentsAggregation = (
         });
     }
 
-    // 6. Apply search
-    if (search) {
+    /*
+    --------------------------------
+    SEARCH
+    --------------------------------
+    */
+    if (search?.trim()) {
+        const regex = new RegExp(search.trim(), 'i');
+
         pipeline.push({
             $match: {
                 $or: [
-                    { 'student.email': { $regex: search, $options: 'i' } },
-                    { 'course.title': { $regex: search, $options: 'i' } }
+                    { 'student.name': regex },
+                    { 'student.email': regex },
+                    { 'course.title': regex }
                 ]
             }
         });
     }
 
-    // 7. Sort
+    /*
+    --------------------------------
+    SORT
+    --------------------------------
+    */
     pipeline.push({
         $sort: { enrolled_at: -1 }
     });
 
-    // 8. Project
+    /*
+    --------------------------------
+    FINAL RESPONSE SHAPE
+    --------------------------------
+    */
+
     pipeline.push({
         $project: {
             _id: 0,
+            student_name: '$student.name',
             student_email: '$student.email',
             course_name: '$course.title',
             status: '$status',
