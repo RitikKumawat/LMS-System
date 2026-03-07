@@ -22,6 +22,7 @@ query GetAllCourseModules($courseId: String!, $paginationInput: PaginationInput!
         title
         passing_score
         questionCount
+        score
         created_at
       }
     }
