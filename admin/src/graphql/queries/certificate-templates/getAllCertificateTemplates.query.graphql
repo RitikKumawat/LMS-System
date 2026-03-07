@@ -1,0 +1,15 @@
+query GetAllCertificateTemplates($paginationInput: PaginationInput!) {
+  getAllCertificateTemplates(paginationInput: $paginationInput) {
+    docs {
+      _id
+      name
+      createdAt
+    }
+    totalDocs
+    limit
+    totalPages
+    page
+    hasNextPage
+    hasPrevPage
+  }
+}

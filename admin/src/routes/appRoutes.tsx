@@ -15,6 +15,8 @@ import RootLayout from "../layouts/root-layout/RootLayout";
 
 import ReviewCourse from "../pages/review-course/ReviewCourse";
 import Enrollments from "../pages/enrollments/Enrollments";
+import CertificateTemplatesList from "../pages/certificate-templates/CertificateTemplatesList";
+import CertificateTemplateEditor from "../pages/certificate-templates/CertificateTemplateEditor";
 
 export const appRoutes = createBrowserRouter([
   {
@@ -98,6 +100,24 @@ export const appRoutes = createBrowserRouter([
         path: ROUTES.ENROLLMENTS,
         element: <PrivateLayout allowedRoles={[Admin_Roles.Instructor, Admin_Roles.Admin]}>
           <Enrollments />
+        </PrivateLayout>
+      },
+      {
+        path: ROUTES.CERTIFICATE_TEMPLATES,
+        element: <PrivateLayout allowedRoles={[Admin_Roles.Admin, Admin_Roles.Instructor]}>
+          <CertificateTemplatesList />
+        </PrivateLayout>
+      },
+      {
+        path: ROUTES.CERTIFICATE_TEMPLATE_EDITOR,
+        element: <PrivateLayout allowedRoles={[Admin_Roles.Admin, Admin_Roles.Instructor]}>
+          <CertificateTemplateEditor />
+        </PrivateLayout>
+      },
+      {
+        path: ROUTES.CERTIFICATE_TEMPLATE_EDITOR + '/:id',
+        element: <PrivateLayout allowedRoles={[Admin_Roles.Admin, Admin_Roles.Instructor]}>
+          <CertificateTemplateEditor />
         </PrivateLayout>
       }
     ]

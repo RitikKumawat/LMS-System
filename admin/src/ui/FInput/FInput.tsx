@@ -26,11 +26,11 @@ interface ICustomTextInput {
   padding?: string;
   fontSize?: string;
   formHandler?:
-    | TextInputProps
-    | NumberInputProps
-    | PasswordInputProps
-    | SelectProps
-    | TextareaProps;
+  | TextInputProps
+  | NumberInputProps
+  | PasswordInputProps
+  | SelectProps
+  | TextareaProps;
   disabled?: boolean;
   onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
   onChange?: (value: FInputChangeValue) => void;
@@ -46,6 +46,7 @@ interface ICustomTextInput {
   clearable?: boolean;
   className?: string;
   style?: React.CSSProperties;
+  onScrollBottom?: () => void;
 }
 
 /* -------------------- Component -------------------- */
@@ -72,6 +73,7 @@ const FInput: React.FC<ICustomTextInput> = ({
   onChange,
   className,
   style,
+  onScrollBottom,
 }) => {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
@@ -79,7 +81,7 @@ const FInput: React.FC<ICustomTextInput> = ({
   if (variant === "number") {
     return (
       <NumberInput
-      style={style}
+        style={style}
         hideControls
         className={className}
         disabled={disabled}
@@ -104,7 +106,7 @@ const FInput: React.FC<ICustomTextInput> = ({
   if (variant === "password") {
     return (
       <PasswordInput
-      style={style}
+        style={style}
         disabled={disabled}
         label={label}
         className={className}
@@ -133,7 +135,7 @@ const FInput: React.FC<ICustomTextInput> = ({
   if (variant === "select") {
     return (
       <Select
-      style={style}
+        style={style}
         label={label}
         className={className}
         placeholder={placeholder}
@@ -147,6 +149,7 @@ const FInput: React.FC<ICustomTextInput> = ({
         allowDeselect={false}
         onDropdownOpen={() => setIsSelectOpen(true)}
         onDropdownClose={() => setIsSelectOpen(false)}
+        scrollAreaProps={{ onBottomReached: onScrollBottom }}
         rightSection={
           <ChevronDown
             size={18}

@@ -1,0 +1,12 @@
+query GetCertificateTemplateById($id: ID!) {
+  getCertificateTemplateById(id: $id) {
+    _id
+    name
+    fabric_json
+    background_url
+    placeholders
+    created_by
+    createdAt
+    updatedAt
+  }
+}
