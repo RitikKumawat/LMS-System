@@ -190,6 +190,7 @@ type CourseWithEnrollment {
   createdAt: DateTime!
   updatedAt: DateTime!
   is_enrolled: Boolean!
+  is_certificate_issued: Boolean!
 }
 
 type CourseProgress {
@@ -315,6 +316,8 @@ type CourseOrderResponse {
 }
 
 type EnrollmentDetails {
+  user_id: ID!
+  course_id: ID!
   student_email: String!
   student_name: String!
   course_name: String!
@@ -323,6 +326,7 @@ type EnrollmentDetails {
   payment_status: PaymentStatus
   method: String
   payment_id: ID
+  course_progress_percentage: Int!
 }
 
 enum ENROLLMENT_STATUS {
@@ -425,6 +429,7 @@ type Mutation {
   createCertificateTemplate(createCertificateTemplateInput: CreateCertificateTemplateInput!): CertificateTemplate!
   updateCertificateTemplate(updateCertificateTemplateInput: UpdateCertificateTemplateInput!): CertificateTemplate!
   removeCertificateTemplate(id: ID!): Boolean!
+  sendCertificate(userId: String, courseId: String): String!
 }
 
 input VerifyOtpInput {

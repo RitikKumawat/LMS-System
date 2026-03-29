@@ -1,0 +1,11 @@
+Total failed: 2
+
+=== JOB: 5 ===
+attempts: 1
+data: {"userId":"6921e3bd4b7a1e2063d08bc","courseId":"69baec94dddaa1e2063d08bc","certificateId":"69baec94dddaa1e2063d08bc"}
+reason: Cast to ObjectId failed for value "6921e3bd4b7a1e2063d08bc" (type string) at path "_id" for model "User"
+
+=== JOB: cert:6921e3bd4b7a1e2063d08bc:69baec94dddaa1e2063d08bc ===
+attempts: 1
+data: {"userId":"6921e3bd4b7a1e2063d08bc","courseId":"69baec94dddaa1e2063d08bc","certificateId":"69baec94dddaa1e2063d08bc"}
+reason: Cast to ObjectId failed for value "6921e3bd4b7a1e2063d08bc" (type string) at path "_id" for model "User"

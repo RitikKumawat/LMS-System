@@ -43,6 +43,9 @@ export class CourseResponse {
 export class CourseWithEnrollment extends Course {
   @Field(() => Boolean)
   is_enrolled: boolean;
+
+  @Field(() => Boolean)
+  is_certificate_issued: boolean;
 }
 
 @ObjectType()

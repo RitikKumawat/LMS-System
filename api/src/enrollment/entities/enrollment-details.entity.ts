@@ -4,6 +4,12 @@ import { PaymentStatus } from 'src/enum/paymentStatus';
 
 @ObjectType()
 export class EnrollmentDetails {
+    @Field(() => ID)
+    user_id: string;
+
+    @Field(() => ID)
+    course_id: string;
+
     @Field()
     student_email: string;
 
@@ -27,6 +33,9 @@ export class EnrollmentDetails {
 
     @Field(() => ID, { nullable: true })
     payment_id?: string;
+
+    @Field(() => Int)
+    course_progress_percentage: number;
 }
 
 import { InputType } from '@nestjs/graphql';

@@ -1,6 +1,8 @@
 query GetAllEnrollments($paginationInput: PaginationInput, $filters: EnrollmentFiltersInput) {
   getAllEnrollments(paginationInput: $paginationInput, filters: $filters) {
     docs {
+      user_id
+      course_id
       student_name
       student_email
       course_name
@@ -9,6 +11,7 @@ query GetAllEnrollments($paginationInput: PaginationInput, $filters: EnrollmentF
       payment_status
       method
       payment_id
+      course_progress_percentage
     }
     totalDocs
     limit

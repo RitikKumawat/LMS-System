@@ -38,5 +38,6 @@ query FindOneCourse($courseId: String!) {
     createdAt
     updatedAt
     is_enrolled
+    is_certificate_issued
   }
 }

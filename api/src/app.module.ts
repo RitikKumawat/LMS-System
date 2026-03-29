@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './config/config';
 import { envSchema } from './config/schema';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { join } from 'path';
@@ -32,6 +33,7 @@ import { LessonProgressModule } from './lesson-progress/lesson-progress.module';
 import { QuizModule } from './quiz/quiz.module';
 import { QuizQuestionModule } from './quiz-question/quiz-question.module';
 import { CertificateTemplateModule } from './certificate-template/certificate-template.module';
+import { CertificateGenerationModule } from './certificate-generation/certificate-generation.module';
 
 @Module({
   imports: [
@@ -46,6 +48,7 @@ import { CertificateTemplateModule } from './certificate-template/certificate-te
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -72,6 +75,7 @@ import { CertificateTemplateModule } from './certificate-template/certificate-te
     QuizModule,
     QuizQuestionModule,
     CertificateTemplateModule,
+    CertificateGenerationModule,
     // CommonModule,
   ],
   controllers: [AppController],
@@ -85,4 +89,4 @@ import { CertificateTemplateModule } from './certificate-template/certificate-te
     UploadsGateway,
   ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
-import { Box, Group, Stack, Text, Select, ActionIcon, Tooltip } from "@mantine/core";
-import { Type, Image as ImageIcon, Trash2, Copy } from "lucide-react";
+import { Box, Group, Stack, Text, Select, ActionIcon, Tooltip, ColorInput, NumberInput } from "@mantine/core";
+import { Type, Image as ImageIcon, Trash2, Copy, Upload } from "lucide-react";
 import FButton from "../../ui/FButton/FButton";
 
 interface CertificateDesignerProps {
@@ -21,11 +21,17 @@ const CertificateDesigner = ({ initialFabricJson, onSave, isLoading }: Certifica
     const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null);
     const [selectedPlaceholder, setSelectedPlaceholder] = useState<string | null>(null);
 
+    // Active object styling state
+    const [activeFontFamily, setActiveFontFamily] = useState<string>("Arial");
+    const [activeFontSize, setActiveFontSize] = useState<number>(24);
+    const [activeFillColor, setActiveFillColor] = useState<string>("#000000");
+    const [hasTextSelection, setHasTextSelection] = useState<boolean>(false);
+
     useEffect(() => {
         if (canvasRef.current && !fabricCanvas) {
             const initCanvas = new fabric.Canvas(canvasRef.current, {
-                height: 600,
-                width: 800,
+                height: 595,
+                width: 842,
                 backgroundColor: "#f8f9fa",
             });
 
@@ -36,15 +42,44 @@ const CertificateDesigner = ({ initialFabricJson, onSave, isLoading }: Certifica
             }
 
             setFabricCanvas(initCanvas);
+
+            // Add event listeners for selection
+            initCanvas.on("selection:created", handleSelection);
+            initCanvas.on("selection:updated", handleSelection);
+            initCanvas.on("selection:cleared", () => setHasTextSelection(false));
         }
 
         return () => {
-            // cleanup is handled cautiously, sometimes fabric dispose fails on unmount
             if (fabricCanvas) {
+                fabricCanvas.off("selection:created", handleSelection);
+                fabricCanvas.off("selection:updated", handleSelection);
+                fabricCanvas.off("selection:cleared");
                 fabricCanvas.dispose();
             }
         };
     }, [canvasRef]);
+
+    const handleSelection = (e: fabric.IEvent) => {
+        const activeObj = e.selected?.[0];
+        if (activeObj && (activeObj.type === "i-text" || activeObj.type === "text")) {
+            const textObj = activeObj as fabric.IText;
+            setHasTextSelection(true);
+            setActiveFontFamily(textObj.fontFamily || "Arial");
+            setActiveFontSize(textObj.fontSize || 24);
+            setActiveFillColor((textObj.fill as string) || "#000000");
+        } else {
+            setHasTextSelection(false);
+        }
+    };
+
+    const updateActiveTextProperty = (property: keyof fabric.IText, value: any) => {
+        if (!fabricCanvas) return;
+        const activeObj = fabricCanvas.getActiveObject() as fabric.IText;
+        if (activeObj && (activeObj.type === "i-text" || activeObj.type === "text")) {
+            activeObj.set(property, value);
+            fabricCanvas.renderAll();
+        }
+    };
 
     const addText = () => {
         if (!fabricCanvas) return;
@@ -183,35 +218,66 @@ const CertificateDesigner = ({ initialFabricJson, onSave, isLoading }: Certifica
                         </Group>
                     </Stack>
 
+                    {/* Font Styling Controls (Visible only when text is selected) */}
+                    {hasTextSelection && (
+                        <Stack gap={4}>
+                            <Text size="xs" fw={500}>Text Styling</Text>
+                            <Group gap="xs">
+                                <Select
+                                    data={[
+                                        "Arial", "Helvetica", "Times New Roman", "Courier New", "Verdana",
+                                        "Georgia", "Palatino", "Garamond", "Impact"
+                                    ]}
+                                    value={activeFontFamily}
+                                    onChange={(val) => {
+                                        setActiveFontFamily(val || "Arial");
+                                        updateActiveTextProperty("fontFamily", val);
+                                    }}
+                                    styles={{ input: { height: 36, width: 120 } }}
+                                />
+                                <NumberInput
+                                    value={activeFontSize}
+                                    onChange={(val) => {
+                                        setActiveFontSize(Number(val) || 24);
+                                        updateActiveTextProperty("fontSize", Number(val));
+                                    }}
+                                    styles={{ input: { height: 36, width: 80 } }}
+                                    min={8}
+                                    max={120}
+                                />
+                                <ColorInput
+                                    value={activeFillColor}
+                                    onChange={(val) => {
+                                        setActiveFillColor(val);
+                                        updateActiveTextProperty("fill", val);
+                                    }}
+                                    styles={{ input: { height: 36, width: 100 } }}
+                                />
+                            </Group>
+                        </Stack>
+                    )}
+
                     <Stack gap={4}>
                         <Text size="xs" fw={500}>Add Media</Text>
                         <Group gap="xs">
-                            <label>
+                            <label style={{ display: "flex", gap: "8px", cursor: "pointer", border: "1px solid #dee2e6", padding: "6px 16px", borderRadius: "8px", alignItems: "center" }}>
+                                <ImageIcon size={16} />
+                                <Text size="sm" fw={500}>Add Image</Text>
                                 <input
                                     type="file"
                                     accept="image/*"
                                     onChange={handleImageUpload}
                                     style={{ display: "none" }}
                                 />
-                                <FButton
-                                    variant="outline"
-                                    leftIcon={<ImageIcon size={16} />}
-                                    title="Add Image"
-                                    handleClick={() => { }} // click is handled by label wrapping
-
-                                />
                             </label>
-                            <label>
+                            <label style={{ display: "flex", gap: "8px", cursor: "pointer", border: "1px solid #dee2e6", padding: "6px 16px", borderRadius: "8px", alignItems: "center" }}>
+                                <Upload size={16} />
+                                <Text size="sm" fw={500}>Set Background</Text>
                                 <input
                                     type="file"
                                     accept="image/*"
                                     onChange={setBackgroundImage}
                                     style={{ display: "none" }}
-                                />
-                                <FButton
-                                    variant="outline"
-                                    title="Set Background"
-                                    handleClick={() => { }} // click is handled by label wrapping
                                 />
                             </label>
                         </Group>
@@ -232,7 +298,15 @@ const CertificateDesigner = ({ initialFabricJson, onSave, isLoading }: Certifica
                 </Group>
             </Group>
 
-            <Box style={{ border: "1px solid #dee2e6", borderRadius: "8px", overflow: "hidden", display: "inline-block" }}>
+            <Box style={{
+                border: "1px solid #dee2e6",
+                borderRadius: "8px",
+                overflow: "hidden",
+                display: "inline-block",
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.12)",
+                background: "#fff",
+                width: "fit-content",
+            }}>
                 <canvas ref={canvasRef} />
             </Box>
 
