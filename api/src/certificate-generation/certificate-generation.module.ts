@@ -9,16 +9,8 @@ import { CertificateGenerationProcessor } from './certificate-generation.process
 import { CertificateGenerationResolver } from './certificate-generation.resolver';
 import { CertificateDownloadController } from './certificate-download.controller';
 import { PdfGeneratorService } from './pdf-generator.service';
-import { Certificate, CertificateSchema } from '../schemas/certificate.schema';
-import { Enrollment, EnrollmentSchema } from '../schemas/enrollment.schema';
-import { Lesson, LessonSchema } from '../schemas/lesson.schema';
-import { User, UserSchema } from '../schemas/user.schema';
-import { Course, CourseSchema } from '../schemas/course.schema';
-import {
-  CertificateTemplate,
-  CertificateTemplateSchema,
-} from '../schemas/certificate-template.schema';
 import { CERTIFICATE_QUEUE_NAME } from './constants';
+import { SCHEMAS } from 'src/schemas';
 
 @Module({
   controllers: [CertificateDownloadController],
@@ -42,14 +34,7 @@ import { CERTIFICATE_QUEUE_NAME } from './constants';
       },
     }),
     // Register Mongoose schemas
-    MongooseModule.forFeature([
-      { name: Certificate.name, schema: CertificateSchema },
-      { name: Enrollment.name, schema: EnrollmentSchema },
-      { name: Lesson.name, schema: LessonSchema },
-      { name: User.name, schema: UserSchema },
-      { name: Course.name, schema: CourseSchema },
-      { name: CertificateTemplate.name, schema: CertificateTemplateSchema },
-    ]),
+    MongooseModule.forFeature(SCHEMAS),
   ],
   providers: [
     CertificateGenerationScheduler,

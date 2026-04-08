@@ -64,19 +64,19 @@ export class CertificateGenerationProcessor {
       }
 
       // 2. Find the certificate template assigned to this course
-      if (!(course as any).certificate_template_id) {
+      if (!course.certificate_template_id) {
         throw new Error(
           `Course ${courseId} does not have a certificate template assigned.`,
         );
       }
 
       const template = await this.certificateTemplateModel
-        .findById((course as any).certificate_template_id)
+        .findById(course.certificate_template_id)
         .lean();
 
       if (!template) {
         throw new Error(
-          `Certificate template ${(course as any).certificate_template_id} not found for course ${courseId}.`,
+          `Certificate template ${course.certificate_template_id} not found for course ${courseId}.`,
         );
       }
 
@@ -164,8 +164,8 @@ export class CertificateGenerationProcessor {
         `Certificate generation completed for user ${userId}, course ${courseId}`,
       );
     } catch (error) {
-      const errorMsg = error?.message || 'Unknown error';
-      const errorStack = error?.stack || '';
+      const errorMsg = error || 'Unknown error';
+      const errorStack = error || 'No stack trace';
 
       this.logger.error(
         `Certificate generation FAILED for cert=${certificateId} user=${userId} course=${courseId}: ${errorMsg}`,

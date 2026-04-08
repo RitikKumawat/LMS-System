@@ -78,6 +78,7 @@ export default function CourseDetailPage() {
   const [isDownloadingCertificate, setIsDownloadingCertificate] =
     useState(false);
   const [downloadPercentage, setDownloadPercentage] = useState(0);
+  const [isEnrolledLocally, setIsEnrolledLocally] = useState(false);
 
   const errorHandledRef = useRef(false);
 
@@ -152,6 +153,7 @@ export default function CourseDetailPage() {
     if (status === "PAID") {
       stopPolling();
       setPollingOrderId(null);
+      setIsEnrolledLocally(true);
 
       notifications.show({
         title: "Success",
@@ -193,6 +195,7 @@ export default function CourseDetailPage() {
   }
 
   const course = data.getCourseById;
+  const isEnrolled = course.is_enrolled || isEnrolledLocally;
   const isCertificateReady = !!course.is_certificate_issued;
 
   /* ===================== HANDLER ===================== */
@@ -394,7 +397,7 @@ export default function CourseDetailPage() {
             <Divider label="Course Content" labelPosition="left" />
             <CourseModulesAccordion
               courseId={courseId!}
-              isEnrolled={course.is_enrolled}
+              isEnrolled={isEnrolled}
             />
           </Stack>
         </Grid.Col>
@@ -420,12 +423,12 @@ export default function CourseDetailPage() {
                   alt={course.title}
                 />
 
-                {!course.is_enrolled && (
+                {!isEnrolled && (
                   <Text size="3xl" fw={700}>
                     ₹{course.price}
                   </Text>
                 )}
-                {course.is_enrolled &&
+                {isEnrolled &&
                   courseProgress?.getCourseProgress &&
                   courseProgress?.getCourseProgress?.percentage > 0 && (
                     <GlassProgressBar
@@ -448,7 +451,7 @@ export default function CourseDetailPage() {
                     isDownloadingCertificate
                   }
                   onClick={
-                    course.is_enrolled
+                    isEnrolled
                       ? courseProgress?.getCourseProgress?.percentage === 100
                         ? handleDownloadCertificate
                         : () => router.push(`/courses/${courseId}`)
@@ -457,12 +460,12 @@ export default function CourseDetailPage() {
                   disabled={
                     creatingOrder ||
                     !!pollingOrderId ||
-                    (course.is_enrolled &&
+                    (isEnrolled &&
                       courseProgress?.getCourseProgress?.percentage === 100 &&
                       !isCertificateReady)
                   }
                 >
-                  {course.is_enrolled
+                  {isEnrolled
                     ? courseProgress?.getCourseProgress?.percentage === 100
                       ? isCertificateReady
                         ? "Download Certificate"

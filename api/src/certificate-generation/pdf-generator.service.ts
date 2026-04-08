@@ -134,10 +134,6 @@ export class PdfGeneratorService implements OnModuleInit, OnModuleDestroy {
             color: ${obj.fill || '#000000'};
             text-align: ${obj.textAlign || 'left'};
             ${obj.width ? `width: ${obj.width}px;` : ''}
-            transform-origin: ${obj.originX || 'left'} ${obj.originY || 'top'};
-            transform: rotate(${obj.angle || 0}deg) scale(${obj.scaleX || 1}, ${obj.scaleY || 1});
-            opacity: ${obj.opacity !== undefined ? obj.opacity : 1};
-            white-space: pre-wrap;
           ">
             ${this.escapeHTML(text)}
           </div>
