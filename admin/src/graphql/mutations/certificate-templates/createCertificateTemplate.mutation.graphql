@@ -1,0 +1,12 @@
+mutation CreateCertificateTemplate($createCertificateTemplateInput: CreateCertificateTemplateInput!) {
+  createCertificateTemplate(createCertificateTemplateInput: $createCertificateTemplateInput) {
+    _id
+    name
+    fabric_json
+    background_url
+    placeholders
+    created_by
+    createdAt
+    updatedAt
+  }
+}

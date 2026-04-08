@@ -61,6 +61,10 @@ export class Course {
   @Field(() => Date, { nullable: true })
   published_at: Date;
 
+  @Prop({ type: Types.ObjectId, ref: 'CertificateTemplate', default: null })
+  @Field(() => ID, { nullable: true })
+  certificate_template_id?: string;
+
   @Field(() => Date)
   createdAt: Date;
 

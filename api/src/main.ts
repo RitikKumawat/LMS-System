@@ -7,12 +7,31 @@ import compression from 'compression';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import * as express from 'express';
-import * as bodyParser from "body-parser";
+import * as bodyParser from 'body-parser';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
 import { join } from 'path';
+import { Queue } from 'bull';
+import { getQueueToken } from '@nestjs/bull';
+import { createBullBoard } from '@bull-board/api';
+import { BullAdapter } from '@bull-board/api/bullAdapter';
+import { ExpressAdapter } from '@bull-board/express';
+import { CERTIFICATE_QUEUE_NAME } from './certificate-generation/constants';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
+  const certificateQueue = app.get<Queue>(
+    getQueueToken(CERTIFICATE_QUEUE_NAME),
+  );
+
+  const serverAdapter = new ExpressAdapter();
+  serverAdapter.setBasePath('/admin/queues');
+
+  createBullBoard({
+    queues: [new BullAdapter(certificateQueue)],
+    serverAdapter,
+  });
+
+  app.use('/admin/queues', serverAdapter.getRouter());
 
   app.use(
     helmet({
@@ -55,10 +74,7 @@ async function bootstrap() {
     graphqlUploadExpress({ maxFileSize: 500000000, maxFiles: 10 }),
   );
 
-  app.use(
-    '/webhooks/razorpay',
-    bodyParser.raw({ type: '*/*' }),
-  );
+  app.use('/webhooks/razorpay', bodyParser.raw({ type: '*/*' }));
 
   app.use(compression());
   app.use(cookieParser());

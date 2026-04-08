@@ -1,7 +1,7 @@
 import { FormErrors, useForm } from "@mantine/form";
 import { yupResolver } from "mantine-form-yup-resolver";
 import { Box, Flex, Stepper, Text, Paper, Grid, Stack, Group } from "@mantine/core";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -22,6 +22,7 @@ import {
   GetAllCategoriesDocument,
   GetAllCoursesDocument,
   GetCourseByIdDocument,
+  GetAllCertificateTemplatesDocument,
 } from "../../generated/graphql";
 
 // const NAVBAR_HEIGHT = 72;
@@ -45,6 +46,34 @@ const AddCourse = () => {
   const { data: categoriesData } = useQuery(GetAllCategoriesDocument, {
     variables: { paginationInput: { limit: 100, page: 1 } },
   });
+
+  const [templatePage, setTemplatePage] = useState(1);
+  const { data: certTemplatesData, fetchMore: fetchMoreTemplates } = useQuery(GetAllCertificateTemplatesDocument, {
+    variables: { paginationInput: { limit: 10, page: 1 } },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const handleTemplateScrollBottom = () => {
+    if (certTemplatesData?.getAllCertificateTemplates?.hasNextPage) {
+      const nextPage = templatePage + 1;
+      setTemplatePage(nextPage);
+      fetchMoreTemplates({
+        variables: { paginationInput: { limit: 10, page: nextPage } },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return {
+            getAllCertificateTemplates: {
+              ...fetchMoreResult.getAllCertificateTemplates,
+              docs: [
+                ...prev.getAllCertificateTemplates.docs,
+                ...fetchMoreResult.getAllCertificateTemplates.docs,
+              ],
+            },
+          };
+        },
+      });
+    }
+  };
 
   const { refetch } = useQuery(GetAllCoursesDocument, {
     variables: { paginationInput: { limit: 10, page: 1 }, courseFilters: {} },
@@ -83,6 +112,7 @@ const AddCourse = () => {
         price: course.price,
         thumbnail_url: course.thumbnail_url,
         thumbnail: course.thumbnail_url || null,
+        certificate_template_id: course.certificate_template_id || "",
       });
     }
   }, [id, courseLoading, data]);
@@ -142,6 +172,7 @@ const AddCourse = () => {
           price: values.price,
           category_id: values.category,
           thumbnail_url: values.thumbnail_url || undefined,
+          certificate_template_id: values.certificate_template_id || undefined,
         },
         thumbnail:
           values.thumbnail instanceof File ? values.thumbnail : undefined,
@@ -153,6 +184,12 @@ const AddCourse = () => {
     categoriesData?.getAllCategories?.docs?.map((c) => ({
       label: c.name,
       value: c._id,
+    })) ?? [];
+
+  const templateOptions =
+    certTemplatesData?.getAllCertificateTemplates?.docs?.map((t) => ({
+      label: t.name,
+      value: t._id,
     })) ?? [];
 
   /* ------------------ UI ------------------ */
@@ -257,6 +294,19 @@ const AddCourse = () => {
                     {...form.getInputProps("category")}
                     formHandler={form.getInputProps("category")}
                     selectOptions={categoryOptions}
+                  />
+                </div>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, md: 4 }}>
+                <div id="certificate_template_id">
+                  <FInput
+                    label="Certificate Template"
+                    variant="select"
+                    placeholder="Select Optional Template"
+                    {...form.getInputProps("certificate_template_id")}
+                    formHandler={form.getInputProps("certificate_template_id")}
+                    selectOptions={[{ label: "None", value: "" }, ...templateOptions]}
+                    onScrollBottom={handleTemplateScrollBottom}
                   />
                 </div>
               </Grid.Col>

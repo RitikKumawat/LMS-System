@@ -12,6 +12,7 @@ query GetCourseById($courseId: String!) {
     is_published
     created_by
     published_at
+    certificate_template_id
     createdAt
     updatedAt
     is_enrolled

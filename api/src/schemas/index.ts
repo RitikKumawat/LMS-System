@@ -1,6 +1,7 @@
 import { Admin, AdminSchema } from './admin.schema';
 import { Category, CategorySchema } from './category.schema';
 import { Certificate, CertificateSchema } from './certificate.schema';
+import { CertificateTemplate, CertificateTemplateSchema } from './certificate-template.schema';
 import { CourseModule, CourseModuleSchema } from './course-module.schema';
 import { CourseReview, CourseReviewSchema } from './course-review.schema';
 import { Course, CourseSchema } from './course.schema';
@@ -32,4 +33,5 @@ export const SCHEMAS = [
   { name: Order.name, schema: OrderSchema },
   { name: Payment.name, schema: PaymentSchema },
   { name: QuizQuestion.name, schema: QuizQuestionSchema },
+  { name: CertificateTemplate.name, schema: CertificateTemplateSchema },
 ];

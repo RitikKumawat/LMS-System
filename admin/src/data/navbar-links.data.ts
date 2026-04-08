@@ -1,4 +1,4 @@
-import { BookType, LayoutDashboard, User2, User2Icon } from "lucide-react";
+import { BookCheck, BookType, LayoutDashboard, User2, User2Icon } from "lucide-react";
 import { Admin_Roles } from "../generated/graphql";
 
 export const navbarLinks = [
@@ -26,5 +26,10 @@ export const navbarLinks = [
     allowedRole: [Admin_Roles.Admin, Admin_Roles.Instructor],
     icon: User2,
   },
-
+  {
+    name: "Certificate Templates",
+    href: "/certificate-templates",
+    allowedRole: [Admin_Roles.Admin, Admin_Roles.Instructor],
+    icon: BookCheck,
+  },
 ];

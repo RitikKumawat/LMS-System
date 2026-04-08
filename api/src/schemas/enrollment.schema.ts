@@ -27,6 +27,10 @@ export class Enrollment {
   @Field(() => String)
   status: ENROLLMENT_STATUS; // active | cancelled | refunded
 
+  @Prop({ type: Boolean, default: false })
+  @Field(() => Boolean)
+  certificate_sent: boolean;
+
   @Prop({ type: Types.ObjectId, ref: 'Payment', default: null })
   @Field(() => String, { nullable: true })
   payment_id: Types.ObjectId;

@@ -23,6 +23,33 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type CertificateTemplateResponse {
+  _id: ID!
+  name: String!
+  createdAt: DateTime!
+}
+
+type CertificateTemplate {
+  _id: ID!
+  name: String!
+  fabric_json: String!
+  background_url: String
+  placeholders: [String!]!
+  created_by: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PaginatedCertificateTemplate {
+  docs: [CertificateTemplateResponse!]!
+  totalDocs: Int!
+  limit: Int!
+  totalPages: Int!
+  page: Int!
+  hasNextPage: Boolean!
+  hasPrevPage: Boolean!
+}
+
 type CourseModule {
   _id: ID!
   course_id: ID!
@@ -46,6 +73,7 @@ type Course {
   is_published: Boolean!
   created_by: ID!
   published_at: DateTime
+  certificate_template_id: ID
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -158,9 +186,11 @@ type CourseWithEnrollment {
   is_published: Boolean!
   created_by: ID!
   published_at: DateTime
+  certificate_template_id: ID
   createdAt: DateTime!
   updatedAt: DateTime!
   is_enrolled: Boolean!
+  is_certificate_issued: Boolean!
 }
 
 type CourseProgress {
@@ -286,6 +316,8 @@ type CourseOrderResponse {
 }
 
 type EnrollmentDetails {
+  user_id: ID!
+  course_id: ID!
   student_email: String!
   student_name: String!
   course_name: String!
@@ -294,6 +326,7 @@ type EnrollmentDetails {
   payment_status: PaymentStatus
   method: String
   payment_id: ID
+  course_progress_percentage: Int!
 }
 
 enum ENROLLMENT_STATUS {
@@ -339,6 +372,8 @@ type Query {
   getLatestQuizAttemptForStudent(quizId: String!): QuizAttempt
   getQuizQuestionsByQuizId(quizId: String!): [QuizQuestion!]!
   quizQuestion(id: String!): QuizQuestion!
+  getAllCertificateTemplates(paginationInput: PaginationInput!): PaginatedCertificateTemplate!
+  getCertificateTemplateById(id: ID!): CertificateTemplate!
 }
 
 input PaginationInput {
@@ -391,6 +426,10 @@ type Mutation {
   submitQuizAttempt(quizId: String!, score: Int!): SubmitQuizAttemptResponse!
   createQuizQuestion(createQuizQuestionInput: CreateQuizQuestionInput!): QuizQuestion!
   removeQuizQuestion(id: String!): QuizQuestion!
+  createCertificateTemplate(createCertificateTemplateInput: CreateCertificateTemplateInput!): CertificateTemplate!
+  updateCertificateTemplate(updateCertificateTemplateInput: UpdateCertificateTemplateInput!): CertificateTemplate!
+  removeCertificateTemplate(id: ID!): Boolean!
+  sendCertificate(userId: String, courseId: String): String!
 }
 
 input VerifyOtpInput {
@@ -439,6 +478,7 @@ input CreateCourseInput {
   level: COURSE_LEVEL!
   language: String!
   category_id: String!
+  certificate_template_id: String
 }
 
 input CreateCourseModuleInput {
@@ -493,4 +533,19 @@ input CreateQuizQuestionInput {
 input CreateOptionInput {
   option_text: String!
   is_correct: Boolean!
+}
+
+input CreateCertificateTemplateInput {
+  name: String!
+  fabric_json: String!
+  background_url: String
+  placeholders: [String!]! = []
+}
+
+input UpdateCertificateTemplateInput {
+  name: String
+  fabric_json: String
+  background_url: String
+  placeholders: [String!] = []
+  templateId: ID!
 }

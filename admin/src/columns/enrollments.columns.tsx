@@ -1,8 +1,10 @@
 import { Text, Badge } from "@mantine/core";
-import { Enrollment_Status, EnrollmentDetails, PaymentStatus } from "../generated/graphql";
+import { Enrollment_Status, PaymentStatus } from "../generated/graphql";
 import { TColumns } from "../types/table";
+import EnrollmentTableActions from "../components/table-action/EnrollmentTableActions";
+import { AdminEnrollmentRow } from "../types/enrollment";
 
-export const enrollmentColumns: TColumns<EnrollmentDetails>[] = [
+export const enrollmentColumns: TColumns<AdminEnrollmentRow>[] = [
     {
         key: "student_name",
         label: "Student Name",
@@ -87,6 +89,17 @@ export const enrollmentColumns: TColumns<EnrollmentDetails>[] = [
         filter: true,
     },
     {
+        key: "course_progress_percentage",
+        label: "Course Progress",
+        render: (value) => (
+            <Text fw={600} size="sm" style={{ color: "#0f766e" }}>
+                {value.course_progress_percentage}%
+            </Text>
+        ),
+        minWidth: 120,
+        filter: false,
+    },
+    {
         key: "method",
         label: "Payment Method",
         render: (value) => (
@@ -123,4 +136,11 @@ export const enrollmentColumns: TColumns<EnrollmentDetails>[] = [
         minWidth: 100,
         filter: false,
     },
+    {
+                key: "action" as keyof AdminEnrollmentRow,
+        label: "Action",
+        minWidth: 120,
+        render: (enrollment) => <EnrollmentTableActions enrollment={enrollment} />,
+        filter:false,
+      },
 ];

@@ -11,6 +11,7 @@ mutation CreateCourse($createCourseInput: CreateCourseInput!, $thumbnail: Upload
     price
     is_published
     created_by
+    certificate_template_id
     createdAt
     updatedAt
   }

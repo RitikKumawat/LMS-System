@@ -8,4 +8,6 @@ export const ROUTES = {
   COURSE_CURRICULUM: "/courses/curriculum",
   COURSE_REVIEW: "/courses/review",
   ENROLLMENTS: "/enrollments",
+  CERTIFICATE_TEMPLATES: "/certificate-templates",
+  CERTIFICATE_TEMPLATE_EDITOR: "/certificate-templates/editor",
 };

@@ -15,13 +15,21 @@ import {
   PaginatedResult,
 } from 'src/utils/paginate-aggregate';
 import { getAllCoursePipeline } from 'src/aggregation/getAllCourse.aggregation';
-import { CourseProgress, CourseResponse, CourseWithEnrollment } from './entities/course.entity';
+import {
+  CourseProgress,
+  CourseResponse,
+  CourseWithEnrollment,
+} from './entities/course.entity';
 import { ADMIN_ROLES, USER_ROLES } from 'src/enum/roles';
 import { Enrollment } from 'src/schemas/enrollment.schema';
 import { ENROLLMENT_STATUS } from 'src/enum/enrollmentStatus';
 import { getCourseProgressPipeline } from 'src/aggregation/getCourseProgress.aggregation';
 import { Lesson } from 'src/schemas/lesson.schema';
 import { getUserPurchasedCourses } from 'src/aggregation/getUserCourses.aggregation';
+import {
+  Certificate,
+  CERTIFICATE_STATUS,
+} from 'src/schemas/certificate.schema';
 
 @Injectable()
 export class CourseService {
@@ -32,7 +40,9 @@ export class CourseService {
     private readonly enrollmentModel: Model<Enrollment>,
     @InjectModel(Lesson.name)
     private readonly lessonModel: Model<Lesson>,
-  ) { }
+    @InjectModel(Certificate.name)
+    private readonly certificateModel: Model<Certificate>,
+  ) {}
   async create(
     req: Request,
     createCourseInput: CreateCourseInput,
@@ -54,6 +64,8 @@ export class CourseService {
       slug: slug,
       title: createCourseInput.title,
       description: createCourseInput.description,
+      certificate_template_id:
+        createCourseInput.certificate_template_id || null,
     };
     if (thumbnail) {
       await validateFileUpload(
@@ -101,7 +113,11 @@ export class CourseService {
   ): Promise<PaginatedResult<CourseResponse>> {
     const role = req.user.roles;
     const userId = req.user.id;
-    const pipeline = getAllCoursePipeline(courseFilters, role as ADMIN_ROLES, userId);
+    const pipeline = getAllCoursePipeline(
+      courseFilters,
+      role as ADMIN_ROLES,
+      userId,
+    );
     const result = await paginateAggregate<CourseResponse>(
       this.courseModel,
       pipeline,
@@ -125,6 +141,7 @@ export class CourseService {
 
     // Default: field not present
     let is_enrolled = false;
+    let is_certificate_issued = false;
 
     if (user && user.roles === USER_ROLES.USER) {
       const enrollmentExists = await this.enrollmentModel.exists({
@@ -133,11 +150,21 @@ export class CourseService {
         status: ENROLLMENT_STATUS.ACTIVE,
       });
       is_enrolled = !!enrollmentExists;
+
+      if (is_enrolled) {
+        const issuedCertificate = await this.certificateModel.exists({
+          user_id: new Types.ObjectId(user.id),
+          course_id: course._id,
+          status: CERTIFICATE_STATUS.ISSUED,
+        });
+        is_certificate_issued = !!issuedCertificate;
+      }
     }
 
     return {
       ...course,
       is_enrolled,
+      is_certificate_issued,
     };
   }
 
@@ -152,29 +179,50 @@ export class CourseService {
 
     if (isPublishing) {
       // Validate Modules: course must have at least one module
-      const moduleCount = await this.courseModel.db.collection('coursemodules').countDocuments({ course_id: new Types.ObjectId(courseId) });
+      const moduleCount = await this.courseModel.db
+        .collection('coursemodules')
+        .countDocuments({ course_id: new Types.ObjectId(courseId) });
       if (moduleCount === 0) {
-        throw new HttpException('Cannot publish course: At least one module is required.', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'Cannot publish course: At least one module is required.',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       // Validate Quizzes: every quiz in this course must have at least one question
-      const modules = await this.courseModel.db.collection('coursemodules').find({ course_id: new Types.ObjectId(courseId) }).toArray();
-      const moduleIds = modules.map(m => m._id);
+      const modules = await this.courseModel.db
+        .collection('coursemodules')
+        .find({ course_id: new Types.ObjectId(courseId) })
+        .toArray();
+      const moduleIds = modules.map((m) => m._id);
 
       // Validate Lessons: every module must have at least one lesson
       for (const module of modules) {
-        const lessonCount = await this.courseModel.db.collection('lessons').countDocuments({ module_id: module._id });
+        const lessonCount = await this.courseModel.db
+          .collection('lessons')
+          .countDocuments({ module_id: module._id });
         if (lessonCount === 0) {
-          throw new HttpException(`Cannot publish course: Module "${module.title}" is empty. Every module must have at least one lesson.`, HttpStatus.BAD_REQUEST);
+          throw new HttpException(
+            `Cannot publish course: Module "${module.title}" is empty. Every module must have at least one lesson.`,
+            HttpStatus.BAD_REQUEST,
+          );
         }
       }
 
-      const quizzes = await this.courseModel.db.collection('quizzes').find({ module_id: { $in: moduleIds } }).toArray();
+      const quizzes = await this.courseModel.db
+        .collection('quizzes')
+        .find({ module_id: { $in: moduleIds } })
+        .toArray();
 
       for (const quiz of quizzes) {
-        const questionCount = await this.courseModel.db.collection('quizquestions').countDocuments({ quiz_id: quiz._id });
+        const questionCount = await this.courseModel.db
+          .collection('quizquestions')
+          .countDocuments({ quiz_id: quiz._id });
         if (questionCount === 0) {
-          throw new HttpException(`Cannot publish course: Quiz "${quiz.title}" has no questions.`, HttpStatus.BAD_REQUEST);
+          throw new HttpException(
+            `Cannot publish course: Quiz "${quiz.title}" has no questions.`,
+            HttpStatus.BAD_REQUEST,
+          );
         }
       }
     }
@@ -188,7 +236,10 @@ export class CourseService {
       : 'Course unpublished successfully';
   }
 
-  async getCourseProgress(courseId: string, req: Request): Promise<CourseProgress> {
+  async getCourseProgress(
+    courseId: string,
+    req: Request,
+  ): Promise<CourseProgress> {
     if (!courseId) {
       throw new HttpException('Course Id is required', 404);
     }
@@ -226,9 +277,7 @@ export class CourseService {
     return {
       totalLessons,
       completedLessons,
-      percentage: Math.floor(
-        (completedLessons / totalLessons) * 100
-      ),
+      percentage: Math.floor((completedLessons / totalLessons) * 100),
     };
   }
 
